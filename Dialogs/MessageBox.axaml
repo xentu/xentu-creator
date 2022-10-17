@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"		
+		SizeToContent="WidthAndHeight" CanResize="False"
+		Icon="avares://XentuCreator/Assets/xentu-icon.ico"
+		WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+		Background="#222"
+        x:Class="XentuCreator.Dialogs.MessageBox"
+        Title="MessageBox">
+	<StackPanel HorizontalAlignment="Center" MinWidth="200" MaxWidth="500" MinHeight="50" Margin="10">
+		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Name="Text" Padding="10,10" Text="text goes here."/>
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Name="Buttons">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="Margin" Value="5"/>
+				</Style>
+			</StackPanel.Styles>
+		</StackPanel>
+	</StackPanel>
+</Window>

@@ -1,0 +1,23 @@
+﻿print("Hello from javascript!");
+
+
+renderer.set_background('#444444'); // set the clear color.
+renderer.set_foreground("#00FFFF"); // set the foreground color.
+
+
+game.on('update', function(dt) {
+	if keyboard.key_clicked(KB_ESCAPE) {
+		game.exit();
+	}
+});
+
+
+game.on('draw', function(dt) {
+	renderer.clear();
+	renderer.begin();
+	renderer.draw_rectangle(10, 10, 50, 50);
+	renderer.present();
+});
+
+
+game.run();

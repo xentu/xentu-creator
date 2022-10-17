@@ -1,0 +1,207 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:XentuCreator"
+		xmlns:helpers="clr-namespace:XentuCreator.Helpers"
+		xmlns:p="clr-namespace:XentuCreator.Properties"
+		xmlns:ct="clr-namespace:XentuCreator.UserControls"
+        mc:Ignorable="d" Width="1024" Height="720" FontSize="12"
+        x:Class="XentuCreator.MainWindow" Icon="avares://XentuCreator/Assets/xentu-icon.ico"
+		WindowStartupLocation="CenterScreen" Closing="WindowClosing"
+        Title="XentuCreator">
+	<Window.Resources>
+		<helpers:BitmapAssetValueConverter x:Key="variableImage" />
+	</Window.Resources>
+	<Window.Styles>
+		<Style Selector="TabControl WrapPanel">
+			<Setter Property="Background" Value="#1a1a1a"/>
+			<Setter Property="Height" Value="30" />
+		</Style>
+		<Style Selector="TabItem">
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="Cursor" Value="Hand" />
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+		</Style>
+		<Style Selector="TabItem /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Height" Value="30"/>
+			<Setter Property="Padding" Value="10 6"/>
+			<Setter Property="Cursor" Value="Hand" />
+		</Style>
+		<Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="#111" />
+		</Style>
+		<Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="Black" />
+		</Style>
+		<Style Selector="TabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="Black" />
+		</Style>
+		<Style Selector="MenuItem">
+			<Setter Property="FontSize" Value="12" />
+		</Style>
+		<Style Selector="MenuItem.DefaultDisabled">
+			<Setter Property="IsEnabled" Value="False" />
+		</Style>
+		<Style Selector="MenuItem.Loaded">
+			<Setter Property="IsEnabled" Value="True" />
+		</Style>
+	</Window.Styles>
+	<Window.KeyBindings>
+		<KeyBinding Command="{Binding TriggerNew}" Gesture="Ctrl+N" />
+		<KeyBinding Command="{Binding TriggerOpen}" Gesture="Ctrl+O" />
+		<KeyBinding Command="{Binding TriggerPlay}" Gesture="F5" />
+		<KeyBinding Command="{Binding TriggerDebugSettings}" Gesture="F6" />
+		<KeyBinding Command="{Binding TriggerOptions}" Gesture="F8" />
+		<KeyBinding Command="{Binding TriggerAbout}" Gesture="F1" />
+	</Window.KeyBindings>
+	<Grid Name="MainGrid">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="30" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200" MaxWidth="0" />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		
+		<Menu Name="MainMenu" VerticalAlignment="Top" Background="#222" Height="24" Grid.ColumnSpan="2">
+			<Menu.Items>
+				<MenuItem Header="{x:Static p:Resources.MenuFile}">
+					<MenuItem Header="{x:Static p:Resources.CommandNewGame}" HotKey="CTRL+N" InputGesture="Ctrl+N" Command="{Binding TriggerNew}" />
+					<MenuItem Header="{x:Static p:Resources.CommandOpenExisting}" HotKey="CTRL+O" InputGesture="Ctrl+O" Command="{Binding TriggerOpen}" />
+					<Separator />
+					<MenuItem Header="{x:Static p:Resources.CommandClose}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}" Command="{Binding TriggerClose}" />
+					<Separator />
+					<MenuItem Header="{x:Static p:Resources.CommandSave}" Classes="DefaultDisabled" Classes.Loaded="{Binding CanSave}" InputGesture="Ctrl+S" HotKey="Ctrl+S" Command="{Binding TriggerSave}" />
+					<MenuItem Header="{x:Static p:Resources.CommandSaveAll}" Classes="DefaultDisabled" Classes.Loaded="{Binding CanSaveAll}" InputGesture="Ctrl+Shift+A" HotKey="Ctrl+Shift+A" Command="{Binding TriggerSaveAll}" />
+					<Separator />
+					<MenuItem Header="{x:Static p:Resources.CommandGameProperties}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}" Command="{Binding TriggerGameProperties}" />
+					<MenuItem Header="{x:Static p:Resources.CommandPublish}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}" Command="{Binding TriggerPublish}" />
+					<Separator />
+					<MenuItem Header="{x:Static p:Resources.CommandExit}" Command="{Binding TriggerExit}" />
+				</MenuItem>
+				<MenuItem Header="{x:Static p:Resources.MenuEdit}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}">
+					<MenuItem Header="Cut" Command="{Binding TriggerCut}" InputGesture="Ctrl+X" />
+					<MenuItem Header="Copy" Command="{Binding TriggerCopy}" InputGesture="Ctrl+C" />
+					<MenuItem Header="Paste" Command="{Binding TriggerPaste}" InputGesture="Ctrl+V" />
+					<MenuItem Header="Delete" Command="{Binding TriggerDelete}" InputGesture="Delete" />
+					<Separator />
+					<MenuItem Header="Select All" Command="{Binding TriggerSelectAll}" InputGesture="Ctrl+A" />
+				</MenuItem>
+				<MenuItem Header="{x:Static p:Resources.MenuDebug}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}">
+					<MenuItem Header="{x:Static p:Resources.CommandPlay}" Command="{Binding TriggerPlay}" InputGesture="F5" HotKey="F5" />
+					<Separator />
+					<MenuItem Header="{x:Static p:Resources.CommandDebugSettings}" Command="{Binding TriggerDebugSettings}" InputGesture="F6" HotKey="F6" />
+				</MenuItem>
+				<MenuItem Header="{x:Static p:Resources.MenuView}">
+					<MenuItem Header="{x:Static p:Resources.CommandToggleFullscreen}" Command="{Binding TriggerToggleFullScreen}" InputGesture="F11" HotKey="F11" />
+				</MenuItem>
+				<MenuItem Header="{x:Static p:Resources.MenuTools}">
+					<MenuItem Header="{x:Static p:Resources.CommandOptions}" Command="{Binding TriggerOptions}" InputGesture="F8" HotKey="F8" />
+					<MenuItem Header="Next Editor Theme" Click="MenuNextEditorTheme_Click" />
+				</MenuItem>
+				<MenuItem Header="{x:Static p:Resources.MenuHelp}">
+					<MenuItem Header="{x:Static p:Resources.CommandAbout}" Command="{Binding TriggerAbout}" InputGesture="F1" HotKey="F1" />
+				</MenuItem>
+			</Menu.Items>
+		</Menu>
+
+		<Border Name="RootLabelBorder" Grid.Row="2" Background="#1a1a1a">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock VerticalAlignment="Center" Margin="12,0,0,0" FontWeight="Bold" Opacity="0.7" Name="RootLabel" Text="?" />
+			</StackPanel>
+		</Border>
+
+		<Border Name="TabControl1Border" Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Background="#000" PointerReleased="TabCloseClicked">
+			<TabControl Name="TabControl1" Items="{Binding}">
+				<TabControl.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Classes="TabHead" Text="{Binding NameComposite}" Margin="0,2,0,0" Classes.IsWelcome="{Binding IsWelcomeTab}">
+								<TextBlock.Styles>
+									<Style Selector="TextBlock.IsWelcome">
+										<Setter Property="Text" Value="{x:Static p:Resources.LabelWelcome}" />
+									</Style>
+									<Style Selector="TextBlock:not(.IsWelcome)">
+										<Setter Property="Text" Value="{Binding NameComposite}" />
+									</Style>
+								</TextBlock.Styles>
+							</TextBlock>
+							<TextBlock Classes="CloseBut" Margin="8,3,0,0" Text="&#xf00d;" Classes.CloseButHidden="{Binding CloseButHidden}"
+									   FontFamily="avares://XentuCreator/Assets/fontawesome.ttf#FontAwesome" ToolTip.Tip="Close This Tab">
+								<TextBlock.Styles>
+									<Style Selector="TextBlock.CloseBut">
+										<Setter Property="Opacity" Value="0.3" />
+									</Style>
+									<Style Selector="TextBlock.CloseButHidden">
+										<Setter Property="IsVisible" Value="False" />
+									</Style>
+									<Style Selector="TextBlock.CloseBut:pointerover">
+										<Setter Property="Foreground" Value="Yellow" />
+										<Setter Property="Opacity" Value="0.7" />
+									</Style>
+								</TextBlock.Styles>
+							</TextBlock>
+						</StackPanel>
+					</DataTemplate>
+				</TabControl.ItemTemplate>
+			</TabControl>
+		</Border>
+
+		<Grid Name="MainPane" Grid.Row="3" Grid.Column="1">
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" MinHeight="60" />
+			</Grid.RowDefinitions>
+			<ae:TextEditor Name="Editor"
+						   FontFamily="Consolas,Menlo,Monospace" Padding="5"
+						   Foreground="#D4D4D4"
+						   HorizontalScrollBarVisibility="Visible"
+						   VerticalScrollBarVisibility="Visible"
+						   FontWeight="Light"
+						   FontSize="14" />
+			<ct:WelcomeControl Name="WelcomePane" />
+
+			<Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">
+				<ct:TerminalControl Name="Terminal" Padding="0" />
+			</Border>
+
+			<GridSplitter ResizeDirection="Rows" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+			
+		</Grid>
+
+		<Border Name="FolderViewBorder" Background="#111" Grid.Row="3">
+			<TreeView Name="FolderView" Items="{Binding Items}">
+				<TreeView.ItemTemplate>
+					<TreeDataTemplate ItemsSource="{Binding SubNodes}">
+						<StackPanel Orientation="Horizontal">
+							<Image Source="{Binding NodeIcon, Converter={StaticResource variableImage}}" Width="16" Height="16" Margin="0,0,5,0" />
+							<TextBlock Text="{Binding NodeText}" Classes="TvHeader" ToolTip.Tip="Double-click to open this file/folder." />
+						</StackPanel>
+					</TreeDataTemplate>
+				</TreeView.ItemTemplate>
+				<TreeView.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="New File" Click="FolderView_CreateFile" />
+						<MenuItem Header="New Folder" Click="FolderView_CreateFolder" />
+						<Separator />
+						<MenuItem Header="Rename" Classes="DefaultDisabled" Classes.Loaded="{Binding CanRenameSelectedFile}" Click="FolderView_Rename" />
+						<MenuItem Header="Delete" Classes="DefaultDisabled" Classes.Loaded="{Binding CanRenameSelectedFile}" Click="FolderView_Delete" />
+					</ContextMenu>
+				</TreeView.ContextMenu>
+			</TreeView>
+		</Border>
+
+		<GridSplitter ResizeDirection="Columns" Grid.Row="3" Grid.RowSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" />
+
+		<StackPanel Name="StatusBar" Grid.Row="4" Grid.ColumnSpan="2" Background="DarkCyan" Height="25" Orientation="Horizontal">
+			<TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
+		</StackPanel>
+	</Grid>
+</Window>

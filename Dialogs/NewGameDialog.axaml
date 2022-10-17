@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:helpers="clr-namespace:XentuCreator.Helpers"
+        mc:Ignorable="d" Width="400" d:DesignHeight="260" SizeToContent="Height"
+        x:Class="XentuCreator.Dialogs.NewGameDialog" Background="#222"
+		Icon="avares://XentuCreator/Assets/xentu-icon.ico"
+		ShowInTaskbar="False" WindowStartupLocation="CenterOwner" CanResize="False"
+        Title="New Game...">
+	<Window.Resources>
+		<helpers:ComparisonConverter x:Key="ComparisonConverter" />
+	</Window.Resources>
+	<Window.Styles>
+		<Style Selector="DockPanel TextBlock.Label">
+			<Setter Property="Width" Value="90" />
+			<Setter Property="Margin" Value="0 7 10 0" />
+		</Style>
+		<Style Selector="DockPanel CheckBox, DockPanel RadioButton">
+			<Setter Property="Margin" Value="0 0 10 7" />
+		</Style>
+	</Window.Styles>
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<StackPanel>
+
+			<DockPanel Margin="0 0 0 10">
+				<TextBlock Classes="Label">Game Name</TextBlock>
+				<TextBox Text="{Binding Path=Title}" Padding="10 8 0 0" />
+			</DockPanel>
+
+			<DockPanel Margin="0 0 0 0">
+				<TextBlock Classes="Label">Code</TextBlock>
+				<WrapPanel>
+					<RadioButton GroupName="Lang" Content="JavaScript" IsChecked="{Binding Path=Language, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static helpers:GameCodeLanguage.JavaScript}, Mode=TwoWay}" />
+					<RadioButton GroupName="Lang" Content="Lua" IsChecked="{Binding Path=Language, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static helpers:GameCodeLanguage.Lua}, Mode=TwoWay}" />
+					<!-- RadioButton GroupName="Lang" Content="Python" IsEnabled="False" / -->
+				</WrapPanel>
+			</DockPanel>
+
+			<DockPanel Margin="0 0 0 10">
+				<TextBlock Classes="Label" Opacity="0.6">Template</TextBlock>
+				<ComboBox SelectedIndex="0" IsEnabled="False" HorizontalAlignment="Left" Width="220" Padding="10 0 0 0">
+					<ComboBoxItem>No Template</ComboBoxItem>
+					<ComboBoxItem>Side Scrolling Game</ComboBoxItem>
+					<ComboBoxItem>Top Down Game</ComboBoxItem>
+					<ComboBoxItem>Visual Novel (Using Sutori)</ComboBoxItem>
+				</ComboBox>
+			</DockPanel>
+			
+			<DockPanel Margin="0 0 0 10">
+				<TextBlock Classes="Label" Margin="0 7 10 0">Viewport</TextBlock>
+				<StackPanel>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+						<TextBox Text="{Binding Path=ViewportWidth}" Padding="10 8 0 0" Margin="0 0 10 0" />
+						<TextBox Text="{Binding Path=ViewportHeight}" Padding="10 8 0 0" Grid.Column="1" />
+					</Grid>
+					<ComboBox Margin="0 10 0 0" Width="160" SelectedIndex="{Binding ViewportMode}" Padding="10 0 0 0">
+						<ComboBoxItem>Fixed Viewport</ComboBoxItem>
+						<ComboBoxItem>Center Viewport</ComboBoxItem>
+						<ComboBoxItem>Stretch Viewport</ComboBoxItem>
+					</ComboBox>
+				</StackPanel>
+			</DockPanel>
+
+			<DockPanel Margin="0 0 0 10">
+				<TextBlock Classes="Label">Target FPS</TextBlock>
+				<ComboBox SelectedItem="{Binding TargetFPS}" Width="80" IsTextSearchEnabled="True" Padding="10 0 0 0">
+					<sys:Int32>30</sys:Int32>
+					<sys:Int32>60</sys:Int32>
+				</ComboBox>
+			</DockPanel>
+
+			<DockPanel Margin="0 0 0 10">
+				<TextBlock Classes="Label">Options</TextBlock>
+				<WrapPanel>
+					<CheckBox Content="V-Sync" IsChecked="{Binding VSync}" />
+					<CheckBox Content="Full Screen" IsChecked="{Binding Fullscreen}" />
+				</WrapPanel>
+			</DockPanel>
+
+		</StackPanel>
+
+		<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Name="Buttons" Grid.Row="1">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="Margin" Value="5 5 0 0"/>
+				</Style>
+			</StackPanel.Styles>
+			<Button IsDefault="True" Click="ButtonOK_Click" Background="SteelBlue">Create Game</Button>
+			<Button IsCancel="True" Click="ButtonCancel_Click" MinWidth="80" HorizontalContentAlignment="Center">Cancel</Button>
+		</StackPanel>
+		
+	</Grid>
+</Window>

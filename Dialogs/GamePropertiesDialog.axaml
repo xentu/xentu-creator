@@ -1,0 +1,192 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:helpers="clr-namespace:XentuCreator.Helpers"
+        mc:Ignorable="d" Width="530" Height="380"
+        x:Class="XentuCreator.Dialogs.GamePropertiesDialog" Background="#222"
+		Icon="avares://XentuCreator/Assets/xentu-icon.ico"
+		ShowInTaskbar="False" WindowStartupLocation="CenterOwner" CanResize="False"
+        Title="Game Properties...">
+	<Window.Styles>
+		<Style Selector="DockPanel TextBlock.Label">
+			<Setter Property="Width" Value="110" />
+			<Setter Property="Margin" Value="0 7 10 0" />
+		</Style>
+		<Style Selector="DockPanel CheckBox, DockPanel RadioButton">
+			<Setter Property="Margin" Value="0 0 10 7" />
+		</Style>
+	</Window.Styles>
+	<Window.Resources>
+		<helpers:RadioBoolToIntConverter x:Key="RadioBoolToIntConverter" />
+	</Window.Resources>
+	<Grid Margin="5 5 10 10">
+
+
+		<TabControl>
+			<TabItem Header="General">
+
+				<Grid Margin="0 20 0 0">
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<StackPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Game Name</TextBlock>
+							<TextBox Text="{Binding title}" Padding="10 8 0 0" />
+						</DockPanel>
+
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Entry Point</TextBlock>
+							<TextBox Text="{Binding entry_point}" Padding="10 8 0 0" />
+						</DockPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Version</TextBlock>
+							<TextBox Text="0.0.0" Padding="10 8 0 0" Width="130" HorizontalAlignment="Left" />
+						</DockPanel>
+						
+					</StackPanel>
+					
+					
+
+				</Grid>
+				
+			</TabItem>
+			<TabItem Header="Graphics">
+
+				<Grid Margin="0 20 0 0">
+					<StackPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label" Padding="0 8 0 0" Margin="0 7 10 0">Viewport</TextBlock>
+							<StackPanel>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<TextBox Text="{Binding viewport.width}" Padding="10 8 0 0" Margin="0 0 10 0" />
+									<TextBox Text="{Binding viewport.height}" Padding="10 8 0 0" Grid.Column="1" />
+								</Grid>
+								<ComboBox Margin="0 10 0 0" Width="160" SelectedIndex="{Binding viewport.mode}" Padding="10 0 0 0">
+									<ComboBoxItem>Fixed Viewport</ComboBoxItem>
+									<ComboBoxItem>Center Viewport</ComboBoxItem>
+									<ComboBoxItem>Stretch Viewport</ComboBoxItem>
+								</ComboBox>
+								<TextBlock FontSize="11" Margin="0 5" TextWrapping="Wrap">The viewport is the clipped area on which the game is drawn.</TextBlock>
+							</StackPanel>
+						</DockPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label" Margin="0 7 10 0">Window Size</TextBlock>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<TextBox Text="{Binding window.width}" Padding="10 8 0 0" Margin="0 0 10 0" />
+								<TextBox Text="{Binding window.height}" Padding="10 8 0 0" Grid.Column="1" />
+							</Grid>
+						</DockPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Update FPS</TextBlock>
+							<Grid>
+								<NumericUpDown Minimum="1" Maximum="9999" Value="{Binding update_frequency}" Width="150" HorizontalAlignment="Left" />
+							</Grid>
+						</DockPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Draw FPS</TextBlock>
+							<Grid>
+								<NumericUpDown Minimum="1" Maximum="9999" Value="{Binding draw_frequency}" Width="150" HorizontalAlignment="Left" />
+							</Grid>
+						</DockPanel>
+
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Options</TextBlock>
+							<WrapPanel>
+								<CheckBox Content="V-Sync" IsChecked="{Binding v_sync}" />
+								<CheckBox Content="Full Screen" IsChecked="{Binding fullscreen}" />
+							</WrapPanel>
+						</DockPanel>
+
+					</StackPanel>
+
+				</Grid>
+				
+			</TabItem>
+			<TabItem Header="Sound">
+
+				<Grid Margin="0 20 0 0">
+					<StackPanel>
+
+						<DockPanel Margin="0 0 0 0">
+							<TextBlock Classes="Label">Sample Rate</TextBlock>
+							<WrapPanel>
+								<RadioButton GroupName="SampleRate" Content="44100" IsChecked="{Binding Path=audio.frequency, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=44100, Mode=TwoWay}" />
+								<RadioButton GroupName="SampleRate" Content="48000" IsChecked="{Binding Path=audio.frequency, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=48000, Mode=TwoWay}" />
+								<RadioButton GroupName="SampleRate" Content="96000" IsChecked="{Binding Path=audio.frequency, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=96000, Mode=TwoWay}" />
+							</WrapPanel>
+						</DockPanel>
+						<DockPanel Margin="0 0 0 0">
+							<TextBlock Classes="Label">Bit Depth</TextBlock>
+							<WrapPanel>
+								<RadioButton GroupName="BitDepth" Content="8 bit" IsChecked="{Binding Path=audio.depth, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=8, Mode=TwoWay}" />
+								<RadioButton GroupName="BitDepth" Content="16 bit" IsChecked="{Binding Path=audio.depth, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=16, Mode=TwoWay}" />
+								<RadioButton GroupName="BitDepth" Content="24 bit" IsChecked="{Binding Path=audio.depth, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=24, Mode=TwoWay}" />
+							</WrapPanel>
+						</DockPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Channels</TextBlock>
+							<WrapPanel>
+								<RadioButton GroupName="Channels" Content="Mono" IsChecked="{Binding Path=audio.channels, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=1, Mode=TwoWay}" />
+								<RadioButton GroupName="Channels" Content="Stereo" IsChecked="{Binding Path=audio.channels, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=2, Mode=TwoWay}" />
+								<RadioButton GroupName="Channels" Content="Quad Channel" IsChecked="{Binding Path=audio.channels, Converter={StaticResource RadioBoolToIntConverter}, ConverterParameter=4, Mode=TwoWay}" />
+							</WrapPanel>
+						</DockPanel>
+
+						<DockPanel Margin="0 0 0 10">
+							<TextBlock Classes="Label">Codecs</TextBlock>
+							<WrapPanel>
+								<CheckBox Name="cbWAV" Content="WAV" IsChecked="True" />
+								<CheckBox Name="cbOGG" Content="OGG" IsChecked="True" />
+								<CheckBox Name="cbFLAC" Content="FLAC" IsChecked="True" />
+								<CheckBox Name="cbMP3" Content="MP3 (needs license)" />
+								<CheckBox Name="cbMIDI" Content="MIDI" />
+								<CheckBox Name="cbMOD" Content="MOD" />
+								
+							</WrapPanel>
+						</DockPanel>
+
+					</StackPanel>
+
+				</Grid>
+
+
+			</TabItem>
+			<TabItem Header="Packs">
+
+			</TabItem>
+			
+		</TabControl>
+		
+
+		<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Name="Buttons">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="Margin" Value="5 5 0 0"/>
+				</Style>
+			</StackPanel.Styles>
+			<Button IsDefault="True" Click="ButtonOK_Click" Background="SteelBlue" MinWidth="80" HorizontalContentAlignment="Center">OK</Button>
+			<Button Click="ButtonCancel_Click" MinWidth="80" HorizontalContentAlignment="Center">Cancel</Button>
+		</StackPanel>
+	</Grid>
+</Window>

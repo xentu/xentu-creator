@@ -1,0 +1,43 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit"
+             x:Class="XentuCreator.App">
+	<Application.Resources>
+		<x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
+	</Application.Resources>
+    <Application.Styles>
+        <FluentTheme Mode="Dark" />
+        <StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
+
+		<Style Selector="cc|CompletionList > ListBox">
+			<Setter Property="Background" Value="White" />
+		</Style>
+		<Style Selector="ContentControl.ToolTip">
+			<Setter Property="Foreground" Value="Black" />
+			<Setter Property="Background" Value="Yellow" />
+		</Style>
+
+		<Style Selector="cc|CompletionList">
+			<Setter Property="Template">
+				<ControlTemplate>
+					<cc:CompletionListBox Name="PART_ListBox" FontSize="11">
+						<cc:CompletionListBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal" Margin="0">
+									<TextBlock Foreground="Black" Padding="3" Text="{Binding Content}" />
+								</StackPanel>
+							</DataTemplate>
+						</cc:CompletionListBox.ItemTemplate>
+					</cc:CompletionListBox>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+
+
+		<Style Selector="cc|OverloadViewer /template/ ContentPresenter">
+			<Setter Property="TextBlock.Foreground" Value="#444" />
+		</Style>
+		
+		
+    </Application.Styles>
+</Application>

@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="400" SizeToContent="Height"
+		WindowStartupLocation="CenterOwner" CanResize="False" ShowInTaskbar="False" Background="#222"
+        x:Class="XentuCreator.Dialogs.NewFileDialog"
+		Icon="avares://XentuCreator/Assets/xentu-icon.ico"
+        Title="New File/Folder..." Opened="NewFileDialog_Opened">
+	<Window.Styles>
+		<Style Selector="DockPanel TextBlock.Label">
+			<Setter Property="Width" Value="90" />
+			<Setter Property="Margin" Value="0 7 10 0" />
+		</Style>
+		<Style Selector="DockPanel CheckBox, DockPanel RadioButton">
+			<Setter Property="Margin" Value="0 0 10 7" />
+		</Style>
+	</Window.Styles>
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<StackPanel Margin="0 0 0 5">
+			<DockPanel Margin="0 0 0 10">
+				<TextBlock Classes="Label">FileName</TextBlock>
+				<TextBox Name="TextName" Text="Untitled" />
+			</DockPanel>
+			<DockPanel Margin="0 0 0 10">
+				<TextBlock Classes="Label">In Folder</TextBlock>
+				<TextBlock Name="TextFolder" Text="/" Margin="0 7 0 4" />
+			</DockPanel>
+			<DockPanel>
+				<TextBlock Classes="Label">File Type:</TextBlock>
+				<ComboBox Name="ComboFileType" SelectedIndex="0" HorizontalAlignment="Stretch"></ComboBox>
+			</DockPanel>
+		</StackPanel>
+
+		<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Name="Buttons" Grid.Row="1">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="Margin" Value="5 5 0 0"/>
+				</Style>
+			</StackPanel.Styles>
+			<Button IsDefault="True" Click="ButtonOK_Click" Background="SteelBlue" MinWidth="80">Create File</Button>
+			<Button IsCancel="True" Click="ButtonCancel_Click" HorizontalContentAlignment="Center" MinWidth="80">Cancel</Button>
+		</StackPanel>
+	</Grid>
+	
+</Window>
