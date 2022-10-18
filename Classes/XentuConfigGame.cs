@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace XentuCreator.Models
+namespace XentuCreator.Classes
 {
     public class XentuConfigGameContainer
     {

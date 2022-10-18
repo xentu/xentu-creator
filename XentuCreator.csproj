@@ -61,4 +61,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Dialogs\OptionsDialog.axaml" />
+  </ItemGroup>
 </Project>

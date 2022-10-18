@@ -5,9 +5,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using static AvaloniaEdit.Document.TextDocumentWeakEventManager;
 
-namespace XentuCreator.Models
+namespace XentuCreator.Classes
 {
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -103,9 +102,9 @@ namespace XentuCreator.Models
         public void TriggerSelectAll() => _owner.MenuEditSelectAll_Click(_owner, new());
 
         public void TriggerToggleFullScreen() => _owner.MenuToggleFullScreen_Click(_owner, new());
-        public void TriggerPlay() { }
+        public void TriggerPlay() => _owner.MenuPlay_Click(_owner, new());
         public void TriggerDebugSettings() { }
-        public void TriggerOptions() { }
+        public void TriggerOptions() => _owner.MenuOptions_Click(_owner, new());
         public void TriggerAbout() => _owner.MenuAbout_Click(_owner, new());
 
 

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using TextMateSharp.Grammars;
 
-namespace XentuCreator.Models
+namespace XentuCreator.Classes
 {
     /// <summary>
     /// Tracks a file open with an editor in XentuCreator.

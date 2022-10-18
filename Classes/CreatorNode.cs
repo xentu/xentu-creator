@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-namespace XentuCreator.Models
+namespace XentuCreator.Classes
 {
     public class CreatorNodeCollection : ObservableCollection<CreatorNode>
     {

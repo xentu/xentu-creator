@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
 using XentuCreator.Helpers;
-using XentuCreator.Models;
+using XentuCreator.Classes;
 
 namespace XentuCreator.Dialogs
 {

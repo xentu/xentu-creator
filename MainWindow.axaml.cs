@@ -25,8 +25,9 @@ using System.Threading;
 using TextMateSharp.Grammars;
 using XentuCreator.Dialogs;
 using XentuCreator.Helpers;
-using XentuCreator.Models;
+using XentuCreator.Classes;
 using XentuCreator.UserControls;
+using System.Diagnostics;
 
 namespace XentuCreator
 {
@@ -249,6 +250,26 @@ namespace XentuCreator
         internal static void SetLanguage(string languageCode) => SetLanguage(CultureInfo.GetCultureInfo(languageCode));
 
         internal static void SetLanguage(CultureInfo culture) => Thread.CurrentThread.CurrentUICulture = culture;
+
+        internal async void BeginDebugging()
+        {
+            if (App.Config != null && !string.IsNullOrWhiteSpace(_mainView.Project?.LoadedFileInfo?.DirectoryName))
+            {
+                using (Process compiler = new Process())
+                {
+                    string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
+                    compiler.StartInfo.WorkingDirectory = dir;
+                    compiler.StartInfo.FileName = App.Config.DebugBinary;
+                    compiler.StartInfo.ErrorDialog = true;
+                    compiler.StartInfo.UseShellExecute = true;
+                    //compiler.StartInfo.RedirectStandardOutput = true;
+                    compiler.Start();
+                    //string output = compiler.StandardOutput.ReadToEnd();
+                    //Debug.WriteLine(output);
+                    await compiler.WaitForExitAsync();
+                }
+            }
+        }
 
         #endregion
 
@@ -669,6 +690,11 @@ namespace XentuCreator
 
         internal void MenuEditSelectAll_Click(object? sender, RoutedEventArgs e) => _textEditor?.SelectAll();
 
+        internal void MenuPlay_Click(object? sender, RoutedEventArgs e)
+        {
+            BeginDebugging();
+        }
+
         internal void MenuToggleFullScreen_Click(object? sender, RoutedEventArgs e)
         {
             _ = 5;
@@ -683,6 +709,11 @@ namespace XentuCreator
                 HasSystemDecorations = true;
                 WindowState = WindowState.Normal;
             }
+        }
+
+        internal async void MenuOptions_Click(object? sender, RoutedEventArgs e)
+        {
+            await OptionsDialog.Show(this);
         }
 
         internal void MenuNextEditorTheme_Click(object? sender, RoutedEventArgs e)

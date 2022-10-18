@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="530" Height="280"
+        x:Class="XentuCreator.Dialogs.OptionsDialog" Background="#222"
+		Icon="avares://XentuCreator/Assets/xentu-icon.ico"
+		ShowInTaskbar="False" WindowStartupLocation="CenterOwner" CanResize="False"
+        Title="Options">
+	<Window.Styles>
+		<Style Selector="DockPanel TextBlock.Label">
+			<Setter Property="Width" Value="110" />
+			<Setter Property="Margin" Value="0 7 10 0" />
+		</Style>
+		<Style Selector="DockPanel CheckBox, DockPanel RadioButton">
+			<Setter Property="Margin" Value="0 0 10 7" />
+		</Style>
+	</Window.Styles>
+	<Grid Margin="5 5 10 10">
+
+		<TabControl>
+			<TabItem Header="General">
+				<Grid Margin="0 20 0 0">
+
+					<StackPanel>
+						<DockPanel>
+							<TextBlock Classes="Label">Debug Binary</TextBlock>
+							<TextBox Text="{Binding DebugBinary}" />
+						</DockPanel>
+					</StackPanel>
+					
+				</Grid>
+			</TabItem>
+		</TabControl>
+
+		<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Name="Buttons">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="Margin" Value="5 5 0 0"/>
+				</Style>
+			</StackPanel.Styles>
+			<Button IsDefault="True" Click="ButtonOK_Click" Background="SteelBlue" MinWidth="80" HorizontalContentAlignment="Center">OK</Button>
+			<Button Click="ButtonCancel_Click" MinWidth="80" HorizontalContentAlignment="Center">Cancel</Button>
+		</StackPanel>
+		
+	</Grid>
+</Window>

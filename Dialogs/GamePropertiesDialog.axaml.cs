@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Threading.Tasks;
 using XentuCreator.Helpers;
-using XentuCreator.Models;
+using XentuCreator.Classes;
 
 namespace XentuCreator.Dialogs
 {
