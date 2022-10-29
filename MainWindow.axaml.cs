@@ -16,18 +16,17 @@ using AvaloniaEdit.TextMate;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using TextMateSharp.Grammars;
+using XentuCreator.Classes;
 using XentuCreator.Dialogs;
 using XentuCreator.Helpers;
-using XentuCreator.Classes;
 using XentuCreator.UserControls;
-using System.Diagnostics;
 
 namespace XentuCreator
 {
@@ -255,6 +254,15 @@ namespace XentuCreator
         {
             if (App.Config != null && !string.IsNullOrWhiteSpace(_mainView.Project?.LoadedFileInfo?.DirectoryName))
             {
+                if (string.IsNullOrWhiteSpace(App.Config.DebugBinary) || !File.Exists(App.Config.DebugBinary))
+                {
+                    await MessageBox.Show(this, "Error, in order to debug, you need to tell Xentu Creator " +
+                                                "where the engine binary is. The next screen will allow you " +
+                                                "to do so.");
+                    MenuOptions_Click(this, new());
+                    return;
+                }
+
                 using (Process compiler = new Process())
                 {
                     string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";

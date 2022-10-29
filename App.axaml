@@ -6,8 +6,11 @@
 		<x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
 	</Application.Resources>
     <Application.Styles>
+		<!--StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/ -->
         <FluentTheme Mode="Dark" />
         <StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
+
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 
 		<Style Selector="cc|CompletionList > ListBox">
 			<Setter Property="Background" Value="White" />

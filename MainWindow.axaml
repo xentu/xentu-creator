@@ -97,7 +97,7 @@
 				<MenuItem Header="{x:Static p:Resources.MenuDebug}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}">
 					<MenuItem Header="{x:Static p:Resources.CommandPlay}" Command="{Binding TriggerPlay}" InputGesture="F5" HotKey="F5" />
 					<Separator />
-					<MenuItem Header="{x:Static p:Resources.CommandDebugSettings}" Command="{Binding TriggerDebugSettings}" InputGesture="F6" HotKey="F6" />
+					<MenuItem Header="{x:Static p:Resources.CommandDebugSettings}" Command="{Binding TriggerDebugSettings}" IsEnabled="False" InputGesture="F6" HotKey="F6" />
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuView}">
 					<MenuItem Header="{x:Static p:Resources.CommandToggleFullscreen}" Command="{Binding TriggerToggleFullScreen}" InputGesture="F11" HotKey="F11" />
