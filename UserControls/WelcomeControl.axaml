@@ -39,8 +39,13 @@
 				<TextBlock Margin="0 20 0 10" FontSize="14" FontWeight="SemiBold">Recent Projects</TextBlock>
 			</Border>
 			<StackPanel>
-				<TextBlock Classes="Hyperlink" Text="Recent Game #1" Margin="0 0 0 5" />
-				<TextBlock Classes="Hyperlink" Text="Recent Game #2" Margin="0 0 0 5" />
+				<ItemsControl Name="ListRecents" Items="{Binding Recents}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Classes="Hyperlink" Text="{Binding Nickname}" Margin="0 0 0 5" PointerReleased="RecentLink_Clicked" />
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 			</StackPanel>
 		</StackPanel>
 		

@@ -7,6 +7,10 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationIcon>Assets\xentu-icon.ico</ApplicationIcon>
+    <FileVersion>0.0.1</FileVersion>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
+    <Version>0.0.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
@@ -64,5 +68,8 @@
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Dialogs\OptionsDialog.axaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\xentu-icon.ico" />
   </ItemGroup>
 </Project>

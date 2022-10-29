@@ -1,18 +1,22 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
 using System.ComponentModel;
+using XentuCreator.Classes;
+using XentuCreator.Dialogs;
 
 namespace XentuCreator.UserControls
 {
     public partial class WelcomeControl : UserControl
     {
         
-        Button _buttonNew, _buttonOpen;
-        public WelcomeControlView DataView;
+        Button? _buttonNew, _buttonOpen;
+        public WelcomeControlView? DataView;
 
         public event EventHandler<RoutedEventArgs> NewClicked;
         public event EventHandler<RoutedEventArgs> OpenClicked;
+        public event EventHandler<OpenRecentEventArgs> OpenRecentClicked;
 
         public WelcomeControl()
         {
@@ -30,6 +34,20 @@ namespace XentuCreator.UserControls
             {
                 OpenClicked?.Invoke(sender, e);
             };
+
+
+            ItemsControl? recentsControl = this.FindControl<ItemsControl>("ListRecents");
+            recentsControl.DataContext = App.Config;
+
+            //App.Config?.Recents.Add(new() { Nickname = "test" });
+        }
+
+        private async void RecentLink_Clicked(object? sender, PointerReleasedEventArgs e)
+        {
+            if (e.Source is TextBlock src && src.DataContext is CreatorConfigRecent recent)
+            {
+                OpenRecentClicked?.Invoke(sender, new(recent));
+            }
         }
     }
 
@@ -47,6 +65,17 @@ namespace XentuCreator.UserControls
                 _showButtons = value;
                 PropertyChanged?.Invoke(this, new(nameof(ShowButtons)));
             }
+        }
+    }
+
+
+    public class OpenRecentEventArgs : EventArgs
+    {
+        public CreatorConfigRecent Data { get; }
+
+        public OpenRecentEventArgs(CreatorConfigRecent data)
+        {
+            Data = data;
         }
     }
 }

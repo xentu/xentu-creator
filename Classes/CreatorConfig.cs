@@ -49,6 +49,9 @@ namespace XentuCreator.Classes
         public CreatorConfigBinaryCollection Binaries { get; set; } = new();
 
 
+        public CreatorConfigRecentCollection Recents { get; set; } = new();
+
+
         public string LastBinaryVersion { get; set; } = "0.0.1";
 
 
@@ -221,6 +224,25 @@ namespace XentuCreator.Classes
 
             return (_success, _message);
         }
+    
+
+        /// <summary>
+        /// Add a project to the recently opened list.
+        /// </summary>
+        /// <param name="project">The project to add.</param>
+        public void AddRecent(CreatorProject project)
+        {
+            if (project.LoadedFileInfo == null) return;
+            string path = project.LoadedFileInfo.FullName;
+            CreatorConfigRecent? existing = Recents.FirstOrDefault(t => t.Path == path);
+            if (existing != null)
+            {
+                Recents.Remove(existing);
+                Recents.Insert(0, existing);
+            }
+            else Recents.Add(new(project));
+            Save();
+        }
     }
 
 
@@ -335,6 +357,29 @@ namespace XentuCreator.Classes
         internal Architecture? CastedArchitecture
         {
             get => Enum.Parse<Architecture>(Architecture, true);
+        }
+    }
+
+
+    public class CreatorConfigRecentCollection : ObservableCollection<CreatorConfigRecent> { }
+
+
+    public class CreatorConfigRecent
+    {
+        public string Nickname { get; set; } = "Unknown";
+
+        public string Path { get; set; } = "";
+
+
+        public CreatorConfigRecent() { }
+
+        public CreatorConfigRecent(CreatorProject project)
+        {
+            this.Nickname = project.Game.title;
+            if (project.LoadedFileInfo != null)
+            {
+                this.Path = project.LoadedFileInfo.FullName;
+            }
         }
     }
 }

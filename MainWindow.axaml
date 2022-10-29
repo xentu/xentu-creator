@@ -104,7 +104,7 @@
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuTools}">
 					<MenuItem Header="{x:Static p:Resources.CommandOptions}" Command="{Binding TriggerOptions}" InputGesture="F8" HotKey="F8" />
-					<MenuItem Header="Next Editor Theme" Click="MenuNextEditorTheme_Click" />
+					<!-- MenuItem Header="Next Editor Theme" Click="MenuNextEditorTheme_Click" / -->
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuHelp}">
 					<MenuItem Header="{x:Static p:Resources.CommandAbout}" Command="{Binding TriggerAbout}" InputGesture="F1" HotKey="F1" />
@@ -157,7 +157,7 @@
 		<Grid Name="MainPane" Grid.Row="3" Grid.Column="1">
 			<Grid.RowDefinitions>
 				<RowDefinition />
-				<RowDefinition Height="Auto" MinHeight="60" />
+				<!--RowDefinition Height="Auto" MinHeight="60" / -->
 			</Grid.RowDefinitions>
 			<ae:TextEditor Name="Editor"
 						   FontFamily="Consolas,Menlo,Monospace" Padding="5"
@@ -168,11 +168,11 @@
 						   FontSize="14" />
 			<ct:WelcomeControl Name="WelcomePane" />
 
-			<Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">
+			<!-- Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">
 				<ct:TerminalControl Name="Terminal" Padding="0" />
-			</Border>
+			</Border -->
 
-			<GridSplitter ResizeDirection="Rows" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+			<!-- GridSplitter ResizeDirection="Rows" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" /-->
 			
 		</Grid>
 

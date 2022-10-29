@@ -54,12 +54,14 @@ namespace XentuCreator
 
         // active state.
         MainViewModel _mainView;
+        internal static MainWindow _self;
         
 
 
         public MainWindow()
         {
             InitializeComponent();
+            _self = this;
             DataContext = _mainView = new(this);
 
             // main controls.
@@ -96,6 +98,15 @@ namespace XentuCreator
             _mainView.OpenTabs.Add(_welcomeTab);
             _welcomePane.NewClicked += delegate(object? s, RoutedEventArgs e) { MenuNewGame_Click(s, e); };
             _welcomePane.OpenClicked += delegate (object? s, RoutedEventArgs e) { MenuOpenGame_Click(s, e); };
+            _welcomePane.OpenRecentClicked += delegate (object? s, OpenRecentEventArgs e)
+            {
+                CreatorProject? existingPrj = CreatorProject.Load(e.Data.Path);
+                SetProject(existingPrj);
+                if (App.Config != null && existingPrj != null)
+                {
+                    App.Config.AddRecent(existingPrj);
+                }
+            };
 
             _folderView = this.FindControl<TreeView>("FolderView");
             _folderView.SelectionChanged += FolderViewSelectionChanged;
@@ -580,6 +591,10 @@ namespace XentuCreator
                 {
                     CreatorProject? existingPrj = CreatorProject.Load(gamePath);
                     SetProject(existingPrj);
+                    if (App.Config != null && existingPrj != null)
+                    {
+                        App.Config.AddRecent(existingPrj);
+                    }
                 }
             }
         }
