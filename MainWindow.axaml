@@ -7,7 +7,7 @@
 		xmlns:helpers="clr-namespace:XentuCreator.Helpers"
 		xmlns:p="clr-namespace:XentuCreator.Properties"
 		xmlns:ct="clr-namespace:XentuCreator.UserControls"
-        mc:Ignorable="d" Width="1024" Height="720" FontSize="12"
+        mc:Ignorable="d" Width="1024" Height="720" FontSize="13"
         x:Class="XentuCreator.MainWindow" Icon="avares://XentuCreator/Assets/xentu-icon.ico"
 		WindowStartupLocation="CenterScreen" Closing="WindowClosing"
         Title="XentuCreator">
@@ -53,9 +53,12 @@
 		<KeyBinding Command="{Binding TriggerNew}" Gesture="Ctrl+N" />
 		<KeyBinding Command="{Binding TriggerOpen}" Gesture="Ctrl+O" />
 		<KeyBinding Command="{Binding TriggerPlay}" Gesture="F5" />
-		<KeyBinding Command="{Binding TriggerDebugSettings}" Gesture="F6" />
+		<KeyBinding Command="{Binding TriggerPlayRelease}" Gesture="F6" />
+		<KeyBinding Command="{Binding TriggerDebugSettings}" Gesture="F7" />
 		<KeyBinding Command="{Binding TriggerOptions}" Gesture="F8" />
 		<KeyBinding Command="{Binding TriggerAbout}" Gesture="F1" />
+		<KeyBinding Command="{Binding ToggleShowSidebar}" Gesture="Ctrl+B" />
+		<KeyBinding Command="{Binding ToggleShowStatusBar}" Gesture="Ctrl+Shift+B" />
 	</Window.KeyBindings>
 	<Grid Name="MainGrid">
 		<Grid.RowDefinitions>
@@ -66,14 +69,18 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="200" MaxWidth="0" />
+			<ColumnDefinition Width="200" MaxWidth="9999" />
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		
 		<Menu Name="MainMenu" VerticalAlignment="Top" Background="#222" Height="24" Grid.ColumnSpan="2">
 			<Menu.Items>
 				<MenuItem Header="{x:Static p:Resources.MenuFile}">
-					<MenuItem Header="{x:Static p:Resources.CommandNewGame}" HotKey="CTRL+N" InputGesture="Ctrl+N" Command="{Binding TriggerNew}" />
+					<MenuItem Header="{x:Static p:Resources.CommandNewGame}" HotKey="CTRL+N" InputGesture="Ctrl+N" Command="{Binding TriggerNew}">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="True" IsHitTestVisible="False" Opacity="0" />
+						</MenuItem.Icon>
+					</MenuItem>
 					<MenuItem Header="{x:Static p:Resources.CommandOpenExisting}" HotKey="CTRL+O" InputGesture="Ctrl+O" Command="{Binding TriggerOpen}" />
 					<Separator />
 					<MenuItem Header="{x:Static p:Resources.CommandClose}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}" Command="{Binding TriggerClose}" />
@@ -87,7 +94,11 @@
 					<MenuItem Header="{x:Static p:Resources.CommandExit}" Command="{Binding TriggerExit}" />
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuEdit}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}">
-					<MenuItem Header="Cut" Command="{Binding TriggerCut}" InputGesture="Ctrl+X" />
+					<MenuItem Header="Cut" Command="{Binding TriggerCut}" InputGesture="Ctrl+X">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="True" IsHitTestVisible="False" Opacity="0" />
+						</MenuItem.Icon>
+					</MenuItem>
 					<MenuItem Header="Copy" Command="{Binding TriggerCopy}" InputGesture="Ctrl+C" />
 					<MenuItem Header="Paste" Command="{Binding TriggerPaste}" InputGesture="Ctrl+V" />
 					<MenuItem Header="Delete" Command="{Binding TriggerDelete}" InputGesture="Delete" />
@@ -95,26 +106,51 @@
 					<MenuItem Header="Select All" Command="{Binding TriggerSelectAll}" InputGesture="Ctrl+A" />
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuDebug}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}">
-					<MenuItem Header="{x:Static p:Resources.CommandPlay}" Command="{Binding TriggerPlay}" InputGesture="F5" HotKey="F5" />
+					<MenuItem Header="{x:Static p:Resources.CommandPlay}" Command="{Binding TriggerPlay}" InputGesture="F5" HotKey="F5">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="True" IsHitTestVisible="False" Opacity="0" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="{x:Static p:Resources.CommandPlayRelease}" Command="{Binding TriggerPlayRelease}" InputGesture="F6" HotKey="F6" />
 					<Separator />
-					<MenuItem Header="{x:Static p:Resources.CommandDebugSettings}" Command="{Binding TriggerDebugSettings}" IsEnabled="False" InputGesture="F6" HotKey="F6" />
+					<MenuItem Header="{x:Static p:Resources.CommandDebugSettings}" Command="{Binding TriggerDebugSettings}" IsEnabled="False" InputGesture="F7" HotKey="F7" />
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuView}">
 					<MenuItem Header="{x:Static p:Resources.CommandToggleFullscreen}" Command="{Binding TriggerToggleFullScreen}" InputGesture="F11" HotKey="F11" />
+					<Separator />
+					<MenuItem Header="Side Bar" Command="{Binding ToggleShowSidebar}" InputGesture="Ctrl+B" HotKey="Ctrl+B">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="{Binding ShowSidebar}" IsHitTestVisible="False" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="Status Bar" Command="{Binding ToggleShowStatusBar}" InputGesture="Ctrl+Shift+B" HotKey="Ctrl+Shift+B">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="{Binding ShowStatusBar}" IsHitTestVisible="False" />
+						</MenuItem.Icon>
+					</MenuItem>
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuTools}">
-					<MenuItem Header="{x:Static p:Resources.CommandOptions}" Command="{Binding TriggerOptions}" InputGesture="F8" HotKey="F8" />
+					<MenuItem Header="{x:Static p:Resources.CommandOptions}" Command="{Binding TriggerOptions}" InputGesture="F8" HotKey="F8">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="True" IsHitTestVisible="False" Opacity="0" />
+						</MenuItem.Icon>
+					</MenuItem>
 					<!-- MenuItem Header="Next Editor Theme" Click="MenuNextEditorTheme_Click" / -->
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuHelp}">
-					<MenuItem Header="{x:Static p:Resources.CommandAbout}" Command="{Binding TriggerAbout}" InputGesture="F1" HotKey="F1" />
+					<MenuItem Header="{x:Static p:Resources.CommandAbout}" Command="{Binding TriggerAbout}" InputGesture="F1" HotKey="F1">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="True" IsHitTestVisible="False" Opacity="0" />
+						</MenuItem.Icon>
+					</MenuItem>
 				</MenuItem>
 			</Menu.Items>
 		</Menu>
 
-		<Border Name="RootLabelBorder" Grid.Row="2" Background="#1a1a1a">
+		<Border Name="RootLabelBorder" Grid.Row="2" Background="#1a1a1a" IsVisible="{Binding ShowSidebar}">
 			<StackPanel Orientation="Horizontal">
-				<TextBlock VerticalAlignment="Center" Margin="12,0,0,0" FontWeight="Bold" Opacity="0.7" Name="RootLabel" Text="?" />
+				<TextBlock VerticalAlignment="Center" Margin="12,0,0,0" FontFamily="avares://XentuCreator/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+						   Opacity="0.7" Name="RootLabel" Text=" " />
 			</StackPanel>
 		</Border>
 
@@ -176,7 +212,7 @@
 			
 		</Grid>
 
-		<Border Name="FolderViewBorder" Background="#111" Grid.Row="3">
+		<Border Name="FolderViewBorder" Background="#111" Grid.Row="3" IsVisible="{Binding ShowSidebar}">
 			<TreeView Name="FolderView" Items="{Binding Items}">
 				<TreeView.ItemTemplate>
 					<TreeDataTemplate ItemsSource="{Binding SubNodes}">
@@ -200,8 +236,19 @@
 
 		<GridSplitter ResizeDirection="Columns" Grid.Row="3" Grid.RowSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" />
 
-		<StackPanel Name="StatusBar" Grid.Row="4" Grid.ColumnSpan="2" Background="DarkCyan" Height="25" Orientation="Horizontal">
+		<StackPanel Name="StatusBar" Grid.Row="4" Grid.ColumnSpan="2" Background="DarkCyan" Height="25" Orientation="Horizontal" IsVisible="{Binding ShowStatusBar}">
 			<TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
 		</StackPanel>
+
+		<StackPanel IsVisible="False">
+			<ComboBox>
+				<ComboBoxItem Name="FF_Consolas" FontFamily="Consolas">Consolas</ComboBoxItem>
+				<ComboBoxItem Name="FF_JetBrainsMonoRegular" FontFamily="avares://XentuCreator/Assets/Fonts/JetBrainsMono-Regular.ttf#JetBrains Mono">JetBrains Mono (Regular)</ComboBoxItem>
+				<ComboBoxItem Name="FF_JetBrainsMonoMedium" FontFamily="avares://XentuCreator/Assets/Fonts/JetBrainsMono-Medium.ttf#JetBrains Mono">JetBrains Mono (Medium)</ComboBoxItem>
+				<ComboBoxItem Name="FF_UbuntuMonoRegular" FontFamily="avares://XentuCreator/Assets/Fonts/UbuntuMono-Regular.ttf#Ubuntu Mono">Ubuntu Mono (Regular)</ComboBoxItem>
+				<ComboBoxItem Name="FF_UbuntuMonoBold" FontFamily="avares://XentuCreator/Assets/Fonts/UbuntuMono-Bold.ttf#Ubuntu Mono">Ubuntu Mono (Bold)</ComboBoxItem>
+			</ComboBox>
+		</StackPanel>
+		
 	</Grid>
 </Window>

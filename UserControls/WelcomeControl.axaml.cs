@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
 using System.ComponentModel;
+using System.IO;
 using XentuCreator.Classes;
 using XentuCreator.Dialogs;
 
@@ -46,7 +47,19 @@ namespace XentuCreator.UserControls
         {
             if (e.Source is TextBlock src && src.DataContext is CreatorConfigRecent recent)
             {
-                OpenRecentClicked?.Invoke(sender, new(recent));
+                if (!File.Exists(recent.Path))
+                {
+                    MessageBoxResult res = await MessageBox.Show(MainWindow._self, "The project you clicked on is missing, remove it from this list?", "Open Recent", MessageBoxButtons.YesNo);
+                    if (res == MessageBoxResult.Yes && App.Config != null)
+                    {
+                        App.Config.Recents.Remove(recent);
+                        App.Config.Save();
+                    }
+                }
+                else
+                {
+                    OpenRecentClicked?.Invoke(sender, new(recent));
+                }
             }
         }
     }

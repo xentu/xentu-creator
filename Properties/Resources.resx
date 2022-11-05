@@ -142,7 +142,10 @@
     <value>_Options</value>
   </data>
   <data name="CommandPlay" xml:space="preserve">
-    <value>_Play</value>
+    <value>Start Debugging</value>
+  </data>
+  <data name="CommandPlayRelease" xml:space="preserve">
+    <value>Run Without Debugging</value>
   </data>
   <data name="CommandPublish" xml:space="preserve">
     <value>_Publish...</value>
@@ -163,7 +166,7 @@
     <value>Welcome</value>
   </data>
   <data name="MenuDebug" xml:space="preserve">
-    <value>_Debug</value>
+    <value>_Run</value>
   </data>
   <data name="MenuEdit" xml:space="preserve">
     <value>_Edit</value>

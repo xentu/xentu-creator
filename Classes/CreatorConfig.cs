@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AvaloniaEdit.TextMate.Grammars;
+using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,8 +14,10 @@ namespace XentuCreator.Classes
 {
     public class CreatorConfig : INotifyPropertyChanged
     {
-        string? _debugBinary = "", _lastBinaryVersionTag = "missing.";
-        bool _autoCheckBinaryUpdates = false;
+        string _debugBinary = "", _lastBinaryVersionTag = "missing.", _codeFont = "Consolas";
+        bool _autoCheckBinaryUpdates = false, _enableIntelliSense = true, _enableLineNumbers = true;
+        int _fontSize = 14;
+        ThemeName _codeTheme = ThemeName.DarkPlus;
 
 
         [field:JsonIgnore]
@@ -46,6 +49,28 @@ namespace XentuCreator.Classes
         }
 
 
+        public bool EnableIntelliSense
+        {
+            get => _enableIntelliSense;
+            set
+            {
+                _enableIntelliSense = value;
+                PropertyChanged?.Invoke(this, new(nameof(EnableIntelliSense)));
+            }
+        }
+
+
+        public bool EnableLineNumbers
+        {
+            get => _enableLineNumbers;
+            set
+            {
+                _enableLineNumbers = value;
+                PropertyChanged?.Invoke(this, new(nameof(EnableLineNumbers)));
+            }
+        }
+
+
         public CreatorConfigBinaryCollection Binaries { get; set; } = new();
 
 
@@ -62,6 +87,39 @@ namespace XentuCreator.Classes
             {
                 _lastBinaryVersionTag = value;
                 PropertyChanged?.Invoke(this, new(nameof(LastBinaryVersionTag)));
+            }
+        }
+
+
+        public ThemeName CodeTheme
+        {
+            get => _codeTheme;
+            set
+            {
+                _codeTheme = value;
+                PropertyChanged?.Invoke(this, new(nameof(CodeTheme)));
+            }
+        }
+
+
+        public string CodeFont
+        {
+            get => _codeFont;
+            set
+            {
+                _codeFont = value;
+                PropertyChanged?.Invoke(this, new(nameof(CodeFont)));
+            }
+        }
+
+
+        public int FontSize
+        {
+            get => _fontSize;
+            set
+            {
+                _fontSize = value;
+                PropertyChanged?.Invoke(this, new(nameof(FontSize)));
             }
         }
 
@@ -239,6 +297,7 @@ namespace XentuCreator.Classes
             {
                 Recents.Remove(existing);
                 Recents.Insert(0, existing);
+                existing.Nickname = project.Game.title;
             }
             else Recents.Add(new(project));
             Save();

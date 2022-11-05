@@ -133,11 +133,20 @@ namespace XentuCreator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Play.
+        ///   Looks up a localized string similar to Start Debugging.
         /// </summary>
         public static string CommandPlay {
             get {
                 return ResourceManager.GetString("CommandPlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run Without Debugging.
+        /// </summary>
+        public static string CommandPlayRelease {
+            get {
+                return ResourceManager.GetString("CommandPlayRelease", resourceCulture);
             }
         }
         
@@ -196,7 +205,7 @@ namespace XentuCreator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Debug.
+        ///   Looks up a localized string similar to _Run.
         /// </summary>
         public static string MenuDebug {
             get {

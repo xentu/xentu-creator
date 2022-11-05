@@ -12,7 +12,7 @@ namespace XentuCreator.Classes
     {
         MainWindow _owner;
         CreatorProject? _project;
-        bool _loaded;
+        bool _loaded = false, _showSidebar = true, _showStatusBar = true;
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -38,6 +38,26 @@ namespace XentuCreator.Classes
             {
                 _loaded = value;
                 PropertyChanged?.Invoke(this, new(nameof(Loaded)));
+            }
+        }
+
+        public bool ShowSidebar
+        {
+            get => _showSidebar;
+            set
+            {
+                _showSidebar = value;
+                PropertyChanged?.Invoke(this, new(nameof(ShowSidebar)));
+            }
+        }
+
+        public bool ShowStatusBar
+        {
+            get => _showStatusBar;
+            set
+            {
+                _showStatusBar = value;
+                PropertyChanged?.Invoke(this, new(nameof(ShowStatusBar)));
             }
         }
 
@@ -103,10 +123,14 @@ namespace XentuCreator.Classes
 
         public void TriggerToggleFullScreen() => _owner.MenuToggleFullScreen_Click(_owner, new());
         public void TriggerPlay() => _owner.MenuPlay_Click(_owner, new());
+        public void TriggerPlayRelease() => _owner.MenuPlayRelease_Click(_owner, new());
         public void TriggerDebugSettings() { }
         public void TriggerOptions() => _owner.MenuOptions_Click(_owner, new());
         public void TriggerAbout() => _owner.MenuAbout_Click(_owner, new());
 
+
+        public void ToggleShowSidebar() => ShowSidebar = !ShowSidebar;
+        public void ToggleShowStatusBar() => ShowStatusBar = !ShowStatusBar;
 
 
         public void SaveStateChanged()

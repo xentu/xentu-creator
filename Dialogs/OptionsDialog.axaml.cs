@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaloniaEdit.TextMate.Grammars;
 using System;
 using System.Linq;
 using System.Net;
@@ -33,6 +34,12 @@ namespace XentuCreator.Dialogs
             //_creatorConfig.Binaries.Add(new(false, "Windows", "x86", "0.0.2"));
             //_creatorConfig.Binaries.Add(new(false, "Linux/FreeBSD", "x86", "0.0.2"));
             //_creatorConfig.Binaries.Add(new(false, "Mac OS", "x86", "0.0.2"));
+
+            ComboBox cb = this.FindControl<ComboBox>("ComboCodeTheme");
+            cb.Items = Enum.GetValues<ThemeName>();
+
+            ComboBox cbFont = this.FindControl<ComboBox>("ComboFonts");
+            cbFont.Items = App.Fonts.Keys.ToArray();
 
             this.DataContext = _creatorConfig;
         }

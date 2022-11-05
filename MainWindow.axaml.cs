@@ -13,6 +13,7 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.TextMate;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using TextMateSharp.Grammars;
@@ -34,14 +36,15 @@ namespace XentuCreator
     {
         // constants.
         readonly string[] _editable_extensions = { ".js", ".json", ".lua", ".py", ".xml", ".txt", ".shader" };
-        readonly ElementGenerator _generator = new ElementGenerator();
+        readonly ElementGenerator _generator = new();
         readonly TextMate.Installation _textMateInstallation;
         readonly RegistryOptions _registryOptions;
-        private CustomCompletionWindow _completionWindow;
-        private CustomOverloadInsightWindow _insightWindow;
+        private CustomCompletionWindow? _completionWindow;
+        private CustomOverloadInsightWindow? _insightWindow;
         private Thread _uiTimerThread;
         private int _currentTheme = (int)ThemeName.Monokai;
         private bool _closed = false;
+        private bool _editorShown = false;
 
         // controls.
         readonly Grid _mainGrid;
@@ -53,9 +56,9 @@ namespace XentuCreator
         readonly TextBlock _statusTextBlock, _rootLabel;
 
         // active state.
-        MainViewModel _mainView;
-        internal static MainWindow _self;
-        
+        internal MainViewModel _mainView;
+        internal static MainWindow? _self;
+        internal static IntelliSense? _intellisense;
 
 
         public MainWindow()
@@ -63,6 +66,13 @@ namespace XentuCreator
             InitializeComponent();
             _self = this;
             DataContext = _mainView = new(this);
+
+            // cache fonts.
+            CacheFontFromControl("FF_Consolas", "Consolas");
+            CacheFontFromControl("FF_JetBrainsMonoRegular", "JetBrains Mono (Regular)");
+            CacheFontFromControl("FF_JetBrainsMonoMedium", "JetBrains Mono (Medium)");
+            CacheFontFromControl("FF_UbuntuMonoRegular", "Ubuntu Mono (Regular)");
+            CacheFontFromControl("FF_UbuntuMonoBold", "Ubuntu Mono (Bold)");
 
             // main controls.
             _mainGrid = this.FindControl<Grid>("MainGrid");
@@ -76,11 +86,11 @@ namespace XentuCreator
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
-            _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
-            _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
+            _textEditor.TextArea.TextEntering += IntelliText_TextEntering;
+            _textEditor.TextArea.TextEntered += IntelliText_TextEntered;
             _textEditor.TextArea.TextInput += TextArea_TextInput;
             _textEditor.TextChanged += EditorTextChanged;
-            _registryOptions = new RegistryOptions(ThemeName.DarkPlus);
+            _registryOptions = new RegistryOptions(App.Config == null ? ThemeName.DarkPlus : (ThemeName)App.Config.CodeTheme);
             _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
 
             // tabs control.
@@ -90,11 +100,11 @@ namespace XentuCreator
 
             // welcome pane/tab
             _welcomePane = this.FindControl<WelcomeControl>("WelcomePane");
-            _welcomeTab = new(_mainView, CreatorTabType.Welcome, _registryOptions, "");
-            _welcomeTab.IsWelcomeTab = true;
-            //"Welome!"SetValue(HeaderedContentControl.HeaderProperty, 
-
-            _welcomeTab.CloseButHidden = true;
+            _welcomeTab = new(_mainView, CreatorTabType.Welcome, _registryOptions, "")
+            {
+                IsWelcomeTab = true,
+                CloseButHidden = true
+            };
             _mainView.OpenTabs.Add(_welcomeTab);
             _welcomePane.NewClicked += delegate(object? s, RoutedEventArgs e) { MenuNewGame_Click(s, e); };
             _welcomePane.OpenClicked += delegate (object? s, RoutedEventArgs e) { MenuOpenGame_Click(s, e); };
@@ -125,11 +135,15 @@ namespace XentuCreator
                         _folderView.DataContext = _mainView.FileSystem;
                     });
                 }
+                else if (e.PropertyName == "ShowSidebar")
+                {
+                    _mainGrid.ColumnDefinitions[0].MaxWidth = _mainView.ShowSidebar ? 9999 : 0;
+                }
             };
 
             SetLeftMarginPadding(10);
 
-            _uiTimerThread = new Thread(TimerCallback);
+            _uiTimerThread = new Thread(IntellisenseTimerCallback);
             _uiTimerThread.Start();
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
@@ -138,6 +152,11 @@ namespace XentuCreator
                 if (i.Delta.Y > 0) _textEditor.FontSize++;
                 else _textEditor.FontSize = _textEditor.FontSize > 1 ? _textEditor.FontSize - 1 : 1;
             }, RoutingStrategies.Bubble, true);
+
+
+            // apply options from config.
+            _intellisense = new();
+            ApplyConfigChanges();
         }
 
 
@@ -147,40 +166,21 @@ namespace XentuCreator
         }
 
 
-        private void TextArea_TextInput(object? sender, TextInputEventArgs e)
-        {
-            if (_completionWindow != null)
-            {
-                _completionWindow.FixPosition();
-            }
-        }
-
-
-        void TimerCallback(object? o)
-        {
-            while (_closed == false)
-            {
-                if (_completionWindow != null)
-                {
-                    Dispatcher.UIThread.InvokeAsync((Action)delegate
-                    {
-                        _completionWindow?.FixPosition();
-                    });
-                }
-                if (_insightWindow != null)
-                {
-                    Dispatcher.UIThread.InvokeAsync((Action)delegate
-                    {
-                        _insightWindow?.FixPosition();
-                    });
-                }
-
-                Thread.Sleep(50);
-            }
-        }
-
-
         #region Functions
+
+        private void CacheFontFromControl(string controlName, string fallbackName)
+        {
+            ComboBoxItem ctl = this.FindControl<ComboBoxItem>(controlName);
+            App.Fonts.Add(ctl.Content.ToString() ?? fallbackName, ctl.FontFamily);
+        }
+
+        private void ApplyConfigChanges()
+        {
+            _textMateInstallation.SetTheme(_registryOptions.LoadTheme((ThemeName)App.Config.CodeTheme));
+            _textEditor.FontFamily = App.Fonts[App.Config.CodeFont];
+            _textEditor.FontSize = App.Config.FontSize;
+            _textEditor.ShowLineNumbers = App.Config.EnableLineNumbers;
+        }
 
         private void SetLeftMarginPadding(int margin)
         {
@@ -202,6 +202,8 @@ namespace XentuCreator
         /// <param name="project">The project object or null.</param>
         private void SetProject(CreatorProject? project)
         {
+            if (_welcomePane == null || _welcomePane.DataView == null) throw new NullReferenceException("WelcomePane is missing when calling SetProject");
+
             _mainView.Project = project;
             _mainView.Loaded = false;
             _mainView.FileSystem.Clear();
@@ -209,7 +211,6 @@ namespace XentuCreator
             _folderView.DataContext = null;
             _mainView.OpenTabs.Clear();
             _mainView.OpenTabs.Add(_welcomeTab);
-            _mainGrid.ColumnDefinitions[0].MaxWidth = 0;
             this.Title = "XentuCreator";
             _statusTextBlock.Text = "Ready";
 
@@ -220,7 +221,6 @@ namespace XentuCreator
                 if (dir != null && file != null)
                 {
                     _folderView.DataContext = _mainView.FileSystem = CreatorNode.ListDirectory(dir);
-                    _mainGrid.ColumnDefinitions[0].MaxWidth = 9999;
                 }
                 _mainView.SetupWatcher(dir);
                 _mainView.Loaded = true;
@@ -238,8 +238,7 @@ namespace XentuCreator
         {
             foreach (var entry in root.Containers)
             {
-                TreeViewItem? tvi = entry.ContainerControl as TreeViewItem;
-                if (tvi != null)
+                if (entry.ContainerControl is TreeViewItem tvi)
                 {
                     if (item == entry.Item) return tvi;
                     if (tvi.ItemContainerGenerator != null)
@@ -274,17 +273,40 @@ namespace XentuCreator
                     return;
                 }
 
-                using (Process compiler = new Process())
+                using (Process compiler = new())
                 {
                     string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
                     compiler.StartInfo.WorkingDirectory = dir;
                     compiler.StartInfo.FileName = App.Config.DebugBinary;
                     compiler.StartInfo.ErrorDialog = true;
                     compiler.StartInfo.UseShellExecute = true;
-                    //compiler.StartInfo.RedirectStandardOutput = true;
                     compiler.Start();
-                    //string output = compiler.StandardOutput.ReadToEnd();
-                    //Debug.WriteLine(output);
+                    await compiler.WaitForExitAsync();
+                }
+            }
+        }
+
+        internal async void BeginDebuggingRelease()
+        {
+            if (App.Config != null && !string.IsNullOrWhiteSpace(_mainView.Project?.LoadedFileInfo?.DirectoryName))
+            {
+                if (string.IsNullOrWhiteSpace(App.Config.DebugBinary) || !File.Exists(App.Config.DebugBinary))
+                {
+                    await MessageBox.Show(this, "Error, in order to debug, you need to tell Xentu Creator " +
+                                                "where the engine binary is. The next screen will allow you " +
+                                                "to do so.");
+                    MenuOptions_Click(this, new());
+                    return;
+                }
+
+                using (Process compiler = new())
+                {
+                    string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
+                    compiler.StartInfo.WorkingDirectory = dir;
+                    compiler.StartInfo.FileName = App.Config.DebugBinary.Replace("_debug", "");
+                    compiler.StartInfo.ErrorDialog = true;
+                    compiler.StartInfo.UseShellExecute = true;
+                    compiler.Start();
                     await compiler.WaitForExitAsync();
                 }
             }
@@ -297,8 +319,7 @@ namespace XentuCreator
 
         private void FolderViewSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            CreatorNode? node = e.AddedItems[0] as CreatorNode;
-            if (node != null && node.IsFile)
+            if (e.AddedItems[0] is CreatorNode node && node.IsFile)
             {
                 CreatorTab? existingTab = _mainView.OpenTabs.FirstOrDefault(t => t.FilePath == node.FullPath);
                 if (existingTab != null)
@@ -312,11 +333,9 @@ namespace XentuCreator
         private void FolderViewDoubleTapped(object? sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            TextBlock? tb = e.Source as TextBlock;
-            if (tb != null && tb.Classes.Contains("TvHeader"))
+            if (e.Source is TextBlock tb && tb.Classes.Contains("TvHeader"))
             {
-                CreatorNode? node = tb.DataContext as CreatorNode;
-                if (node != null)
+                if (tb.DataContext is CreatorNode node)
                 {
                     if (node.IsFile == false)
                     {
@@ -341,6 +360,17 @@ namespace XentuCreator
                                 CreatorTab tab = CreatorTab.LoadFile(_mainView, _registryOptions, node.FullPath);
                                 _mainView.OpenTabs.Add(tab);
                                 _tabControl1.SelectedItem = tab;
+
+                                if (!_editorShown)
+                                {
+                                    _editorShown = true;
+                                    if (App.Config != null)
+                                    {
+                                        _textEditor.FontFamily = App.Fonts[App.Config.CodeFont];
+                                        _textEditor.FontSize = App.Config.FontSize;
+                                        _textEditor.ShowLineNumbers = App.Config.EnableLineNumbers;
+                                    }
+                                }
                             }
                             else
                             {
@@ -357,8 +387,7 @@ namespace XentuCreator
 
         private void FolderView_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
-            TreeView? tv = sender as TreeView;
-            if (tv != null && e.Source is ScrollContentPresenter)
+            if (sender is TreeView tv && e.Source is ScrollContentPresenter)
             {
                 tv.UnselectAll();
                 _mainView.SelectedTreeItemChanged();
@@ -369,8 +398,7 @@ namespace XentuCreator
         {
             string? basePath = _mainView.Project?.LoadedFileInfo?.DirectoryName;
             string? path = basePath;
-            CreatorNode? node = FolderView.SelectedItem as CreatorNode;
-            if (node != null)
+            if (FolderView.SelectedItem is CreatorNode node)
             {
                 if (node.IsFile)
                 {
@@ -387,7 +415,7 @@ namespace XentuCreator
             }
 
             if (path != null && basePath != null) {
-                string relPath = path.Substring(basePath.Length);
+                string relPath = path[basePath.Length..];
                 NewFileDialog.Show(this, relPath, basePath);
             }            
         }
@@ -396,8 +424,7 @@ namespace XentuCreator
         {
             string? basePath = _mainView.Project?.LoadedFileInfo?.DirectoryName;
             string? path = basePath;
-            CreatorNode? node = FolderView.SelectedItem as CreatorNode;
-            if (node != null)
+            if (FolderView.SelectedItem is CreatorNode node)
             {
                 if (node.IsFile)
                 {
@@ -415,20 +442,19 @@ namespace XentuCreator
 
             if (path != null && basePath != null)
             {
-                string relPath = path.Substring(basePath.Length);
+                string relPath = path[basePath.Length..];
                 NewFileDialog.Show(this, relPath, basePath, true);
             }
         }
 
         private async void FolderView_Rename(object? sender, RoutedEventArgs e)
         {
-            CreatorNode? node = FolderView.SelectedItem as CreatorNode;
-            if (node != null)
+            if (FolderView.SelectedItem is CreatorNode node)
             {
                 if (node.IsFile)
                 {
                     FileInfo fileInfo = new(node.FullPath);
-                    renameFile:;
+                renameFile:;
                     string? newFileName = await TextBoxDialog.Show(this, node.NodeText);
                     if (newFileName != null && fileInfo.DirectoryName != null)
                     {
@@ -444,7 +470,7 @@ namespace XentuCreator
                 else
                 {
                     DirectoryInfo dirInfo = new(node.FullPath);
-                    renameDir:;
+                renameDir:;
                     string? newFolderName = await TextBoxDialog.Show(this, node.NodeText);
                     if (newFolderName != null && dirInfo.Parent != null)
                     {
@@ -462,8 +488,7 @@ namespace XentuCreator
 
         private async void FolderView_Delete(object? sender, RoutedEventArgs e)
         {
-            CreatorNode? node = FolderView.SelectedItem as CreatorNode;
-            if (node != null)
+            if (FolderView.SelectedItem is CreatorNode node)
             {
                 if (node.IsFile)
                 {
@@ -496,7 +521,7 @@ namespace XentuCreator
             if (tab != null)
             {
                 _textMateInstallation.SetGrammar(null);
-                _textEditor.Document = null;
+                //_textEditor.Document = null;
                 if (tab.TabType == CreatorTabType.Editor)
                 {
                     _textEditor.Document = tab.Document;
@@ -516,11 +541,9 @@ namespace XentuCreator
         private void TabCloseClicked(object? sender, PointerReleasedEventArgs e)
         {
             e.Handled = true;
-            TextBlock? tb = e.Source as TextBlock;
-            if (tb != null && tb.Classes.Contains("CloseBut"))
+            if (e.Source is TextBlock tb && tb.Classes.Contains("CloseBut"))
             {
-                CreatorTab? tab = tb.DataContext as CreatorTab;
-                if (tab != null && tab.TabType == CreatorTabType.Editor)
+                if (tb.DataContext is CreatorTab tab && tab.TabType == CreatorTabType.Editor)
                 {
                     _mainView.OpenTabs.Remove(tab);
                 }
@@ -543,7 +566,7 @@ namespace XentuCreator
             }
         }
 
-        private void Caret_PositionChanged(object sender, EventArgs e)
+        private void Caret_PositionChanged(object? sender, EventArgs e)
         {
             _statusTextBlock.Text = string.Format("Line {0} Column {1}",
                 _textEditor.TextArea.Caret.Line,
@@ -680,8 +703,8 @@ namespace XentuCreator
                     try
                     {
                         config = XentuConfigGameContainer.Load(fileName);
-                        bool? res = await GamePropertiesDialog.Show(this, config);
-                        if (res != null & res == true)
+                        bool? res = await GamePropertiesDialog.Show(this, config ?? new());
+                        if (res != null & res == true && config != null)
                         {
                             config.Save(fileName);
                             RootLabel.Text = config.Game.title;
@@ -718,10 +741,14 @@ namespace XentuCreator
             BeginDebugging();
         }
 
+        internal void MenuPlayRelease_Click(object? sender, RoutedEventArgs e)
+        {
+            BeginDebuggingRelease();
+        }
+
         internal void MenuToggleFullScreen_Click(object? sender, RoutedEventArgs e)
         {
-            _ = 5;
-
+            #pragma warning disable CS0618 // Type or member is obsolete
             if (HasSystemDecorations)
             {
                 HasSystemDecorations = false;
@@ -732,11 +759,16 @@ namespace XentuCreator
                 HasSystemDecorations = true;
                 WindowState = WindowState.Normal;
             }
+            #pragma warning restore CS0618 // Type or member is obsolete
         }
 
         internal async void MenuOptions_Click(object? sender, RoutedEventArgs e)
         {
             await OptionsDialog.Show(this);
+            if (App.Config != null)
+            {
+                ApplyConfigChanges();
+            }
         }
 
         internal void MenuNextEditorTheme_Click(object? sender, RoutedEventArgs e)
@@ -756,9 +788,60 @@ namespace XentuCreator
         #region Code Complettion
 
 
-        private void textEditor_TextArea_TextEntering(object sender, TextInputEventArgs e)
+        private void Intelli_SetupMethods(int depth)
         {
-            if (e.Text.Length > 0 && _completionWindow != null)
+            if (_completionWindow == null) return;
+            var data = _completionWindow.CompletionList.CompletionData;
+            data.Clear();
+
+            string[] entries1 = new string[]
+            {
+                "print", "game",  "assets",  "audio",  "renderer",
+                "sprite_map", "shader", "config", "textbox",
+                "keyboard", "mouse", "data" 
+            };
+
+            foreach (string entry in entries1)
+                data.Add(new MyCompletionData(entry));
+        }
+
+
+        private void TextArea_TextInput(object? sender, TextInputEventArgs e)
+        {
+            if (_completionWindow != null)
+            {
+                _completionWindow.FixPosition();
+            }
+        }
+
+
+        private void IntellisenseTimerCallback(object? o)
+        {
+            while (_closed == false)
+            {
+                if (_completionWindow != null)
+                {
+                    Dispatcher.UIThread.InvokeAsync((Action)delegate
+                    {
+                        _completionWindow?.FixPosition();
+                    });
+                }
+                if (_insightWindow != null)
+                {
+                    Dispatcher.UIThread.InvokeAsync((Action)delegate
+                    {
+                        _insightWindow?.FixPosition();
+                    });
+                }
+
+                Thread.Sleep(50);
+            }
+        }
+
+
+        private void IntelliText_TextEntering(object? sender, TextInputEventArgs e)
+        {
+            if (e.Text?.Length > 0 && _completionWindow != null)
             {
                 if (!char.IsLetterOrDigit(e.Text[0]))
                 {
@@ -770,37 +853,30 @@ namespace XentuCreator
         }
 
 
-        private void textEditor_TextArea_TextEntered(object sender, TextInputEventArgs e)
+        private void IntelliText_TextEntered(object? sender, TextInputEventArgs e)
         {
+            if (!App.Config.EnableIntelliSense) return;
+
             if (e.Text == ".")
             {
-                _completionWindow = new CustomCompletionWindow(_textEditor.TextArea);
-                _completionWindow.PlacementAnchor = PopupAnchor.TopLeft;
+                string textBefore = GetTextBeforeCursor();
+
+                _completionWindow = new(_textEditor.TextArea)
+                {
+                    PlacementAnchor = PopupAnchor.TopLeft
+                };
                 ToolTip.SetShowDelay(_completionWindow, 1);
                 _completionWindow.Closed += delegate (object? o, EventArgs args)
                 {
                     _completionWindow = null;
                 };
 
-                var data = _completionWindow.CompletionList.CompletionData;
-                data.Add(new MyCompletionData("Item1"));
-                data.Add(new MyCompletionData("Item2"));
-                data.Add(new MyCompletionData("Item3"));
-                data.Add(new MyCompletionData("Item4"));
-                data.Add(new MyCompletionData("Item5"));
-                data.Add(new MyCompletionData("Item6"));
-                data.Add(new MyCompletionData("Item7"));
-                data.Add(new MyCompletionData("Item8"));
-                data.Add(new MyCompletionData("Item9"));
-                data.Add(new MyCompletionData("Item10"));
-                data.Add(new MyCompletionData("Item11"));
-                data.Add(new MyCompletionData("Item12"));
-                data.Add(new MyCompletionData("Item13"));
+                Intelli_SetupMethods(0);
                 _completionWindow.Show();
             }
             else if (e.Text == "(")
             {
-                _insightWindow = new CustomOverloadInsightWindow(_textEditor.TextArea);
+                /* _insightWindow = new CustomOverloadInsightWindow(_textEditor.TextArea);
                 _insightWindow.Closed += (o, args) => _insightWindow = null;
                 _insightWindow.Provider = new MyOverloadProvider(new[]
                 {
@@ -808,8 +884,37 @@ namespace XentuCreator
                     ("Method2(int)", "Method2 description"),
                     ("Method3(string)", "Method3 description"),
                 });
-                _insightWindow.Show();
+                _insightWindow.Show(); */
             }
+        }
+
+
+        /// <summary>
+        /// Based on the selection cursor, returns all text before the first encountered space, or the beginning of the buffer.
+        /// </summary>
+        /// <returns></returns>
+        private string GetTextBeforeCursor()
+        {
+            if (_textEditor.TextArea == null || _textEditor.TextArea.Caret == null || _textEditor.TextArea.Document == null) return "";
+            int row = _textEditor.TextArea.Caret.Line;
+            int col = _textEditor.TextArea.Caret.Offset;
+
+            if (col <= 1) return "";
+            string line;
+            if (row == 0)
+            {
+                line = _textEditor.Text[..col];
+            }
+            else
+            {
+                DocumentLine prevLineInfo = _textEditor.TextArea.Document.Lines[row - 1];
+
+                int prevLineEnd = prevLineInfo.Offset;
+                line = _textEditor.Text[prevLineEnd..col];
+            }
+
+            int lastSpace = line.LastIndexOf(' ');
+            return (lastSpace >= 0) ? line[(lastSpace + 1)..] : line;
         }
 
 
@@ -839,13 +944,13 @@ namespace XentuCreator
             }
 
             public int Count => _items.Count;
-            public string CurrentIndexText => null;
+            public string? CurrentIndexText => null;
             public object CurrentHeader => _items[SelectedIndex].header;
             public object CurrentContent => _items[SelectedIndex].content;
 
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler? PropertyChanged;
 
-            private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
@@ -860,7 +965,7 @@ namespace XentuCreator
                 Content = text;
             }
 
-            public IBitmap Image => null;
+            public IBitmap? Image => null;
 
             public string Text { get; }
 
@@ -880,8 +985,6 @@ namespace XentuCreator
 
         public class CustomCompletionWindow : CompletionWindow
         {
-            private static readonly System.Reflection.PropertyInfo LogicalChildrenProperty = typeof(StyledElement).GetProperty("LogicalChildren", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
             private bool _isSoftSelectionActive;
             private KeyEventArgs? _keyDownArgs;
 
@@ -906,7 +1009,7 @@ namespace XentuCreator
                 CompletionList.ListBox.PointerPressed += (o, e) => _isSoftSelectionActive = false;
             }
 
-            private void CompletionListOnSelectionChanged(object sender, SelectionChangedEventArgs args)
+            private void CompletionListOnSelectionChanged(object? sender, SelectionChangedEventArgs args)
             {
                 if (!UseHardSelection &&
                     _isSoftSelectionActive && _keyDownArgs?.Handled != true

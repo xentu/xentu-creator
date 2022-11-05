@@ -3,7 +3,7 @@
 			 xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit"
              x:Class="XentuCreator.App">
 	<Application.Resources>
-		<x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
+		<x:Double x:Key="ControlContentThemeFontSize">13</x:Double>
 	</Application.Resources>
     <Application.Styles>
 		<!--StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/ -->
@@ -11,6 +11,10 @@
         <StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
 
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+		<Style Selector="Window">
+			<Setter Property="FontFamily" Value="avares://XentuCreator/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
+		</Style>
 
 		<Style Selector="cc|CompletionList > ListBox">
 			<Setter Property="Background" Value="White" />
@@ -39,6 +43,16 @@
 
 		<Style Selector="cc|OverloadViewer /template/ ContentPresenter">
 			<Setter Property="TextBlock.Foreground" Value="#444" />
+		</Style>
+
+		<Style Selector="ComboBox">
+			<Setter Property="Padding" Value="10 0 0 0" />
+		</Style>
+		<Style Selector="TextBox">
+			<Setter Property="Padding" Value="8 8 0 0" />
+		</Style>
+		<Style Selector="NumericUpDown">
+			<Setter Property="Padding" Value="8 8 0 0" />
 		</Style>
 		
 		
