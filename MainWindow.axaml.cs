@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using TextMateSharp.Grammars;
 using XentuCreator.Classes;
@@ -276,6 +277,11 @@ namespace XentuCreator
                 using (Process compiler = new())
                 {
                     string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        dir = dir.Replace("\\", "/");
+                    }
+
                     compiler.StartInfo.WorkingDirectory = dir;
                     compiler.StartInfo.FileName = App.Config.DebugBinary;
                     compiler.StartInfo.ErrorDialog = true;
