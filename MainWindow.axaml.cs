@@ -13,7 +13,6 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.TextMate;
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +20,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -40,9 +38,10 @@ namespace XentuCreator
         readonly ElementGenerator _generator = new();
         readonly TextMate.Installation _textMateInstallation;
         readonly RegistryOptions _registryOptions;
+        readonly Thread _uiTimerThread;
+
         private CustomCompletionWindow? _completionWindow;
         private CustomOverloadInsightWindow? _insightWindow;
-        private Thread _uiTimerThread;
         private int _currentTheme = (int)ThemeName.Monokai;
         private bool _closed = false;
         private bool _editorShown = false;
@@ -54,7 +53,7 @@ namespace XentuCreator
         readonly WelcomeControl _welcomePane;
         readonly TreeView _folderView;
         readonly CreatorTab _welcomeTab;
-        readonly TextBlock _statusTextBlock, _rootLabel;
+        readonly TextBlock _statusTextBlock, _statusTextCaps, _rootLabel;
 
         // active state.
         internal MainViewModel _mainView;
@@ -78,6 +77,7 @@ namespace XentuCreator
             // main controls.
             _mainGrid = this.FindControl<Grid>("MainGrid");
             _statusTextBlock = this.Find<TextBlock>("StatusText");
+            _statusTextCaps = this.Find<TextBlock>("StatusCapsText");
             _rootLabel = this.Find<TextBlock>("RootLabel");
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Black;
@@ -158,6 +158,12 @@ namespace XentuCreator
             // apply options from config.
             _intellisense = new();
             ApplyConfigChanges();
+
+            // detect caps lock change.
+            _self.KeyUp += delegate (object? sender, KeyEventArgs e)
+            {
+                if (e.Key == Key.CapsLock) _statusTextCaps.Opacity = _statusTextCaps.Opacity == 0 ? 1 : 0;
+            };
         }
 
 
@@ -232,10 +238,11 @@ namespace XentuCreator
             else
             {
                 _welcomePane.DataView.ShowButtons = true;
+                RootLabel.Text = "";
             }
         }
 
-        public static TreeViewItem? FindTvItem(ITreeItemContainerGenerator root, object item)
+        private static TreeViewItem? FindTvItem(ITreeItemContainerGenerator root, object item)
         {
             foreach (var entry in root.Containers)
             {
@@ -274,21 +281,19 @@ namespace XentuCreator
                     return;
                 }
 
-                using (Process compiler = new())
+                using Process compiler = new();
+                string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
-                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        dir = dir.Replace("\\", "/");
-                    }
-
-                    compiler.StartInfo.WorkingDirectory = dir;
-                    compiler.StartInfo.FileName = App.Config.DebugBinary;
-                    compiler.StartInfo.ErrorDialog = true;
-                    compiler.StartInfo.UseShellExecute = true;
-                    compiler.Start();
-                    await compiler.WaitForExitAsync();
+                    dir = dir.Replace("\\", "/");
                 }
+
+                compiler.StartInfo.WorkingDirectory = dir;
+                compiler.StartInfo.FileName = App.Config.DebugBinary;
+                compiler.StartInfo.ErrorDialog = true;
+                compiler.StartInfo.UseShellExecute = true;
+                compiler.Start();
+                await compiler.WaitForExitAsync();
             }
         }
 
@@ -305,16 +310,14 @@ namespace XentuCreator
                     return;
                 }
 
-                using (Process compiler = new())
-                {
-                    string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
-                    compiler.StartInfo.WorkingDirectory = dir;
-                    compiler.StartInfo.FileName = App.Config.DebugBinary.Replace("_debug", "");
-                    compiler.StartInfo.ErrorDialog = true;
-                    compiler.StartInfo.UseShellExecute = true;
-                    compiler.Start();
-                    await compiler.WaitForExitAsync();
-                }
+                using Process compiler = new();
+                string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
+                compiler.StartInfo.WorkingDirectory = dir;
+                compiler.StartInfo.FileName = App.Config.DebugBinary.Replace("_debug", "");
+                compiler.StartInfo.ErrorDialog = true;
+                compiler.StartInfo.UseShellExecute = true;
+                compiler.Start();
+                await compiler.WaitForExitAsync();
             }
         }
 
@@ -725,9 +728,9 @@ namespace XentuCreator
             }
         }
 
-        internal void MenuPublish_Click(object? sender, RoutedEventArgs e)
+        internal async void MenuPublish_Click(object? sender, RoutedEventArgs e)
         {
-            MessageBox.Show(this, "Not yet implemented");
+            await MessageBox.Show(this, "Not yet implemented");
         }
 
         internal void MenuExit_Click(object? sender, RoutedEventArgs e) => Close();
@@ -793,7 +796,6 @@ namespace XentuCreator
 
         #region Code Complettion
 
-
         private void Intelli_SetupMethods(int depth)
         {
             if (_completionWindow == null) return;
@@ -811,7 +813,6 @@ namespace XentuCreator
                 data.Add(new MyCompletionData(entry));
         }
 
-
         private void TextArea_TextInput(object? sender, TextInputEventArgs e)
         {
             if (_completionWindow != null)
@@ -819,7 +820,6 @@ namespace XentuCreator
                 _completionWindow.FixPosition();
             }
         }
-
 
         private void IntellisenseTimerCallback(object? o)
         {
@@ -844,7 +844,6 @@ namespace XentuCreator
             }
         }
 
-
         private void IntelliText_TextEntering(object? sender, TextInputEventArgs e)
         {
             if (e.Text?.Length > 0 && _completionWindow != null)
@@ -857,7 +856,6 @@ namespace XentuCreator
 
             _insightWindow?.Hide();
         }
-
 
         private void IntelliText_TextEntered(object? sender, TextInputEventArgs e)
         {
@@ -894,11 +892,9 @@ namespace XentuCreator
             }
         }
 
-
         /// <summary>
         /// Based on the selection cursor, returns all text before the first encountered space, or the beginning of the buffer.
         /// </summary>
-        /// <returns></returns>
         private string GetTextBeforeCursor()
         {
             if (_textEditor.TextArea == null || _textEditor.TextArea.Caret == null || _textEditor.TextArea.Document == null) return "";
@@ -922,7 +918,6 @@ namespace XentuCreator
             int lastSpace = line.LastIndexOf(' ');
             return (lastSpace >= 0) ? line[(lastSpace + 1)..] : line;
         }
-
 
         private class MyOverloadProvider : IOverloadProvider
         {
@@ -962,7 +957,6 @@ namespace XentuCreator
             }
         }
 
-
         public class MyCompletionData : ICompletionData
         {
             public MyCompletionData(string text)
@@ -987,7 +981,6 @@ namespace XentuCreator
                 textArea.Document.Replace(completionSegment, Text);
             }
         }
-
 
         public class CustomCompletionWindow : CompletionWindow
         {
@@ -1061,7 +1054,6 @@ namespace XentuCreator
             public bool UseHardSelection { get; set; }
         }
 
-
         public class CustomOverloadInsightWindow : OverloadInsightWindow
         {
             public CustomOverloadInsightWindow(TextArea textArea) : base(textArea) { }
@@ -1071,7 +1063,6 @@ namespace XentuCreator
                 UpdatePosition();
             }
         }
-
 
         #endregion
     }

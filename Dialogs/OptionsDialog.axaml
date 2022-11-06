@@ -55,7 +55,7 @@
 							<NumericUpDown Width="150" Value="{Binding FontSize}" Minimum="9" Maximum="100" />
 						</StackPanel>
 
-						<DockPanel Margin="0 10 0 0">
+						<DockPanel Margin="0 10 0 0" IsVisible="False">
 							<TextBlock Classes="Label">Tab Style</TextBlock>
 							<WrapPanel>
 								<RadioButton GroupName="Lang" Content="Tab Char" IsChecked="True" />
@@ -64,7 +64,7 @@
 							</WrapPanel>
 						</DockPanel>
 
-						<Grid>
+						<Grid Margin="0 10 0 0">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition />
