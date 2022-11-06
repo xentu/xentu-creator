@@ -45,6 +45,7 @@ namespace XentuCreator
         private int _currentTheme = (int)ThemeName.Monokai;
         private bool _closed = false;
         private bool _editorShown = false;
+        WindowState _prevWindowState = WindowState.Normal;
 
         // controls.
         readonly Grid _mainGrid;
@@ -761,12 +762,13 @@ namespace XentuCreator
             if (HasSystemDecorations)
             {
                 HasSystemDecorations = false;
+                _prevWindowState = WindowState;
                 WindowState = WindowState.FullScreen;
             }
             else
             {
                 HasSystemDecorations = true;
-                WindowState = WindowState.Normal;
+                WindowState = _prevWindowState;
             }
             #pragma warning restore CS0618 // Type or member is obsolete
         }
