@@ -45,6 +45,7 @@ namespace XentuCreator
         private int _currentTheme = (int)ThemeName.Monokai;
         private bool _closed = false;
         private bool _editorShown = false;
+        private bool _trackingConsole = false; // set to true if the console should auto scroll.
         WindowState _prevWindowState = WindowState.Normal;
 
         // controls.
@@ -54,7 +55,8 @@ namespace XentuCreator
         readonly WelcomeControl _welcomePane;
         readonly TreeView _folderView;
         readonly CreatorTab _welcomeTab;
-        readonly TextBlock _statusTextBlock, _statusTextCaps, _rootLabel;
+        readonly TextBlock _statusTextCaps, _statusPosText, _rootLabel;
+        readonly TextBox _textLog;
 
         // active state.
         internal MainViewModel _mainView;
@@ -77,9 +79,11 @@ namespace XentuCreator
 
             // main controls.
             _mainGrid = this.FindControl<Grid>("MainGrid");
-            _statusTextBlock = this.Find<TextBlock>("StatusText");
             _statusTextCaps = this.Find<TextBlock>("StatusCapsText");
+            _statusPosText = this.Find<TextBlock>("StatusPosText");
             _rootLabel = this.Find<TextBlock>("RootLabel");
+            _textLog = this.Find<TextBox>("TextLog");
+
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Black;
             _textEditor.ShowLineNumbers = true;
@@ -188,6 +192,7 @@ namespace XentuCreator
             _textEditor.FontFamily = App.Fonts[App.Config.CodeFont];
             _textEditor.FontSize = App.Config.FontSize;
             _textEditor.ShowLineNumbers = App.Config.EnableLineNumbers;
+            _textLog.FontFamily = App.Fonts[App.Config.CodeFont];
         }
 
         private void SetLeftMarginPadding(int margin)
@@ -210,7 +215,7 @@ namespace XentuCreator
         /// <param name="project">The project object or null.</param>
         private void SetProject(CreatorProject? project)
         {
-            if (_welcomePane == null || _welcomePane.DataView == null) throw new NullReferenceException("WelcomePane is missing when calling SetProject");
+            if (_mainView == null || _welcomePane == null || _welcomePane.DataView == null) throw new NullReferenceException("WelcomePane is missing when calling SetProject");
 
             _mainView.Project = project;
             _mainView.Loaded = false;
@@ -220,7 +225,7 @@ namespace XentuCreator
             _mainView.OpenTabs.Clear();
             _mainView.OpenTabs.Add(_welcomeTab);
             this.Title = "XentuCreator";
-            _statusTextBlock.Text = "Ready";
+            _mainView.Events.AddLine("Ready");
 
             if (project != null)
             {
@@ -289,12 +294,28 @@ namespace XentuCreator
                     dir = dir.Replace("\\", "/");
                 }
 
+                _trackingConsole = true;
                 compiler.StartInfo.WorkingDirectory = dir;
                 compiler.StartInfo.FileName = App.Config.DebugBinary;
                 compiler.StartInfo.ErrorDialog = true;
-                compiler.StartInfo.UseShellExecute = true;
+                compiler.StartInfo.UseShellExecute = false;
+                compiler.StartInfo.CreateNoWindow = true;
+                compiler.StartInfo.RedirectStandardOutput = true;
+                compiler.EnableRaisingEvents = true;
+                compiler.OutputDataReceived += Compiler_OutputDataReceived;
                 compiler.Start();
+                compiler.BeginOutputReadLine();
                 await compiler.WaitForExitAsync();
+                compiler.OutputDataReceived -= Compiler_OutputDataReceived;
+                _trackingConsole = false;
+            }
+        }
+
+        private void Compiler_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (e.Data != null)
+            {
+                _mainView.Events.AddLine(e.Data);
             }
         }
 
@@ -598,7 +619,7 @@ namespace XentuCreator
 
         private void Caret_PositionChanged(object? sender, EventArgs e)
         {
-            _statusTextBlock.Text = string.Format("Line {0} Column {1}",
+            _statusPosText.Text = string.Format("Line {0}, {1}",
                 _textEditor.TextArea.Caret.Line,
                 _textEditor.TextArea.Caret.Column);
         }
@@ -887,6 +908,18 @@ namespace XentuCreator
                     Dispatcher.UIThread.InvokeAsync((Action)delegate
                     {
                         _insightWindow?.FixPosition();
+                    });
+                }
+
+                if (_trackingConsole)
+                {
+                    Dispatcher.UIThread.InvokeAsync((Action)delegate
+                    {
+                        if (_textLog != null)
+                        {
+                            int pos = _textLog.Text.LastIndexOf("\n");
+                            if (pos > 0) _textLog.CaretIndex = pos + 1;
+                        }
                     });
                 }
 

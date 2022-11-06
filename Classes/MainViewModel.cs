@@ -13,6 +13,7 @@ namespace XentuCreator.Classes
     {
         MainWindow _owner;
         CreatorProject? _project;
+        readonly EventLog _events = new();
         bool _loaded = false, _showSidebar = true, _showStatusBar = true;
 
 
@@ -30,6 +31,11 @@ namespace XentuCreator.Classes
                 SetupWatcher(value?.LoadedFileInfo?.DirectoryName);
                 PropertyChanged?.Invoke(this, new(nameof(Project)));
             }
+        }
+
+        public EventLog Events
+        {
+            get => _events;
         }
 
         public bool Loaded
