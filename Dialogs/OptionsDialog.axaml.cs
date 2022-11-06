@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using AvaloniaEdit.TextMate.Grammars;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Linq;
 using System.Net;
@@ -45,9 +46,40 @@ namespace XentuCreator.Dialogs
         }
 
 
+        private void OptionsDialog_Opened(object? sender, EventArgs e)
+        {
+            if (Tag?.ToString() == "debug")
+            {
+                TabControl tabs = this.FindControl<TabControl>("MainTabs");
+                tabs.SelectedIndex = 1;
+            }
+        }
+
+
         public static new Task<bool?> Show(Window parent)
         {
             var dlg = new OptionsDialog();
+            var tcs = new TaskCompletionSource<bool?>();
+            dlg.Closed += delegate { tcs.TrySetResult(dlg._dialogResult); };
+
+            if (parent != null)
+            {
+                dlg.ShowDialog(parent);
+            }
+            else
+            {
+                dlg.Show();
+            }
+
+            return tcs.Task;
+        }
+
+
+        public static Task<bool?> Show(Window parent, string extra)
+        {
+            var dlg = new OptionsDialog();
+            dlg.Tag = extra;
+
             var tcs = new TaskCompletionSource<bool?>();
             dlg.Closed += delegate { tcs.TrySetResult(dlg._dialogResult); };
 

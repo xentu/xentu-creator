@@ -113,7 +113,7 @@
 					</MenuItem>
 					<MenuItem Header="{x:Static p:Resources.CommandPlayRelease}" Command="{Binding TriggerPlayRelease}" InputGesture="F6" HotKey="F6" />
 					<Separator />
-					<MenuItem Header="{x:Static p:Resources.CommandDebugSettings}" Command="{Binding TriggerDebugSettings}" IsEnabled="False" InputGesture="F7" HotKey="F7" />
+					<MenuItem Header="{x:Static p:Resources.CommandDebugSettings}" Command="{Binding TriggerDebugSettings}" InputGesture="F7" HotKey="F7" />
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuView}">
 					<MenuItem Header="{x:Static p:Resources.CommandToggleFullscreen}" Command="{Binding TriggerToggleFullScreen}" InputGesture="F11" HotKey="F11" />
@@ -242,7 +242,10 @@
 			</Grid.ColumnDefinitions>
 			<TextBlock Name="StatusText" Text="Ready" Margin="8 0 0 0" VerticalAlignment="Center"/>
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-				<TextBlock Name="StatusTabText" Text="TABS" Margin="5 0 5 0" />
+				<StackPanel Orientation="Horizontal" Name="StatusTabText" Margin="5 0 5 0">
+					<TextBlock Opacity="0.5" Margin="0 0 5 0">Indent:</TextBlock>
+					<TextBlock>Tabs</TextBlock>
+				</StackPanel>
 				<TextBlock Name="StatusCapsText" Opacity="0" Text="CAPS" Margin="5 0 8 0" />
 			</StackPanel>
 		</Grid>

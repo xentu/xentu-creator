@@ -548,13 +548,33 @@ namespace XentuCreator
             _mainView.SelectedTab = tab;
         }
 
-        private void TabCloseClicked(object? sender, PointerReleasedEventArgs e)
+        private async void TabCloseClicked(object? sender, PointerReleasedEventArgs e)
         {
             e.Handled = true;
             if (e.Source is TextBlock tb && tb.Classes.Contains("CloseBut"))
             {
                 if (tb.DataContext is CreatorTab tab && tab.TabType == CreatorTabType.Editor)
                 {
+                    if (tab.HasChanged)
+                    {
+                        MessageBoxResult confirm = await MessageBox.Show(this, "Save changes before you close?", "Close Editor", MessageBoxButtons.YesNoCancel);
+                        if (confirm == MessageBoxResult.Yes)
+                        {
+                            string? file = tab.FilePath;
+                            if (file != null)
+                            {
+                                using FileStream fs = File.Create(file);
+                                {
+                                    Editor.Save(fs);
+                                }
+                                tab.HasChanged = false;
+                            }
+                        }
+                        else if (confirm == MessageBoxResult.Cancel)
+                        {
+                            return;
+                        }
+                    }
                     _mainView.OpenTabs.Remove(tab);
                 }
             }
@@ -632,7 +652,22 @@ namespace XentuCreator
             }
         }
 
-        internal void MenuCloseGame_Click(object? sender, RoutedEventArgs e) => SetProject(null);
+        internal async void MenuCloseGame_Click(object? sender, RoutedEventArgs e)
+        {
+            if (_mainView.OpenTabs.Any(t => t.HasChanged))
+            {
+                MessageBoxResult confirm = await MessageBox.Show(this, "You have unsaved work, save before closing?", "Close", MessageBoxButtons.YesNoCancel);
+                if (confirm == MessageBoxResult.Yes)
+                {
+                    MenuSaveAll_Click(sender, e);
+                }
+                else if (confirm == MessageBoxResult.Cancel)
+                {
+                    return;
+                }
+            }
+            SetProject(null);
+        }
 
         internal void MenuSave_Click(object? sender, RoutedEventArgs e)
         {
@@ -775,11 +810,24 @@ namespace XentuCreator
 
         internal async void MenuOptions_Click(object? sender, RoutedEventArgs e)
         {
-            await OptionsDialog.Show(this);
-            if (App.Config != null)
+            if (e is ExRoutedEventArgs eEx)
             {
-                ApplyConfigChanges();
+                await OptionsDialog.Show(this, eEx.Extra);
+                if (App.Config != null)
+                {
+                    ApplyConfigChanges();
+                }
             }
+            else
+            {
+                await OptionsDialog.Show(this);
+                if (App.Config != null)
+                {
+                    ApplyConfigChanges();
+                }
+            }
+
+            
         }
 
         internal void MenuNextEditorTheme_Click(object? sender, RoutedEventArgs e)

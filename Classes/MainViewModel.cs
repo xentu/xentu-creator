@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Interactivity;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -124,7 +125,7 @@ namespace XentuCreator.Classes
         public void TriggerToggleFullScreen() => _owner.MenuToggleFullScreen_Click(_owner, new());
         public void TriggerPlay() => _owner.MenuPlay_Click(_owner, new());
         public void TriggerPlayRelease() => _owner.MenuPlayRelease_Click(_owner, new());
-        public void TriggerDebugSettings() { }
+        public void TriggerDebugSettings() => _owner.MenuOptions_Click(_owner, new ExRoutedEventArgs("debug"));
         public void TriggerOptions() => _owner.MenuOptions_Click(_owner, new());
         public void TriggerAbout() => _owner.MenuAbout_Click(_owner, new());
 
@@ -282,5 +283,16 @@ namespace XentuCreator.Classes
 
 
         #endregion
+    }
+
+
+    public class ExRoutedEventArgs : RoutedEventArgs
+    {
+        public string Extra { get; set; }
+
+        public ExRoutedEventArgs(string extra) : base()
+        {
+            Extra = extra;
+        }
     }
 }
