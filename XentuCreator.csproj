@@ -14,9 +14,11 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
+    <None Remove="Assets\file-audio.png" />
     <None Remove="Assets\file-code.png" />
-    <None Remove="Assets\file-js.png" />
-    <None Remove="Assets\file-lua.png" />
+    <None Remove="Assets\file-gray.png" />
+    <None Remove="Assets\file-green.png" />
+    <None Remove="Assets\file-image.png" />
     <None Remove="Assets\folder-icon.png" />
     <None Remove="Assets\Fonts\JetBrainsMono-Medium.ttf" />
     <None Remove="Assets\Fonts\JetBrainsMono-Regular.ttf" />
@@ -32,9 +34,11 @@
     <None Remove="Assets\xentu-logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Assets\file-audio.png" />
     <AvaloniaResource Include="Assets\file-code.png" />
-    <AvaloniaResource Include="Assets\file-js.png" />
-    <AvaloniaResource Include="Assets\file-lua.png" />
+    <AvaloniaResource Include="Assets\file-gray.png" />
+    <AvaloniaResource Include="Assets\file-green.png" />
+    <AvaloniaResource Include="Assets\file-image.png" />
     <AvaloniaResource Include="Assets\folder-icon.png" />
     <AvaloniaResource Include="Assets\Fonts\JetBrainsMono-Medium.ttf" />
     <AvaloniaResource Include="Assets\Fonts\JetBrainsMono-Regular.ttf" />
