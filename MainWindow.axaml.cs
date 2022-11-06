@@ -49,7 +49,7 @@ namespace XentuCreator
         WindowState _prevWindowState = WindowState.Normal;
 
         // controls.
-        readonly Grid _mainGrid;
+        readonly Grid _mainGrid, _mainPane;
         readonly TextEditor _textEditor;
         readonly TabControl _tabControl1;
         readonly WelcomeControl _welcomePane;
@@ -61,7 +61,7 @@ namespace XentuCreator
         // active state.
         internal MainViewModel _mainView;
         internal static MainWindow? _self;
-        internal static IntelliSense? _intellisense;
+        internal static XentuCodeCompletion? _codeCompletion;
 
 
         public MainWindow()
@@ -79,6 +79,7 @@ namespace XentuCreator
 
             // main controls.
             _mainGrid = this.FindControl<Grid>("MainGrid");
+            _mainPane = this.FindControl<Grid>("MainPane");
             _statusTextCaps = this.Find<TextBlock>("StatusCapsText");
             _statusPosText = this.Find<TextBlock>("StatusPosText");
             _rootLabel = this.Find<TextBlock>("RootLabel");
@@ -92,8 +93,8 @@ namespace XentuCreator
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
-            _textEditor.TextArea.TextEntering += IntelliText_TextEntering;
-            _textEditor.TextArea.TextEntered += IntelliText_TextEntered;
+            _textEditor.TextArea.TextEntering += CodeComplete_TextEntering;
+            _textEditor.TextArea.TextEntered += CodeComplete_TextEntered;
             _textEditor.TextArea.TextInput += TextArea_TextInput;
             _textEditor.TextChanged += EditorTextChanged;
             _registryOptions = new RegistryOptions(App.Config == null ? ThemeName.DarkPlus : (ThemeName)App.Config.CodeTheme);
@@ -145,11 +146,15 @@ namespace XentuCreator
                 {
                     _mainGrid.ColumnDefinitions[0].MaxWidth = _mainView.ShowSidebar ? 9999 : 0;
                 }
+                else if (e.PropertyName == "ShowConsole")
+                {
+                    _mainPane.RowDefinitions[1].MaxHeight = _mainView.ShowConsole ? 9999 : 0;
+                }
             };
 
             SetLeftMarginPadding(10);
 
-            _uiTimerThread = new Thread(IntellisenseTimerCallback);
+            _uiTimerThread = new Thread(CodeComplete_TimerCallback);
             _uiTimerThread.Start();
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
@@ -161,7 +166,7 @@ namespace XentuCreator
 
 
             // apply options from config.
-            _intellisense = new();
+            _codeCompletion = new();
             ApplyConfigChanges();
 
             // detect caps lock change.
@@ -172,10 +177,7 @@ namespace XentuCreator
         }
 
 
-        private void WindowClosing(object? sender, CancelEventArgs e)
-        {
-            _closed = true;
-        }
+        private void WindowClosing(object? sender, CancelEventArgs e) => _closed = true;
 
 
         #region Functions
@@ -802,15 +804,9 @@ namespace XentuCreator
 
         internal void MenuEditSelectAll_Click(object? sender, RoutedEventArgs e) => _textEditor?.SelectAll();
 
-        internal void MenuPlay_Click(object? sender, RoutedEventArgs e)
-        {
-            BeginDebugging();
-        }
+        internal void MenuPlay_Click(object? sender, RoutedEventArgs e) => BeginDebugging();
 
-        internal void MenuPlayRelease_Click(object? sender, RoutedEventArgs e)
-        {
-            BeginDebuggingRelease();
-        }
+        internal void MenuPlayRelease_Click(object? sender, RoutedEventArgs e) => BeginDebuggingRelease();
 
         internal void MenuToggleFullScreen_Click(object? sender, RoutedEventArgs e)
         {
@@ -834,55 +830,21 @@ namespace XentuCreator
             if (e is ExRoutedEventArgs eEx)
             {
                 await OptionsDialog.Show(this, eEx.Extra);
-                if (App.Config != null)
-                {
-                    ApplyConfigChanges();
-                }
+                if (App.Config != null) ApplyConfigChanges();
             }
             else
             {
                 await OptionsDialog.Show(this);
-                if (App.Config != null)
-                {
-                    ApplyConfigChanges();
-                }
+                if (App.Config != null) ApplyConfigChanges();
             }
-
-            
         }
 
-        internal void MenuNextEditorTheme_Click(object? sender, RoutedEventArgs e)
-        {
-            _currentTheme = ((int)_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
-            _textMateInstallation.SetTheme(_registryOptions.LoadTheme((ThemeName)_currentTheme));
-        }
-
-        internal void MenuAbout_Click(object? sender, RoutedEventArgs e)
-        {
-            BrowserHelper.OpenBrowser("https://xentu.net");
-        }
+        internal void MenuAbout_Click(object? sender, RoutedEventArgs e) => BrowserHelper.OpenBrowser("https://xentu.net");
 
         #endregion
 
 
         #region Code Complettion
-
-        private void Intelli_SetupMethods(int depth)
-        {
-            if (_completionWindow == null) return;
-            var data = _completionWindow.CompletionList.CompletionData;
-            data.Clear();
-
-            string[] entries1 = new string[]
-            {
-                "print", "game",  "assets",  "audio",  "renderer",
-                "sprite_map", "shader", "config", "textbox",
-                "keyboard", "mouse", "data" 
-            };
-
-            foreach (string entry in entries1)
-                data.Add(new MyCompletionData(entry));
-        }
 
         private void TextArea_TextInput(object? sender, TextInputEventArgs e)
         {
@@ -892,7 +854,7 @@ namespace XentuCreator
             }
         }
 
-        private void IntellisenseTimerCallback(object? o)
+        private void CodeComplete_TimerCallback(object? o)
         {
             while (_closed == false)
             {
@@ -927,7 +889,7 @@ namespace XentuCreator
             }
         }
 
-        private void IntelliText_TextEntering(object? sender, TextInputEventArgs e)
+        private void CodeComplete_TextEntering(object? sender, TextInputEventArgs e)
         {
             if (e.Text?.Length > 0 && _completionWindow != null)
             {
@@ -940,49 +902,35 @@ namespace XentuCreator
             _insightWindow?.Hide();
         }
 
-        private void IntelliText_TextEntered(object? sender, TextInputEventArgs e)
+        private void CodeComplete_TextEntered(object? sender, TextInputEventArgs e)
         {
-            if (!App.Config.EnableIntelliSense) return;
+            if (!App.Config.EnableCodeCompletion || _codeCompletion == null) return;
 
             if (e.Text == ".")
             {
-                string textBefore = GetTextBeforeCursor();
-
-                _completionWindow = new(_textEditor.TextArea)
-                {
-                    PlacementAnchor = PopupAnchor.TopLeft
-                };
+                /* _completionWindow = new(_textEditor.TextArea) { PlacementAnchor = PopupAnchor.TopLeft };
+                _completionWindow.Closed += delegate { _completionWindow = null; };
                 ToolTip.SetShowDelay(_completionWindow, 1);
-                _completionWindow.Closed += delegate (object? o, EventArgs args)
-                {
-                    _completionWindow = null;
-                };
-
-                Intelli_SetupMethods(0);
-                _completionWindow.Show();
+                _codeCompletion.SetupCompletion(CodeComplete_GetTextBeforeCursor(), _completionWindow);
+                _completionWindow.Show(); */
             }
             else if (e.Text == "(")
             {
-                /* _insightWindow = new CustomOverloadInsightWindow(_textEditor.TextArea);
+                _insightWindow = new CustomOverloadInsightWindow(_textEditor.TextArea);
                 _insightWindow.Closed += (o, args) => _insightWindow = null;
-                _insightWindow.Provider = new MyOverloadProvider(new[]
-                {
-                    ("Method1(int, string)", "Method1 description"),
-                    ("Method2(int)", "Method2 description"),
-                    ("Method3(string)", "Method3 description"),
-                });
-                _insightWindow.Show(); */
+                _codeCompletion.SetupInsight(CodeComplete_GetTextBeforeCursor(), _insightWindow);
+                _insightWindow.Show();
             }
         }
 
         /// <summary>
         /// Based on the selection cursor, returns all text before the first encountered space, or the beginning of the buffer.
         /// </summary>
-        private string GetTextBeforeCursor()
+        private string CodeComplete_GetTextBeforeCursor()
         {
             if (_textEditor.TextArea == null || _textEditor.TextArea.Caret == null || _textEditor.TextArea.Document == null) return "";
             int row = _textEditor.TextArea.Caret.Line;
-            int col = _textEditor.TextArea.Caret.Offset;
+            int col = _textEditor.TextArea.Caret.Offset - 1;
 
             if (col <= 1) return "";
             string line;
@@ -1002,7 +950,7 @@ namespace XentuCreator
             return (lastSpace >= 0) ? line[(lastSpace + 1)..] : line;
         }
 
-        private class MyOverloadProvider : IOverloadProvider
+        public class MyOverloadProvider : IOverloadProvider
         {
             private readonly IList<(string header, string content)> _items;
             private int _selectedIndex;

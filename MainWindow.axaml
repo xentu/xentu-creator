@@ -132,6 +132,11 @@
 							<CheckBox BorderThickness="0" Width="20" IsChecked="{Binding ShowStatusBar}" IsHitTestVisible="False" />
 						</MenuItem.Icon>
 					</MenuItem>
+					<MenuItem Header="Console" Command="{Binding ToggleShowConsole}" InputGesture="Ctrl+Shift+C" HotKey="Ctrl+Shift+C">
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0" Width="20" IsChecked="{Binding ShowConsole}" IsHitTestVisible="False" />
+						</MenuItem.Icon>
+					</MenuItem>
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuTools}">
 					<MenuItem Header="{x:Static p:Resources.CommandOptions}" Command="{Binding TriggerOptions}" InputGesture="F8" HotKey="F8">
@@ -139,7 +144,8 @@
 							<CheckBox BorderThickness="0" Width="20" IsChecked="True" IsHitTestVisible="False" Opacity="0" />
 						</MenuItem.Icon>
 					</MenuItem>
-					<!-- MenuItem Header="Next Editor Theme" Click="MenuNextEditorTheme_Click" / -->
+					<Separator />
+					<MenuItem Header="Clear Console" Command="{Binding TriggerClearConsole}" />
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuHelp}">
 					<MenuItem Header="{x:Static p:Resources.CommandAbout}" Command="{Binding TriggerAbout}" InputGesture="F1" HotKey="F1">
@@ -173,8 +179,8 @@
 									</Style>
 								</TextBlock.Styles>
 							</TextBlock>
-							<TextBlock Classes="CloseBut" Margin="8,3,0,0" Text="&#xf00d;" Classes.CloseButHidden="{Binding CloseButHidden}"
-									   FontFamily="avares://XentuCreator/Assets/fontawesome.ttf#FontAwesome" ToolTip.Tip="Close This Tab">
+							<TextBlock Classes="CloseBut" Margin="8,3,0,0" Text="&#xe800;" Classes.CloseButHidden="{Binding CloseButHidden}"
+									   FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" ToolTip.Tip="Close This Tab">
 								<TextBlock.Styles>
 									<Style Selector="TextBlock.CloseBut">
 										<Setter Property="Opacity" Value="0.3" />
@@ -210,7 +216,7 @@
 
 			<Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">
 				<!--ct:TerminalControl Name="Terminal" Padding="0" / -->
-				<TextBox Name="TextLog" Classes="TextLog" IsReadOnly="True" Text="{Binding Events.Log}"
+				<TextBox Name="TextLog" Classes="TextLog" IsReadOnly="True" Text="{Binding Events.Log}" IsVisible="{Binding ShowConsole}"
 						 AcceptsReturn="True" BorderBrush="Transparent" BorderThickness="0" Padding="5" />
 			</Border>
 

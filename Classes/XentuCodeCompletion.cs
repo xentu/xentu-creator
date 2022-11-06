@@ -1,23 +1,18 @@
-﻿using Avalonia.Controls;
-using Avalonia.Rendering;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XentuCreator.Classes
 {
-    public class IntelliSense
+    public class XentuCodeCompletion
     {
-        public List<IntelliGlobal> Globals { get; set; }
-        public Dictionary<string, IntelliMethod> Methods { get; set; }
+        public List<XentuCodeGlobal> Globals { get; set; }
+        public Dictionary<string, XentuCodeMethod> Methods { get; set; }
 
 
-        public IntelliSense()
+        public XentuCodeCompletion()
         {
-            Globals = new List<IntelliGlobal>
+            Globals = new List<XentuCodeGlobal>
             {
                 new("print"),
                 new("game"),
@@ -154,22 +149,34 @@ namespace XentuCreator.Classes
         }
 
 
-        public IntelliMethod AddMethod(string methodSignature, string argSignature, string desc = "")
+        public XentuCodeMethod AddMethod(string methodSignature, string argSignature, string desc = "")
         {
-            IntelliMethod method = new(methodSignature, argSignature, desc);
+            XentuCodeMethod method = new(methodSignature, argSignature, desc);
             Methods.Add(methodSignature, method);
             return method;
+        }
+
+        internal void SetupCompletion(string textBefore, MainWindow.CustomCompletionWindow completionWindow)
+        {
+            _ = textBefore;
+        }
+
+        internal void SetupInsight(string textBefore, MainWindow.CustomOverloadInsightWindow insightWindow)
+        {
+            var filtered = Methods.Where(t => t.Key == textBefore)
+                                  .Select(t => ($"{t.Key}({t.Value.ArgsSignature})", t.Value.Description));
+            insightWindow.Provider = new MainWindow.MyOverloadProvider(filtered.ToArray());
         }
     }
 
 
-    public class IntelliMethod
+    public class XentuCodeMethod
     {
         public string MethodSignature { get; set; }
         public string ArgsSignature { get; set; }
-        public List<IntelliArg> Arguments { get; set; }
+        public List<XentuCodeArg> Arguments { get; set; }
         public string Description { get; set; }
-        public IntelliMethod(string methodSignature, string argsSignature, string desc = "")
+        public XentuCodeMethod(string methodSignature, string argsSignature, string desc = "")
         {
             this.MethodSignature = methodSignature;
             this.ArgsSignature = argsSignature;
@@ -191,12 +198,12 @@ namespace XentuCreator.Classes
     }
 
 
-    public class IntelliArg
+    public class XentuCodeArg
     {
         public string Name { get; set; }
         public string? Type { get; set; }
         public string Description { get; set; }
-        public IntelliArg(string name, string? type = null, string description = "")
+        public XentuCodeArg(string name, string? type = null, string description = "")
         {
             this.Name = name;
             this.Type = type;
@@ -205,11 +212,11 @@ namespace XentuCreator.Classes
     }
 
 
-    public class IntelliGlobal
+    public class XentuCodeGlobal
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public IntelliGlobal(string name, string desc = "")
+        public XentuCodeGlobal(string name, string desc = "")
         {
             Name = name;
             Description = desc;

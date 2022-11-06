@@ -14,7 +14,7 @@ namespace XentuCreator.Classes
         MainWindow _owner;
         CreatorProject? _project;
         readonly EventLog _events = new();
-        bool _loaded = false, _showSidebar = true, _showStatusBar = true;
+        bool _loaded = false, _showSidebar = true, _showStatusBar = true, _showConsole = true;
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -65,6 +65,16 @@ namespace XentuCreator.Classes
             {
                 _showStatusBar = value;
                 PropertyChanged?.Invoke(this, new(nameof(ShowStatusBar)));
+            }
+        }
+
+        public bool ShowConsole
+        {
+            get => _showConsole;
+            set
+            {
+                _showConsole = value;
+                PropertyChanged?.Invoke(this, new(nameof(ShowConsole)));
             }
         }
 
@@ -134,10 +144,12 @@ namespace XentuCreator.Classes
         public void TriggerDebugSettings() => _owner.MenuOptions_Click(_owner, new ExRoutedEventArgs("debug"));
         public void TriggerOptions() => _owner.MenuOptions_Click(_owner, new());
         public void TriggerAbout() => _owner.MenuAbout_Click(_owner, new());
+        public void TriggerClearConsole() => _events.Clear();
 
 
         public void ToggleShowSidebar() => ShowSidebar = !ShowSidebar;
         public void ToggleShowStatusBar() => ShowStatusBar = !ShowStatusBar;
+        public void ToggleShowConsole() => ShowConsole = !ShowConsole;
 
 
         public void SaveStateChanged()

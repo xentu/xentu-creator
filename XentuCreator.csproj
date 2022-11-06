@@ -18,7 +18,6 @@
     <None Remove="Assets\file-js.png" />
     <None Remove="Assets\file-lua.png" />
     <None Remove="Assets\folder-icon.png" />
-    <None Remove="Assets\fontawesome.ttf" />
     <None Remove="Assets\Fonts\JetBrainsMono-Medium.ttf" />
     <None Remove="Assets\Fonts\JetBrainsMono-Regular.ttf" />
     <None Remove="Assets\Fonts\Roboto-Bold.ttf" />
@@ -26,6 +25,7 @@
     <None Remove="Assets\Fonts\Roboto-Regular.ttf" />
     <None Remove="Assets\Fonts\UbuntuMono-Bold.ttf" />
     <None Remove="Assets\Fonts\UbuntuMono-Regular.ttf" />
+    <None Remove="Assets\Fonts\xc.ttf" />
     <None Remove="Assets\template_js.txt" />
     <None Remove="Assets\template_lua.txt" />
     <None Remove="Assets\xentu-icon.ico" />
@@ -36,7 +36,6 @@
     <AvaloniaResource Include="Assets\file-js.png" />
     <AvaloniaResource Include="Assets\file-lua.png" />
     <AvaloniaResource Include="Assets\folder-icon.png" />
-    <AvaloniaResource Include="Assets\fontawesome.ttf" />
     <AvaloniaResource Include="Assets\Fonts\JetBrainsMono-Medium.ttf" />
     <AvaloniaResource Include="Assets\Fonts\JetBrainsMono-Regular.ttf" />
     <AvaloniaResource Include="Assets\Fonts\Roboto-Bold.ttf" />
@@ -44,6 +43,7 @@
     <AvaloniaResource Include="Assets\Fonts\Roboto-Regular.ttf" />
     <AvaloniaResource Include="Assets\Fonts\UbuntuMono-Bold.ttf" />
     <AvaloniaResource Include="Assets\Fonts\UbuntuMono-Regular.ttf" />
+    <AvaloniaResource Include="Assets\Fonts\xc.ttf" />
     <EmbeddedResource Include="Assets\template_js.txt" />
 	<EmbeddedResource Include="Assets\template_lua.txt" />
     <AvaloniaResource Include="Assets\xentu-logo.png" />

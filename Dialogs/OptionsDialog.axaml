@@ -71,7 +71,7 @@
 							</Grid.ColumnDefinitions>
 							<TextBlock FontWeight="DemiBold" Classes="Label">Features</TextBlock>
 							<StackPanel Grid.Column="1">
-								<CheckBox IsChecked="{Binding EnableIntelliSense}">Enable Code Intelli-sense</CheckBox>
+								<CheckBox IsChecked="{Binding EnableCodeCompletion}">Enable Code Completion</CheckBox>
 								<CheckBox IsChecked="{Binding EnableLineNumbers}">Show Line Numbers</CheckBox>
 							</StackPanel>
 						</Grid>

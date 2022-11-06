@@ -15,7 +15,7 @@ namespace XentuCreator.Classes
     public class CreatorConfig : INotifyPropertyChanged
     {
         string _debugBinary = "", _lastBinaryVersionTag = "missing.", _codeFont = "Consolas";
-        bool _autoCheckBinaryUpdates = false, _enableIntelliSense = true, _enableLineNumbers = true;
+        bool _autoCheckBinaryUpdates = false, _enableCodeCompletion = true, _enableLineNumbers = true;
         int _fontSize = 14;
         ThemeName _codeTheme = ThemeName.DarkPlus;
 
@@ -49,13 +49,13 @@ namespace XentuCreator.Classes
         }
 
 
-        public bool EnableIntelliSense
+        public bool EnableCodeCompletion
         {
-            get => _enableIntelliSense;
+            get => _enableCodeCompletion;
             set
             {
-                _enableIntelliSense = value;
-                PropertyChanged?.Invoke(this, new(nameof(EnableIntelliSense)));
+                _enableCodeCompletion = value;
+                PropertyChanged?.Invoke(this, new(nameof(EnableCodeCompletion)));
             }
         }
 
