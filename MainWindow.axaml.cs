@@ -303,13 +303,23 @@ namespace XentuCreator
                 compiler.StartInfo.UseShellExecute = false;
                 compiler.StartInfo.CreateNoWindow = true;
                 compiler.StartInfo.RedirectStandardOutput = true;
+                compiler.StartInfo.RedirectStandardError = true;
                 compiler.EnableRaisingEvents = true;
                 compiler.OutputDataReceived += Compiler_OutputDataReceived;
+                compiler.ErrorDataReceived += Compiler_ErrorDataReceived;
                 compiler.Start();
                 compiler.BeginOutputReadLine();
                 await compiler.WaitForExitAsync();
                 compiler.OutputDataReceived -= Compiler_OutputDataReceived;
                 _trackingConsole = false;
+            }
+        }
+
+        private void Compiler_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (e.Data != null)
+            {
+                _mainView.Events.AddLine(e.Data);
             }
         }
 

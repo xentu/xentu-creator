@@ -1,11 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using AvaloniaEdit.TextMate.Grammars;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using XentuCreator.Classes;
