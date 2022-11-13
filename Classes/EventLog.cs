@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 
 namespace XentuCreator.Classes
@@ -19,6 +20,7 @@ namespace XentuCreator.Classes
             }
         }
 
+
         public string CurrentLine
         {
             get => _current_line;
@@ -33,12 +35,16 @@ namespace XentuCreator.Classes
         public EventLog() { }
 
 
-        internal void Clear() => CurrentLine = Log = "";
+        internal void Clear()
+        {
+            CurrentLine = Log = "";
+        }
 
 
         internal void AddLine(string format, params object[] args)
         {
             string line = string.Format(format, args);
+            //Log.Add(line);
             Log += _log.Length > 0 ? $"\r\n{line}" : line;
             CurrentLine = line;
         }

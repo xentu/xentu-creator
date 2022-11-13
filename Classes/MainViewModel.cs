@@ -129,6 +129,7 @@ namespace XentuCreator.Classes
         public void TriggerOpen() => _owner.MenuOpenGame_Click(_owner, new());
         public void TriggerClose() => _owner.MenuCloseGame_Click(_owner, new());
         public void TriggerGameProperties() => _owner.MenuGameProperties_Click(_owner, new());
+        public void TriggerFileExplorer() => _owner.RvealInFileExplorer();
         public void TriggerPublish() { }
         public void TriggerExit() => _owner.MenuExit_Click(_owner, new());
 

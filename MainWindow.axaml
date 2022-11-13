@@ -49,7 +49,7 @@
 			<Setter Property="IsEnabled" Value="True" />
 		</Style>
 		<Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
-			<Setter Property="BorderBrush" Value="#333"></Setter>
+			<Setter Property="BorderBrush" Value="#000"></Setter>
 			<Setter Property="CornerRadius" Value="0"></Setter>
 		</Style>
 	</Window.Styles>
@@ -93,6 +93,7 @@
 					<MenuItem Header="{x:Static p:Resources.CommandSaveAll}" Classes="DefaultDisabled" Classes.Loaded="{Binding CanSaveAll}" InputGesture="Ctrl+Shift+A" HotKey="Ctrl+Shift+A" Command="{Binding TriggerSaveAll}" />
 					<Separator />
 					<MenuItem Header="{x:Static p:Resources.CommandGameProperties}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}" Command="{Binding TriggerGameProperties}" />
+					<MenuItem Header="Reveal In File Explorer" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}" Command="{Binding TriggerFileExplorer}" />
 					<MenuItem Header="{x:Static p:Resources.CommandPublish}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}" Command="{Binding TriggerPublish}" />
 					<Separator />
 					<MenuItem Header="{x:Static p:Resources.CommandExit}" Command="{Binding TriggerExit}" />
@@ -215,9 +216,7 @@
 			<ct:WelcomeControl Name="WelcomePane" />
 
 			<Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">
-				<!--ct:TerminalControl Name="Terminal" Padding="0" / -->
-				<TextBox Name="TextLog" Classes="TextLog" IsReadOnly="True" Text="{Binding Events.Log}" IsVisible="{Binding ShowConsole}"
-						 AcceptsReturn="True" BorderBrush="Transparent" BorderThickness="0" Padding="5" />
+				<ct:TerminalControl Name="TextLog" Padding="0" />
 			</Border>
 
 			<GridSplitter ResizeDirection="Rows" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" />

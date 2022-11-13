@@ -56,7 +56,7 @@ namespace XentuCreator
         readonly TreeView _folderView;
         readonly CreatorTab _welcomeTab;
         readonly TextBlock _statusTextCaps, _statusPosText, _rootLabel;
-        readonly TextBox _textLog;
+        readonly TerminalControl _textLog;
 
         // active state.
         internal MainViewModel _mainView;
@@ -83,7 +83,7 @@ namespace XentuCreator
             _statusTextCaps = this.Find<TextBlock>("StatusCapsText");
             _statusPosText = this.Find<TextBlock>("StatusPosText");
             _rootLabel = this.Find<TextBlock>("RootLabel");
-            _textLog = this.Find<TextBox>("TextLog");
+            _textLog = this.Find<TerminalControl>("TextLog");
 
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Black;
@@ -276,6 +276,10 @@ namespace XentuCreator
 
         internal static void SetLanguage(CultureInfo culture) => Thread.CurrentThread.CurrentUICulture = culture;
 
+
+        Process? compiler;
+
+
         internal async void BeginDebugging()
         {
             if (App.Config != null && !string.IsNullOrWhiteSpace(_mainView.Project?.LoadedFileInfo?.DirectoryName))
@@ -289,7 +293,7 @@ namespace XentuCreator
                     return;
                 }
 
-                using Process compiler = new();
+                compiler = new();
                 string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -307,11 +311,26 @@ namespace XentuCreator
                 compiler.EnableRaisingEvents = true;
                 compiler.OutputDataReceived += Compiler_OutputDataReceived;
                 compiler.ErrorDataReceived += Compiler_ErrorDataReceived;
+                compiler.Exited += Compiler_Exited;
                 compiler.Start();
                 compiler.BeginOutputReadLine();
-                await compiler.WaitForExitAsync();
+                compiler.BeginErrorReadLine();
+            }
+        }
+
+        private void Compiler_Exited(object? sender, EventArgs e)
+        {
+            if (compiler != null)
+            {
                 compiler.OutputDataReceived -= Compiler_OutputDataReceived;
+                compiler.ErrorDataReceived -= Compiler_ErrorDataReceived;
+                compiler.Exited -= Compiler_Exited;
+                compiler = null;
                 _trackingConsole = false;
+                Dispatcher.UIThread.InvokeAsync(delegate ()
+                {
+                    _textLog.ScrollToBottom(); //.ScrollIntoView(_textLog.ItemCount - 2);
+                });
             }
         }
 
@@ -320,6 +339,10 @@ namespace XentuCreator
             if (e.Data != null)
             {
                 _mainView.Events.AddLine(e.Data);
+                Dispatcher.UIThread.InvokeAsync(delegate()
+                {
+                    _textLog.ScrollToBottom(); //.ScrollIntoView(_textLog.ItemCount - 2);
+                });
             }
         }
 
@@ -328,6 +351,10 @@ namespace XentuCreator
             if (e.Data != null)
             {
                 _mainView.Events.AddLine(e.Data);
+                Dispatcher.UIThread.InvokeAsync(delegate ()
+                {
+                    _textLog.ScrollToBottom(); //ScrollIntoView(_textLog.ItemCount - 2);
+                });
             }
         }
 
@@ -533,10 +560,11 @@ namespace XentuCreator
         {
             if (FolderView.SelectedItem is CreatorNode node)
             {
+                MessageBoxResult res = await MessageBox.Show(this, "Are you sure?", "Delete", MessageBoxButtons.OkCancel);
+                if (res == MessageBoxResult.Cancel) return;
+
                 if (node.IsFile)
                 {
-                    MessageBoxResult confirm = await MessageBox.Show(this, "Are you sure?", "Delete File", MessageBoxButtons.OkCancel);
-                    if (confirm == MessageBoxResult.Cancel) return;
                     File.Delete(node.FullPath);
                 }
                 else
@@ -797,6 +825,12 @@ namespace XentuCreator
             }
         }
 
+        internal void RvealInFileExplorer()
+        {
+            if (_mainView.Project.LoadedFileInfo.DirectoryName == null) return;
+            Process.Start("explorer.exe", @_mainView.Project.LoadedFileInfo.DirectoryName);
+        }
+
         internal async void MenuPublish_Click(object? sender, RoutedEventArgs e)
         {
             await MessageBox.Show(this, "Not yet implemented");
@@ -889,8 +923,9 @@ namespace XentuCreator
                     {
                         if (_textLog != null)
                         {
-                            int pos = _textLog.Text.LastIndexOf("\n");
-                            if (pos > 0) _textLog.CaretIndex = pos + 1;
+                            _textLog.ScrollToBottom(); //.ScrollIntoView(_textLog.ItemCount - 2);
+                            //int pos = _textLog.Text.LastIndexOf("\n");
+                            //if (pos > 0) _textLog.CaretIndex = pos + 1;
                         }
                     });
                 }
