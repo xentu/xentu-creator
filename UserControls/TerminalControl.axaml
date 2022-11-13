@@ -4,7 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="150" MinHeight="50" Margin="0"
              x:Class="XentuCreator.UserControls.TerminalControl">
-	<Grid>
-		<TextBox Name="_tb" BorderBrush="Transparent" IsReadOnly="True" BorderThickness="0" Margin="5" FontFamily="Consolas" Text="$" />		
-	</Grid>
+	<ScrollViewer Name="scrollViewer1">
+		<TextBox BorderBrush="Transparent" IsReadOnly="True"  VerticalAlignment="Bottom"
+				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+				 BorderThickness="0" Margin="5" FontFamily="Consolas" Text="{Binding Events.Log}" Padding="0 0 0 10">
+			<TextBox.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Clear" Command="{Binding TriggerClearConsole}" />
+				</ContextMenu>
+			</TextBox.ContextMenu>
+		</TextBox>
+	</ScrollViewer>
 </UserControl>
