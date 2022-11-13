@@ -64,9 +64,32 @@ namespace XentuCreator.Classes
         internal CreatorNode(string text, string path, bool is_file)
         {
             NodeText = text;
-            NodeIcon = is_file ? "/Assets/file-code.png" : "/Assets/folder-icon.png";
+            NodeIcon = DecideIcon(path, is_file);
             FullPath = path;
             IsFile = is_file;
+        }
+
+
+        private static string DecideIcon(string file, bool is_file)
+        {
+            const StringComparison sc = StringComparison.InvariantCultureIgnoreCase;
+            string ficon = is_file ? "/Assets/file-code.png" : "/Assets/folder-icon.png";
+            if (is_file)
+            {
+                if (file.Contains(".wav", sc) || file.Contains(".ogg", sc) || file.Contains(".mp3", sc) || file.Contains(".mid", sc) || file.Contains(".flac", sc))
+                {
+                    ficon = "/Assets/file-audio.png";
+                }
+                else if (file.Contains(".png", sc) || file.Contains(".jpg", sc) || file.Contains(".bmp", sc))
+                {
+                    ficon = "/Assets/file-image.png";
+                }
+                else if (file.EndsWith(".js", sc) || file.Contains(".lua", sc))
+                {
+                    ficon = "/Assets/file-green.png";
+                }
+            }
+            return ficon;
         }
 
 
@@ -84,21 +107,7 @@ namespace XentuCreator.Classes
             foreach (string file in Directory.GetFiles(full_path, "*", SearchOption.TopDirectoryOnly))
             {
                 if (ignores.Any(t => t == file)) continue;
-                StringComparison sc = StringComparison.InvariantCultureIgnoreCase;
-
-                string ficon = "/Assets/file-gray.png";
-                if (file.Contains(".wav", sc) || file.Contains(".ogg", sc) || file.Contains(".mp3", sc) || file.Contains(".mid", sc) || file.Contains(".flac", sc))
-                {
-                    ficon = "/Assets/file-audio.png";
-                }
-                else if (file.Contains(".png", sc) || file.Contains(".jpg", sc) || file.Contains(".bmp", sc))
-                {
-                    ficon = "/Assets/file-image.png";
-                }
-                else if (file.EndsWith(".js", sc) || file.Contains(".lua", sc))
-                {
-                    ficon = "/Assets/file-green.png";
-                }
+                string ficon = DecideIcon(file, true);
                 SubNodes.Add(new(file, true, 0, 0, ficon));
             }
         }
@@ -116,19 +125,7 @@ namespace XentuCreator.Classes
                 if (ignores.Any(t => t == file)) continue;
                 StringComparison sc = StringComparison.InvariantCultureIgnoreCase;
 
-                string ficon = "/Assets/file-gray.png";
-                if (file.Contains(".wav", sc) || file.Contains(".ogg", sc) || file.Contains(".mp3", sc) || file.Contains(".mid", sc) || file.Contains(".flac", sc))
-                {
-                    ficon = "/Assets/file-audio.png";
-                }
-                else if (file.Contains(".png", sc) || file.Contains(".jpg", sc) || file.Contains(".bmp", sc))
-                {
-                    ficon = "/Assets/file-image.png";
-                }
-                else if (file.EndsWith(".js", sc) || file.Contains(".lua", sc))
-                {
-                    ficon = "/Assets/file-green.png";
-                }
+                string ficon = DecideIcon(file, true);
                 result.Add(new(file, true, 0, 0, ficon));
             }
             return result;
