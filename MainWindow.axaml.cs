@@ -607,6 +607,8 @@ namespace XentuCreator
                 }
             }
             _mainView.SelectedTab = tab;
+            _mainView.Trigger("CanSave");
+            _mainView.Trigger("CanSaveAll");
         }
 
         private async void TabCloseClicked(object? sender, PointerReleasedEventArgs e)

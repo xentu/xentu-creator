@@ -301,6 +301,12 @@ namespace XentuCreator.Classes
         }
 
 
+        public void Trigger(string prop_name)
+        {
+            PropertyChanged?.Invoke(this, new(prop_name));
+        }
+
+
         #endregion
     }
 
