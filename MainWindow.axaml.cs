@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Generators;
 using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives.PopupPositioning;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -149,6 +148,7 @@ namespace XentuCreator
                 else if (e.PropertyName == "ShowConsole")
                 {
                     _mainPane.RowDefinitions[1].MaxHeight = _mainView.ShowConsole ? 9999 : 0;
+                    _textLog.IsVisible = _mainView.ShowConsole;
                 }
             };
 
