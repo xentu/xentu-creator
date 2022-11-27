@@ -1,5 +1,7 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaloniaEdit;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,6 +14,7 @@ namespace XentuCreator.Classes
     public class MainViewModel : INotifyPropertyChanged
     {
         MainWindow _owner;
+        TextEditor _editor;
         CreatorProject? _project;
         readonly EventLog _events = new();
         bool _loaded = false, _showSidebar = true, _showStatusBar = true, _showConsole = true;
@@ -101,6 +104,19 @@ namespace XentuCreator.Classes
             }
         }
 
+        public bool CanCopy { get => _editor.SelectionLength > 0; }
+        public bool CanCut { get => _editor?.SelectionLength > 0; }
+        public bool CanPaste {
+            get
+            {
+                var task = Application.Current?.Clipboard?.GetTextAsync();
+                if (task == null)
+                    return false;
+                task.Wait();
+                return !string.IsNullOrWhiteSpace(task.Result);
+            }
+        }
+
         #endregion
 
 
@@ -117,9 +133,10 @@ namespace XentuCreator.Classes
         #endregion
 
 
-        public MainViewModel(MainWindow owner)
+        public MainViewModel(MainWindow owner, TextEditor editor)
         {
             _owner = owner;
+            _editor = editor;
         }
 
 
@@ -304,6 +321,14 @@ namespace XentuCreator.Classes
         public void Trigger(string prop_name)
         {
             PropertyChanged?.Invoke(this, new(prop_name));
+        }
+
+
+        public void TriggerEditorEventCheck()
+        {
+            this.Trigger("CanCut");
+            this.Trigger("CanCopy");
+            this.Trigger("CanPaste");
         }
 
 

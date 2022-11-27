@@ -99,14 +99,14 @@
 					<MenuItem Header="{x:Static p:Resources.CommandExit}" Command="{Binding TriggerExit}" />
 				</MenuItem>
 				<MenuItem Header="{x:Static p:Resources.MenuEdit}" Classes="DefaultDisabled" Classes.Loaded="{Binding Loaded}">
-					<MenuItem Header="Cut" Command="{Binding TriggerCut}" InputGesture="Ctrl+X">
+					<MenuItem Header="Cut" Command="{Binding TriggerCut}" IsEnabled="{Binding CanCut}" InputGesture="Ctrl+X">
 						<MenuItem.Icon>
 							<CheckBox BorderThickness="0" Width="20" IsChecked="True" IsHitTestVisible="False" Opacity="0" />
 						</MenuItem.Icon>
 					</MenuItem>
-					<MenuItem Header="Copy" Command="{Binding TriggerCopy}" InputGesture="Ctrl+C" />
-					<MenuItem Header="Paste" Command="{Binding TriggerPaste}" InputGesture="Ctrl+V" />
-					<MenuItem Header="Delete" Command="{Binding TriggerDelete}" InputGesture="Delete" />
+					<MenuItem Header="Copy" Command="{Binding TriggerCopy}" IsEnabled="{Binding CanCopy}" InputGesture="Ctrl+C" />
+					<MenuItem Header="Paste" Command="{Binding TriggerPaste}" IsEnabled="{Binding CanPaste}" InputGesture="Ctrl+V" />
+					<MenuItem Header="Delete" Command="{Binding TriggerDelete}" IsEnabled="{Binding CanCut}" InputGesture="Delete" />
 					<Separator />
 					<MenuItem Header="Select All" Command="{Binding TriggerSelectAll}" InputGesture="Ctrl+A" />
 				</MenuItem>
@@ -212,7 +212,15 @@
 						   HorizontalScrollBarVisibility="Visible"
 						   VerticalScrollBarVisibility="Visible"
 						   FontWeight="Light"
-						   FontSize="14" />
+						   FontSize="14">
+				<ae:TextEditor.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Cut" Command="{Binding TriggerCut}" IsEnabled="{Binding CanCut}" InputGesture="Ctrl+X" />
+						<MenuItem Header="Copy" Command="{Binding TriggerCopy}" IsEnabled="{Binding CanCopy}" InputGesture="Ctrl+C" />
+						<MenuItem Header="Paste" Command="{Binding TriggerPaste}" IsEnabled="{Binding CanPaste}" InputGesture="Ctrl+V" />
+					</ContextMenu>
+				</ae:TextEditor.ContextMenu>
+			</ae:TextEditor>
 			<ct:WelcomeControl Name="WelcomePane" />
 
 			<Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">

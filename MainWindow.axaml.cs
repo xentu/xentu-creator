@@ -67,7 +67,9 @@ namespace XentuCreator
         {
             InitializeComponent();
             _self = this;
-            DataContext = _mainView = new(this);
+            _textEditor = this.FindControl<TextEditor>("Editor");
+
+            DataContext = _mainView = new(this, _textEditor);
 
             // cache fonts.
             CacheFontFromControl("FF_Consolas", "Consolas");
@@ -84,7 +86,6 @@ namespace XentuCreator
             _rootLabel = this.Find<TextBlock>("RootLabel");
             _textLog = this.Find<TerminalControl>("TextLog");
 
-            _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Black;
             _textEditor.ShowLineNumbers = true;
             _textEditor.Options.ShowBoxForControlCharacters = true;
@@ -96,6 +97,7 @@ namespace XentuCreator
             _textEditor.TextArea.TextEntered += CodeComplete_TextEntered;
             _textEditor.TextArea.TextInput += TextArea_TextInput;
             _textEditor.TextChanged += EditorTextChanged;
+            _textEditor.PointerReleased += Editor_PointerReleased;
             _registryOptions = new RegistryOptions(App.Config == null ? ThemeName.DarkPlus : (ThemeName)App.Config.CodeTheme);
             _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
 
@@ -175,7 +177,6 @@ namespace XentuCreator
                 if (e.Key == Key.CapsLock) _statusTextCaps.Opacity = _statusTextCaps.Opacity == 0 ? 1 : 0;
             };
         }
-
 
         private void WindowClosing(object? sender, CancelEventArgs e) => _closed = true;
 
@@ -655,8 +656,14 @@ namespace XentuCreator
                 if (!_mainView.SelectedTab.HasChanged && _mainView.SelectedTab.Document?.IsInUpdate == true)
                 {
                     _mainView.SelectedTab.HasChanged = true;
+                    _mainView.TriggerEditorEventCheck();
                 }
             }
+        }
+
+        private void Editor_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
+            _mainView?.TriggerEditorEventCheck();
         }
 
         private void Caret_PositionChanged(object? sender, EventArgs e)
@@ -664,6 +671,8 @@ namespace XentuCreator
             _statusPosText.Text = string.Format("Line {0}, {1}",
                 _textEditor.TextArea.Caret.Line,
                 _textEditor.TextArea.Caret.Column);
+            _mainView.TriggerEditorEventCheck();
+            
         }
 
         #endregion
@@ -840,15 +849,35 @@ namespace XentuCreator
 
         internal void MenuExit_Click(object? sender, RoutedEventArgs e) => Close();
 
-        internal void MenuEditCut_Click(object? sender, RoutedEventArgs e) => _textEditor?.Cut();
+        internal void MenuEditCut_Click(object? sender, RoutedEventArgs e)
+        {
+            _textEditor?.Cut();
+            _mainView.TriggerEditorEventCheck();
+        }
 
-        internal void MenuEditCopy_Click(object? sender, RoutedEventArgs e) => _textEditor?.Copy();
+        internal void MenuEditCopy_Click(object? sender, RoutedEventArgs e)
+        {
+            _textEditor?.Copy();
+            _mainView.TriggerEditorEventCheck();
+        }
 
-        internal void MenuEditPaste_Click(object? sender, RoutedEventArgs e) => _textEditor?.Paste();
+        internal void MenuEditPaste_Click(object? sender, RoutedEventArgs e)
+        {
+            _textEditor?.Paste();
+            _mainView.TriggerEditorEventCheck();
+        }
 
-        internal void MenuEditDelete_Click(object? sender, RoutedEventArgs e) => _textEditor?.Delete();
+        internal void MenuEditDelete_Click(object? sender, RoutedEventArgs e)
+        {
+            _textEditor?.Delete();
+            _mainView.TriggerEditorEventCheck();
+        }
 
-        internal void MenuEditSelectAll_Click(object? sender, RoutedEventArgs e) => _textEditor?.SelectAll();
+        internal void MenuEditSelectAll_Click(object? sender, RoutedEventArgs e)
+        {
+            _textEditor?.SelectAll();
+            _mainView.TriggerEditorEventCheck();
+        }
 
         internal void MenuPlay_Click(object? sender, RoutedEventArgs e) => BeginDebugging();
 
