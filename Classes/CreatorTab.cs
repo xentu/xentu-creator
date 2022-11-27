@@ -64,12 +64,25 @@ namespace XentuCreator.Classes
                 LanguageScope = registry.GetScopeByLanguageId(Language.Id);
                 Document = new TextDocument(content);
             }
+            else if (type == CreatorTabType.SpriteSheetEditor)
+            {
+                // TODO: setup spritesheet tab data here.
+                _ = name;
+            }
         }
 
 
         public static CreatorTab LoadFile(MainViewModel owner, RegistryOptions registry, string filePath)
         {
             FileInfo info = new(filePath);
+
+            if (info.Extension == ".xsf")
+            {
+                CreatorTab resultSS = new(owner, CreatorTabType.SpriteSheetEditor, registry, info.Name, File.ReadAllText(filePath));
+                resultSS.FilePath = filePath;
+                return resultSS;
+            }
+
             CreatorTab result = new(owner, CreatorTabType.Editor, registry, info.Name, File.ReadAllText(filePath));
             result.FilePath = filePath;
             return result;
@@ -80,6 +93,8 @@ namespace XentuCreator.Classes
     public enum CreatorTabType
     {
         Welcome,
-        Editor
+        Editor,
+        SpriteEditor, /* reserved for future use */
+        SpriteSheetEditor,
     }
 }

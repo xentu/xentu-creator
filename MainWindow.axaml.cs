@@ -12,6 +12,7 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.TextMate;
+using HarfBuzzSharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,7 +34,7 @@ namespace XentuCreator
     public partial class MainWindow : Window
     {
         // constants.
-        readonly string[] _editable_extensions = { ".js", ".json", ".lua", ".py", ".xml", ".txt", ".shader" };
+        readonly string[] _editable_extensions = { ".js", ".json", ".lua", ".py", ".xml", ".txt", ".shader", ".xsf" };
         readonly ElementGenerator _generator = new();
         readonly TextMate.Installation _textMateInstallation;
         readonly RegistryOptions _registryOptions;
@@ -52,6 +53,7 @@ namespace XentuCreator
         readonly TextEditor _textEditor;
         readonly TabControl _tabControl1;
         readonly WelcomeControl _welcomePane;
+        readonly SpriteSheetControl _spriteSheetPane;
         readonly TreeView _folderView;
         readonly CreatorTab _welcomeTab;
         readonly TextBlock _statusTextCaps, _statusPosText, _rootLabel;
@@ -67,6 +69,7 @@ namespace XentuCreator
         {
             InitializeComponent();
             _self = this;
+            _spriteSheetPane = this.FindControl<SpriteSheetControl>("SpriteSheetPane");
             _textEditor = this.FindControl<TextEditor>("Editor");
 
             DataContext = _mainView = new(this, _textEditor);
@@ -125,6 +128,8 @@ namespace XentuCreator
                     App.Config.AddRecent(existingPrj);
                 }
             };
+
+            
 
             _folderView = this.FindControl<TreeView>("FolderView");
             _folderView.SelectionChanged += FolderViewSelectionChanged;
@@ -600,11 +605,19 @@ namespace XentuCreator
                     _textEditor.IsVisible = true;
                     _textMateInstallation.SetGrammar(tab.LanguageScope);
                     _welcomePane.IsVisible = false;
+                    _spriteSheetPane.IsVisible = false;
                 }
-                else
+                else if (tab.TabType == CreatorTabType.SpriteSheetEditor)
+                {
+                    _textEditor.IsVisible = false;
+                    _welcomePane.IsVisible = false;
+                    _spriteSheetPane.IsVisible = true;
+                }
+                else if (tab.TabType == CreatorTabType.Welcome)
                 {
                     _textEditor.IsVisible = false;
                     _welcomePane.IsVisible = true;
+                    _spriteSheetPane.IsVisible = false;
                 }
             }
             _mainView.SelectedTab = tab;
@@ -617,29 +630,37 @@ namespace XentuCreator
             e.Handled = true;
             if (e.Source is TextBlock tb && tb.Classes.Contains("CloseBut"))
             {
-                if (tb.DataContext is CreatorTab tab && tab.TabType == CreatorTabType.Editor)
+                if (tb.DataContext is CreatorTab tab)
                 {
-                    if (tab.HasChanged)
+                    if (tab.TabType == CreatorTabType.Editor)
                     {
-                        MessageBoxResult confirm = await MessageBox.Show(this, "Save changes before you close?", "Close Editor", MessageBoxButtons.YesNoCancel);
-                        if (confirm == MessageBoxResult.Yes)
+                        if (tab.HasChanged)
                         {
-                            string? file = tab.FilePath;
-                            if (file != null)
+                            MessageBoxResult confirm = await MessageBox.Show(this, "Save changes before you close?", "Close Editor", MessageBoxButtons.YesNoCancel);
+                            if (confirm == MessageBoxResult.Yes)
                             {
-                                using FileStream fs = File.Create(file);
+                                string? file = tab.FilePath;
+                                if (file != null)
                                 {
-                                    Editor.Save(fs);
+                                    using FileStream fs = File.Create(file);
+                                    {
+                                        Editor.Save(fs);
+                                    }
+                                    tab.HasChanged = false;
                                 }
-                                tab.HasChanged = false;
+                            }
+                            else if (confirm == MessageBoxResult.Cancel)
+                            {
+                                return;
                             }
                         }
-                        else if (confirm == MessageBoxResult.Cancel)
-                        {
-                            return;
-                        }
+                        _mainView.OpenTabs.Remove(tab);
                     }
-                    _mainView.OpenTabs.Remove(tab);
+                    else if (tab.TabType == CreatorTabType.SpriteSheetEditor)
+                    {
+                        // todo: check if tab needs 
+                        _mainView.OpenTabs.Remove(tab);
+                    }
                 }
             }
         }

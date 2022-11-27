@@ -222,6 +222,7 @@
 				</ae:TextEditor.ContextMenu>
 			</ae:TextEditor>
 			<ct:WelcomeControl Name="WelcomePane" />
+			<ct:SpriteSheetControl Name="SpriteSheetPane" />
 
 			<Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">
 				<ct:TerminalControl Name="TextLog" Padding="0" />
@@ -263,7 +264,7 @@
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
 				<StackPanel Orientation="Horizontal" Margin="5 0 10 0">
 					<TextBlock Opacity="0.5" Margin="0 0 5 0">Cursor:</TextBlock>
-					<TextBlock Name="StatusPosText"></TextBlock>
+					<TextBlock Name="StatusPosText">Line 1, 1</TextBlock>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal" Name="StatusTabText" Margin="5 0 10 0">
 					<TextBlock Opacity="0.5" Margin="0 0 5 0">Indent:</TextBlock>
