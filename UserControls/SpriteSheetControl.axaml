@@ -31,7 +31,7 @@
 									</ContentPresenter.RenderTransform>
 								</ContentPresenter>
 								<Border Margin="0 -9 0 0"
-                                    BorderBrush="#222"
+                                    BorderBrush="#1b1b1b"
                                     BorderThickness="1"
                                     CornerRadius="2"
 									VerticalAlignment="Stretch">
@@ -43,17 +43,33 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+		<Style Selector="ListBoxItem">
+			<Setter Property="Padding" Value="6 4" />
+		</Style>
 	</UserControl.Styles>
 	<Grid Background="Black">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition />
-			<RowDefinition />
+			<RowDefinition Height="200" />
 		</Grid.RowDefinitions>
-		
-		<ScrollViewer />
-		
 
-		<Border Grid.Row="1" Padding="5 10 0 5" Background="#111">
+		<Border Padding="8 4" Background="#111">
+			<StackPanel Orientation="Horizontal" Height="25">
+				<TextBlock Text="Image File:" VerticalAlignment="Center" Margin="0 0 8 0" />
+				<TextBlock Text="{Binding ImageFile}" VerticalAlignment="Center" Margin="0 0 8 0" Opacity="0.6" />
+				<Button Height="20" Content="..." Margin="0 0 8 0" Padding="5 0 5 0" VerticalContentAlignment="Top" Command="{Binding BrowseImage}" />
+			</StackPanel>
+		</Border>
+
+		<ScrollViewer Grid.Row="1">
+			
+			<Image Name="ImagePreview" Width="256" Height="256" Stretch="None" Source="{Binding ImageFilePath}"
+				   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20" />
+			
+		</ScrollViewer>
+
+		<Border Grid.Row="2" Padding="5 10 0 5" Background="#111">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="240" MinWidth="210" />
@@ -68,19 +84,20 @@
 							<RowDefinition />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
-						<ListBox HorizontalAlignment="Stretch" FontSize="12" Grid.Column="1" Margin="8 0 0 0"
+						<ListBox HorizontalAlignment="Stretch" FontSize="12" Grid.Column="1" Margin="0 0 0 0"
 								  Background="#55000000" BorderBrush="#333" BorderThickness="1">
 							<ListBoxItem>Animation 0</ListBoxItem>
 							<ListBoxItem>Animation 1</ListBoxItem>
 						</ListBox>
 						<StackPanel Grid.Row="1" Margin="0 5 0 0" Orientation="Horizontal">
-							<Button Content="New Animation" Margin="0 0 5 0" />
-							<Button Content="Remove" IsEnabled="False" />
+							<Button Height="26" Content="New" Margin="0 0 5 0" />
+							<Button Height="26" Content="Rename"  Margin="0 0 5 0" ToolTip.Tip="Rename Selected Animation" />
+							<Button Height="26" Content="&#xe800;" FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" />
 						</StackPanel>
 					</Grid>
 				</HeaderedContentControl>
 
-				<HeaderedContentControl Grid.Column="1" Grid.RowSpan="2" Margin="0 0 8 3" Header="Cells" Background="Black">
+				<HeaderedContentControl Grid.Column="1" Grid.RowSpan="2" Margin="0 0 8 3" Header="Frames" Background="Black">
 					<Grid Margin="8 12 8 8">
 						<Grid.RowDefinitions>
 							<RowDefinition />
@@ -88,23 +105,23 @@
 						</Grid.RowDefinitions>
 						<ListBox HorizontalAlignment="Stretch" FontSize="12"
 								  Background="#55000000" BorderBrush="#333" BorderThickness="1">
-							<ListBoxItem>Animation 0</ListBoxItem>
-							<ListBoxItem>Animation 1</ListBoxItem>
+							<ListBoxItem>Frame 0</ListBoxItem>
+							<ListBoxItem>Frame 1</ListBoxItem>
 						</ListBox>
 						<StackPanel Grid.Row="1" Margin="0 5 0 0" Orientation="Horizontal">
-							<Button Content="New Cell" Margin="0 0 5 0" />
-							<Button Content="Remove" IsEnabled="False" />
+							<Button Height="26" Content="New" Margin="0 0 5 0" />
+							<Button Height="26" Content="&#xe800;" FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" IsEnabled="False" />
 						</StackPanel>
 					</Grid>
 				</HeaderedContentControl>
 				
 				<GridSplitter HorizontalAlignment="Right" ResizeDirection="Columns" Width="2" Background="Transparent" />
 
-				<HeaderedContentControl Grid.Column="2" Grid.RowSpan="2" Margin="0 0 8 3" Header="Selected Cell" Background="Black">
+				<HeaderedContentControl Grid.Column="2" Grid.RowSpan="2" Margin="0 0 8 3" Header="Selected Frame" Background="Black">
 					<StackPanel Margin="10 14 10 10">
 						<DockPanel>
 							<TextBlock Classes="Label" Width="100" Text="Coords (x,y,w,h):" />
-							<TextBox Watermark="0,0,32,32" />
+							<TextBox Watermark="0, 0, 32, 32" MinWidth="220" HorizontalAlignment="Left" />
 						</DockPanel>
 						<DockPanel Margin="0 8 0 0">
 							<TextBlock Classes="Label" Width="100" Text="Frame Time (ms):" />
@@ -131,7 +148,7 @@
 			</Grid>
 		</Border>
 		
-		<GridSplitter Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" ResizeDirection="Rows" Height="5" />
+		<GridSplitter Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" ResizeDirection="Rows" Height="5" Background="Transparent" />
 		
 	</Grid>
 </UserControl>

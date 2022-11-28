@@ -12,7 +12,6 @@ namespace XentuCreator
         public static CreatorConfig Config { get; set; } = new();
         public static Dictionary<string, FontFamily> Fonts { get; set; } = new();
 
-
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -26,7 +25,6 @@ namespace XentuCreator
             {
                 desktop.MainWindow = new MainWindow();
             }
-
             base.OnFrameworkInitializationCompleted();
         }
     }

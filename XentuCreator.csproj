@@ -94,4 +94,7 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="UserControls\SpriteSheetControl.axaml" />
   </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Dialogs\SelectImageDialog.axaml" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="460" Height="320"
+        x:Class="XentuCreator.Dialogs.SelectImageDialog"
+		WindowStartupLocation="CenterOwner" ShowInTaskbar="False" CanResize="False"
+        Title="SelectImageDialog">
+	<Window.Styles>
+		<Style Selector="ListBoxItem">
+			<Setter Property="Padding" Value="6 4" />
+		</Style>
+	</Window.Styles>
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		
+		<TextBlock Text="Select An Image:" />
+
+		<ListBox Name="listBox1" Grid.Row="1" Margin="0 8 0 8" Background="#55000000" 
+				 BorderBrush="#333" BorderThickness="1" Items="{Binding Images}" SelectedItem="{Binding SelectedFile}" />
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Content="OK" Margin="0 0 5 0" Width="60" HorizontalContentAlignment="Center" Command="{Binding DoOK}" />
+			<Button Content="Cancel" Width="70" HorizontalContentAlignment="Center" Command="{Binding DoCancel}" />
+		</StackPanel>
+		
+	</Grid>
+</Window>
