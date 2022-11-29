@@ -84,15 +84,19 @@
 							<RowDefinition />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
-						<ListBox HorizontalAlignment="Stretch" FontSize="12" Grid.Column="1" Margin="0 0 0 0"
-								  Background="#55000000" BorderBrush="#333" BorderThickness="1">
-							<ListBoxItem>Animation 0</ListBoxItem>
-							<ListBoxItem>Animation 1</ListBoxItem>
+						<ListBox Name="ListAnimations" HorizontalAlignment="Stretch" FontSize="12" Grid.Column="1" Margin="0 0 0 0"
+								 Background="#55000000" BorderBrush="#333" BorderThickness="1"
+								 Items="{Binding SpriteSheet.Animations}" SelectionChanged="ListAnimations_SelectionChanged">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Name}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
 						</ListBox>
 						<StackPanel Grid.Row="1" Margin="0 5 0 0" Orientation="Horizontal">
-							<Button Height="26" Content="New" Margin="0 0 5 0" />
-							<Button Height="26" Content="Rename"  Margin="0 0 5 0" ToolTip.Tip="Rename Selected Animation" />
-							<Button Height="26" Content="&#xe800;" FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" />
+							<Button Command="{Binding Command_NewAnimation}" Height="26" Content="New" Margin="0 0 5 0" />
+							<Button Command="{Binding Command_RenameAnimation}" IsEnabled="{Binding IsAnimationSelected}" Height="26" Content="Rename"  Margin="0 0 5 0" ToolTip.Tip="Rename Selected Animation" />
+							<Button Command="{Binding Command_RemoveAnimation}" IsEnabled="{Binding IsAnimationSelected}" Height="26" Content="&#xe800;" FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" />
 						</StackPanel>
 					</Grid>
 				</HeaderedContentControl>
@@ -104,28 +108,33 @@
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 						<ListBox HorizontalAlignment="Stretch" FontSize="12"
-								  Background="#55000000" BorderBrush="#333" BorderThickness="1">
-							<ListBoxItem>Frame 0</ListBoxItem>
-							<ListBoxItem>Frame 1</ListBoxItem>
+								 SelectionChanged="ListFrames_SelectionChanged"
+								 Name="ListFrames" Items="{Binding Frames}"
+								 Background="#55000000" BorderBrush="#333" BorderThickness="1">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Name}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
 						</ListBox>
 						<StackPanel Grid.Row="1" Margin="0 5 0 0" Orientation="Horizontal">
-							<Button Height="26" Content="New" Margin="0 0 5 0" />
-							<Button Height="26" Content="&#xe800;" FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" IsEnabled="False" />
+							<Button Command="{Binding Command_NewFrame}" IsEnabled="{Binding IsAnimationSelected}" Height="26" Content="New" Margin="0 0 5 0" />
+							<Button Command="{Binding Command_RemoveFrame}" IsEnabled="{Binding IsFrameSelected}" Height="26" Content="&#xe800;" FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" />
 						</StackPanel>
 					</Grid>
 				</HeaderedContentControl>
 				
 				<GridSplitter HorizontalAlignment="Right" ResizeDirection="Columns" Width="2" Background="Transparent" />
 
-				<HeaderedContentControl Grid.Column="2" Grid.RowSpan="2" Margin="0 0 8 3" Header="Selected Frame" Background="Black">
+				<HeaderedContentControl Name="FrameGrid" IsEnabled="False" Opacity="0.5" Grid.Column="2" Grid.RowSpan="2" Margin="0 0 8 3" Header="Selected Frame" Background="Black">
 					<StackPanel Margin="10 14 10 10">
 						<DockPanel>
 							<TextBlock Classes="Label" Width="100" Text="Coords (x,y,w,h):" />
-							<TextBox Watermark="0, 0, 32, 32" MinWidth="220" HorizontalAlignment="Left" />
+							<TextBox Watermark="0, 0, 32, 32" MinWidth="220" HorizontalAlignment="Left" Text="{Binding Path=Coords}" />
 						</DockPanel>
 						<DockPanel Margin="0 8 0 0">
 							<TextBlock Classes="Label" Width="100" Text="Frame Time (ms):" />
-							<TextBox Width="100" Watermark="100" HorizontalAlignment="Left" />
+							<NumericUpDown Width="170" Watermark="100" Minimum="10" Maximum="9999" HorizontalAlignment="Left" Value="{Binding FrameTime}" />
 						</DockPanel>
 						<Grid Margin="0 8 0 0">
 							<Grid.ColumnDefinitions>
@@ -134,10 +143,10 @@
 							</Grid.ColumnDefinitions>
 							<TextBlock Classes="Label" Padding="5 0 0 0">Features</TextBlock>
 							<WrapPanel Grid.Column="1">
-								<CheckBox IsChecked="false" Margin="0 0 8 8">Flip X</CheckBox>
-								<CheckBox IsChecked="false" Margin="0 0 8 8">Flip Y</CheckBox>
-								<CheckBox IsChecked="false" Margin="0 0 8 8">Rot 90</CheckBox>
-								<CheckBox IsChecked="false" Margin="0 0 8 8">Rot -90</CheckBox>
+								<CheckBox IsChecked="{Binding FlipX}" Margin="0 0 8 8">Flip X</CheckBox>
+								<CheckBox IsChecked="{Binding FlipY}" Margin="0 0 8 8">Flip Y</CheckBox>
+								<CheckBox IsChecked="{Binding RotPos90}" Margin="0 0 8 8">Rot 90</CheckBox>
+								<CheckBox IsChecked="{Binding RotNeg90}" Margin="0 0 8 8">Rot -90</CheckBox>
 							</WrapPanel>
 						</Grid>
 					</StackPanel>
