@@ -222,7 +222,7 @@
 				</ae:TextEditor.ContextMenu>
 			</ae:TextEditor>
 			<ct:WelcomeControl Name="WelcomePane" />
-			<ct:SpriteSheetControl Name="SpriteSheetPane" />
+			<Grid Name="SsPaneGrid" />
 
 			<Border Grid.Row="1" BorderThickness="0 1 0 0" Margin="0" BorderBrush="#222">
 				<ct:TerminalControl Name="TextLog" Padding="0" />

@@ -1,8 +1,9 @@
-﻿using Avalonia.Controls;
-using AvaloniaEdit.Document;
+﻿using AvaloniaEdit.Document;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using TextMateSharp.Grammars;
+using XentuCreator.UserControls;
 
 namespace XentuCreator.Classes
 {
@@ -30,6 +31,9 @@ namespace XentuCreator.Classes
         /// <summary>The open document.</summary>
         public TextDocument? Document { get; set; }
 
+        /// <summary>If a tab is used for spritesheets, this holds the editor control.</summary>
+        public SpriteSheetControl? SpriteSheetPane { get; set; }
+
         /// <summary>The language associated with the editor.</summary>
         public Language? Language { get; set; }
         public string? LanguageScope { get; set; }
@@ -51,7 +55,7 @@ namespace XentuCreator.Classes
         }
 
 
-        public CreatorTab(MainViewModel owner, CreatorTabType type, RegistryOptions registry, string name, string content = "")
+        public CreatorTab(MainViewModel owner, CreatorTabType type, RegistryOptions registry, string name, string filePath, string content = "")
         {
             _owner = owner;
             Name = name;
@@ -67,7 +71,8 @@ namespace XentuCreator.Classes
             else if (type == CreatorTabType.SpriteSheetEditor)
             {
                 // TODO: setup spritesheet tab data here.
-                _ = name;
+                SpriteSheetPane = new();
+                SpriteSheetPane.Load(owner.Project?.LoadedFileInfo?.DirectoryName ?? "", filePath);
             }
         }
 
@@ -78,14 +83,38 @@ namespace XentuCreator.Classes
 
             if (info.Extension == ".xsf")
             {
-                CreatorTab resultSS = new(owner, CreatorTabType.SpriteSheetEditor, registry, info.Name, File.ReadAllText(filePath));
+                CreatorTab resultSS = new(owner, CreatorTabType.SpriteSheetEditor, registry, info.Name, filePath, File.ReadAllText(filePath));
                 resultSS.FilePath = filePath;
+                resultSS.ListenForSpriteSheetChanges();
                 return resultSS;
             }
 
             CreatorTab result = new(owner, CreatorTabType.Editor, registry, info.Name, File.ReadAllText(filePath));
             result.FilePath = filePath;
+
             return result;
+        }
+
+
+        private void ListenForSpriteSheetChanges()
+        {
+            if (SpriteSheetPane != null) SpriteSheetPane.Model.HasChanges += Model_HasChanges;
+        }
+
+
+        /// <summary>
+        /// When hosting a spritesheet editor, listens for changes to mark the tab as needing save.
+        /// </summary>
+        private void Model_HasChanges(object? sender, System.EventArgs e) => HasChanged = true;
+
+
+        ~CreatorTab()
+        {
+            // unsubscribe from spritesheet pane changes on deconstruction.
+            if (this.TabType == CreatorTabType.SpriteSheetEditor && SpriteSheetPane != null && SpriteSheetPane.Model != null)
+            {
+                SpriteSheetPane.Model.HasChanges -= Model_HasChanges;
+            }
         }
     }
 

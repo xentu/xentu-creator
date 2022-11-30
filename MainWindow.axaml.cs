@@ -39,6 +39,7 @@ namespace XentuCreator
         readonly TextMate.Installation _textMateInstallation;
         readonly RegistryOptions _registryOptions;
         readonly Thread _uiTimerThread;
+        readonly Grid _ssPaneGrid;
 
         private CustomCompletionWindow? _completionWindow;
         private CustomOverloadInsightWindow? _insightWindow;
@@ -53,7 +54,6 @@ namespace XentuCreator
         readonly TextEditor _textEditor;
         readonly TabControl _tabControl1;
         readonly WelcomeControl _welcomePane;
-        readonly SpriteSheetControl _spriteSheetPane;
         readonly TreeView _folderView;
         readonly CreatorTab _welcomeTab;
         readonly TextBlock _statusTextCaps, _statusPosText, _rootLabel;
@@ -69,7 +69,7 @@ namespace XentuCreator
         {
             InitializeComponent();
             _self = this;
-            _spriteSheetPane = this.FindControl<SpriteSheetControl>("SpriteSheetPane");
+            _ssPaneGrid = this.FindControl<Grid>("SsPaneGrid");
             _textEditor = this.FindControl<TextEditor>("Editor");
 
             DataContext = _mainView = new(this, _textEditor);
@@ -111,7 +111,7 @@ namespace XentuCreator
 
             // welcome pane/tab
             _welcomePane = this.FindControl<WelcomeControl>("WelcomePane");
-            _welcomeTab = new(_mainView, CreatorTabType.Welcome, _registryOptions, "")
+            _welcomeTab = new(_mainView, CreatorTabType.Welcome, _registryOptions, "", "")
             {
                 IsWelcomeTab = true,
                 CloseButHidden = true
@@ -598,6 +598,7 @@ namespace XentuCreator
             if (tab != null)
             {
                 _textMateInstallation.SetGrammar(null);
+                _ssPaneGrid.Children.Clear();
                 //_textEditor.Document = null;
                 if (tab.TabType == CreatorTabType.Editor)
                 {
@@ -605,19 +606,20 @@ namespace XentuCreator
                     _textEditor.IsVisible = true;
                     _textMateInstallation.SetGrammar(tab.LanguageScope);
                     _welcomePane.IsVisible = false;
-                    _spriteSheetPane.IsVisible = false;
+                    //_spriteSheetPane.IsVisible = false;
                 }
                 else if (tab.TabType == CreatorTabType.SpriteSheetEditor)
                 {
                     _textEditor.IsVisible = false;
                     _welcomePane.IsVisible = false;
-                    _spriteSheetPane.IsVisible = true;
+                    _ssPaneGrid.Children.Add(tab.SpriteSheetPane);
+                    //_spriteSheetPane.IsVisible = true;
                 }
                 else if (tab.TabType == CreatorTabType.Welcome)
                 {
                     _textEditor.IsVisible = false;
                     _welcomePane.IsVisible = true;
-                    _spriteSheetPane.IsVisible = false;
+                    //_spriteSheetPane.IsVisible = false;
                 }
             }
             _mainView.SelectedTab = tab;
@@ -658,7 +660,15 @@ namespace XentuCreator
                     }
                     else if (tab.TabType == CreatorTabType.SpriteSheetEditor)
                     {
-                        // todo: check if tab needs 
+                        if (tab.HasChanged && tab.SpriteSheetPane != null)
+                        {
+                            string? file = tab.FilePath;
+                            if (file != null)
+                            {
+                                await tab.SpriteSheetPane.Save(file);
+                                tab.HasChanged = false;
+                            }
+                        }
                         _mainView.OpenTabs.Remove(tab);
                     }
                 }
@@ -762,24 +772,38 @@ namespace XentuCreator
             SetProject(null);
         }
 
-        internal void MenuSave_Click(object? sender, RoutedEventArgs e)
+        internal async void MenuSave_Click(object? sender, RoutedEventArgs e)
         {
             CreatorTab? tab = _mainView?.SelectedTab;
-            if (tab != null && tab.TabType == CreatorTabType.Editor)
+            if (tab != null)
             {
-                string? file = tab.FilePath;
-                if (file != null)
+                if (tab.TabType == CreatorTabType.Editor)
                 {
-                    using FileStream fs = File.Create(file);
+                    string? file = tab.FilePath;
+                    if (file != null)
                     {
-                        Editor.Save(fs);
+                        using FileStream fs = File.Create(file);
+                        {
+                            Editor.Save(fs);
+                        }
+                        tab.HasChanged = false;
                     }
-                    tab.HasChanged = false;
+                }
+                else if (tab.TabType == CreatorTabType.SpriteSheetEditor)
+                {
+                    string? file = tab.FilePath;
+                    if (file != null && tab.SpriteSheetPane != null)
+                    {
+                        await tab.SpriteSheetPane.Save(file);
+                        tab.HasChanged = false;
+                    }
                 }
             }
+                
+                
         }
 
-        internal void MenuSaveAll_Click(object? sender, RoutedEventArgs e)
+        internal async void MenuSaveAll_Click(object? sender, RoutedEventArgs e)
         {
             foreach (CreatorTab tab in _mainView.OpenTabs)
             {
@@ -792,6 +816,15 @@ namespace XentuCreator
                         {
                             Editor.Save(fs);
                         }
+                        tab.HasChanged = false;
+                    }
+                }
+                else if (tab.TabType == CreatorTabType.SpriteSheetEditor && tab.HasChanged)
+                {
+                    string? file = tab.FilePath;
+                    if (file != null && tab.SpriteSheetPane != null)
+                    {
+                        await tab.SpriteSheetPane.Save(file);
                         tab.HasChanged = false;
                     }
                 }

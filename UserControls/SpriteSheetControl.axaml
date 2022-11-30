@@ -130,11 +130,11 @@
 					<StackPanel Margin="10 14 10 10">
 						<DockPanel>
 							<TextBlock Classes="Label" Width="100" Text="Coords (x,y,w,h):" />
-							<TextBox Watermark="0, 0, 32, 32" MinWidth="220" HorizontalAlignment="Left" Text="{Binding Path=Coords}" />
+							<TextBox Name="TextCoords" Watermark="0, 0, 32, 32" MinWidth="220" HorizontalAlignment="Left" Text="{Binding Path=Coords}" />
 						</DockPanel>
 						<DockPanel Margin="0 8 0 0">
 							<TextBlock Classes="Label" Width="100" Text="Frame Time (ms):" />
-							<NumericUpDown Width="170" Watermark="100" Minimum="10" Maximum="9999" HorizontalAlignment="Left" Value="{Binding FrameTime}" />
+							<NumericUpDown Name="TextDelay" Width="170" Watermark="100" Minimum="10" Maximum="9999" HorizontalAlignment="Left" Value="{Binding FrameTime}" />
 						</DockPanel>
 						<Grid Margin="0 8 0 0">
 							<Grid.ColumnDefinitions>
@@ -143,10 +143,10 @@
 							</Grid.ColumnDefinitions>
 							<TextBlock Classes="Label" Padding="5 0 0 0">Features</TextBlock>
 							<WrapPanel Grid.Column="1">
-								<CheckBox IsChecked="{Binding FlipX}" Margin="0 0 8 8">Flip X</CheckBox>
-								<CheckBox IsChecked="{Binding FlipY}" Margin="0 0 8 8">Flip Y</CheckBox>
-								<CheckBox IsChecked="{Binding RotPos90}" Margin="0 0 8 8">Rot 90</CheckBox>
-								<CheckBox IsChecked="{Binding RotNeg90}" Margin="0 0 8 8">Rot -90</CheckBox>
+								<CheckBox Name="CbFlipX" IsChecked="{Binding FlipX}" Margin="0 0 8 8">Flip X</CheckBox>
+								<CheckBox Name="CbFlipY" IsChecked="{Binding FlipY}" Margin="0 0 8 8">Flip Y</CheckBox>
+								<CheckBox Name="CbRot90" IsChecked="{Binding RotPos90}" Margin="0 0 8 8">Rot 90</CheckBox>
+								<CheckBox Name="CbRot270" IsChecked="{Binding RotNeg90}" Margin="0 0 8 8">Rot -90</CheckBox>
 							</WrapPanel>
 						</Grid>
 					</StackPanel>

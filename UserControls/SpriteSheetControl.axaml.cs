@@ -2,11 +2,15 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using AvaloniaEdit.Utils;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using XentuCreator.Classes;
 using XentuCreator.Dialogs;
 
@@ -29,7 +33,43 @@ namespace XentuCreator.UserControls
             ListFrames.PointerReleased += ListFrames_PointerReleased;
             frameGrid = this.FindControl<HeaderedContentControl>("FrameGrid");
             frameGrid.DataContext = new CreatorSpriteSheetFrame();
+            frameGrid.GotFocus += FrameGrid_GotFocus;
         }
+
+        private void FrameGrid_GotFocus(object? sender, GotFocusEventArgs e)
+        {
+            Model?.TriggerChange();
+        }
+
+        public void Load(string basePath, string filename)
+        {
+            CreatorSpriteSheet? ss = CreatorSpriteSheet.Load(filename) ?? new();
+            if (ss != null)
+            {
+                Model.SpriteSheet = ss;
+                if (MainWindow._self == null) return;
+                if (Model.SpriteSheet == null) return;
+
+                string imagePath = Model.SpriteSheet.ImageFilename;
+                string fullPath = $"{basePath}/{imagePath}";
+                DataContext = null;
+                DataContext = Model;
+                if (File.Exists(fullPath))
+                {
+                    Model.SetImage(imagePath, fullPath);
+                }
+            }
+        }
+
+
+        public async Task Save(string filename)
+        {
+            if (Model.SpriteSheet != null)
+            {
+                await Model.SpriteSheet.Save(filename);
+            }
+        }
+
 
         private void ListAnimations_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
@@ -87,6 +127,7 @@ namespace XentuCreator.UserControls
         CreatorSpriteSheetAnimation? _selectedAnimation;
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event EventHandler? HasChanges;
 
 
         public CreatorSpriteSheet SpriteSheet { get; set; } = new();
@@ -98,27 +139,40 @@ namespace XentuCreator.UserControls
         {
             this._owner = owner;
             this._image_file = "";
-
-            SpriteSheet.Animations.Add(new() { Name = "test" });
-            SpriteSheet.Animations[0].Frames.Add(new ());
-            SpriteSheet.Animations.Add(new() { Name = "test 2" });
-            SpriteSheet.Animations[1].Frames.Add(new());
-            SpriteSheet.Animations[1].Frames.Add(new());
+            //SpriteSheet.Animations.Add(new() { Name = "test" });
+            //SpriteSheet.Animations[0].Frames.Add(new ());
+            //SpriteSheet.Animations.Add(new() { Name = "test 2" });
+            //SpriteSheet.Animations[1].Frames.Add(new());
+            //SpriteSheet.Animations[1].Frames.Add(new());
         }
 
 
         public async void BrowseImage()
         {
             if (MainWindow._self == null) return;
-            var (success, path, full) = await SelectImageDialog.Show(MainWindow._self);
-            if (success == true)
+            var (success, rel_path, full_path) = await SelectImageDialog.Show(MainWindow._self);
+            if (success == true && rel_path != null)
             {
-                _image_file = path ?? "None Selected";
-                _image_file_path = full ?? "";
-                PropertyChanged?.Invoke(this, new(nameof(ImageFile)));
+                SpriteSheet.ImageFilename = rel_path;
+                SetImage(rel_path, full_path);
+                TriggerChange();
+            }
+        }
 
+
+        public void SetImage(string relativePath, string fullPath)
+        {
+            try
+            {
+                _image_file = relativePath ?? "None Selected";
+                _image_file_path = fullPath ?? "";
+                PropertyChanged?.Invoke(this, new(nameof(ImageFile)));
                 Image img = _owner.FindControl<Image>("ImagePreview");
                 img.Source = new Bitmap(_image_file_path);
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
             }
         }
 
@@ -154,6 +208,7 @@ namespace XentuCreator.UserControls
         {
             string newName = $"Animation {SpriteSheet.Animations.Count + 1}";
             SpriteSheet.Animations.Add(new() { Name = newName});
+            TriggerChange();
         }
 
 
@@ -170,6 +225,7 @@ namespace XentuCreator.UserControls
                     ani.Trigger("Name");
                     SpriteSheet.Trigger("Animations");
                     PropertyChanged?.Invoke(this, new(nameof(SpriteSheet)));
+                    TriggerChange();
                 }
             }
         }
@@ -185,6 +241,7 @@ namespace XentuCreator.UserControls
                 if (res == MessageBoxResult.Ok)
                 {
                     SpriteSheet.Animations.Remove(ani);
+                    TriggerChange();
                 }
             }
 
@@ -197,6 +254,7 @@ namespace XentuCreator.UserControls
             {
                 Frames.Add(new SpriteFrameModel("Untitled", new()));
                 AdjustFrameTitles();
+                TriggerChange();
             }
         }
 
@@ -210,6 +268,7 @@ namespace XentuCreator.UserControls
                     Frames.Remove(model);
                     _selectedAnimation.Frames.Remove(model.Frame);
                     AdjustFrameTitles();
+                    TriggerChange();
                 }
             }
         }
@@ -220,6 +279,8 @@ namespace XentuCreator.UserControls
 
         public void TriggerAnimationSelected() => PropertyChanged?.Invoke(this, new(nameof(IsAnimationSelected)));
         public void TriggerFrameSelected() => PropertyChanged?.Invoke(this, new(nameof(IsFrameSelected)));
+
+        internal void TriggerChange() => HasChanges?.Invoke(this, new());
     }
 
 
