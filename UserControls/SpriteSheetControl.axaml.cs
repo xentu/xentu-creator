@@ -1,8 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using AvaloniaEdit.Utils;
 using System;
@@ -79,6 +81,7 @@ namespace XentuCreator.UserControls
             }
         }
 
+
         private void ListFrames_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             if (sender is ListBox lv && e.Source is ScrollContentPresenter)
@@ -86,6 +89,7 @@ namespace XentuCreator.UserControls
                 listFrames.UnselectAll();
             }
         }
+
 
         void ListAnimations_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
@@ -102,6 +106,7 @@ namespace XentuCreator.UserControls
             Model.TriggerAnimationSelected();
             Model.TriggerFrameSelected();
         }
+
 
         void ListFrames_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
@@ -122,9 +127,11 @@ namespace XentuCreator.UserControls
     public class SpriteSheetControlModel : INotifyPropertyChanged
     {
         readonly SpriteSheetControl _owner;
+        readonly Canvas _regionCanvas;
         string _image_file = "Untitled";
         string _image_file_path = "";
         CreatorSpriteSheetAnimation? _selectedAnimation;
+        IBrush _regionBrush;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler? HasChanges;
@@ -133,11 +140,13 @@ namespace XentuCreator.UserControls
         public CreatorSpriteSheet SpriteSheet { get; set; } = new();
         public ObservableCollection<SpriteFrameModel> Frames { get; set; } = new();
         public string ImageFile { get => _image_file; }
-
+        public CreatorSpriteSheetAnimation? SelectedAnimation { get => _selectedAnimation; }
 
         public SpriteSheetControlModel(SpriteSheetControl owner)
         {
             this._owner = owner;
+            this._regionCanvas = owner.FindControl<Canvas>("RegionCanvas");
+            this._regionBrush = new SolidColorBrush(Colors.Gray, 0.5);
             this._image_file = "";
             //SpriteSheet.Animations.Add(new() { Name = "test" });
             //SpriteSheet.Animations[0].Frames.Add(new ());
@@ -277,10 +286,50 @@ namespace XentuCreator.UserControls
         public bool IsAnimationSelected { get => _owner.FindControl<ListBox>("ListAnimations").SelectedItems.Count > 0; }
         public bool IsFrameSelected { get => IsAnimationSelected && _owner.FindControl<ListBox>("ListFrames").SelectedItems.Count > 0; }
 
-        public void TriggerAnimationSelected() => PropertyChanged?.Invoke(this, new(nameof(IsAnimationSelected)));
-        public void TriggerFrameSelected() => PropertyChanged?.Invoke(this, new(nameof(IsFrameSelected)));
+        public void TriggerAnimationSelected()
+        {
+            PropertyChanged?.Invoke(this, new(nameof(IsAnimationSelected)));
+            UpdateRegionSelections();
+        }
 
-        internal void TriggerChange() => HasChanges?.Invoke(this, new());
+        public void TriggerFrameSelected()
+        {
+            PropertyChanged?.Invoke(this, new(nameof(IsFrameSelected)));
+            UpdateRegionSelections();
+        }
+
+        internal void TriggerChange()
+        {
+            HasChanges?.Invoke(this, new());
+            UpdateRegionSelections();
+        }
+
+
+        public void UpdateRegionSelections()
+        {
+            _regionCanvas.Children.Clear();
+            if (Frames != null)
+            {
+                SpriteFrameModel? selectedFrame = _owner.FindControl<ListBox>("ListFrames").SelectedItem as SpriteFrameModel;
+                foreach (SpriteFrameModel frame in Frames)
+                {
+                    string[] cp = frame.Frame.Coords.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.RemoveEmptyEntries);
+                    bool selected = selectedFrame == frame;
+                    if (cp.Length > 3 && int.TryParse(cp[0], out int x) && int.TryParse(cp[1], out int y) && int.TryParse(cp[2], out int w) && int.TryParse(cp[3], out int h))
+                    {
+                        Rectangle r = new()
+                        {
+                            Width = w, Height = h,
+                            Stroke = selected ? Brushes.Green : _regionBrush,
+                            StrokeThickness = 1
+                        };
+                        _regionCanvas.Children.Add(r);
+                        Canvas.SetLeft(r, x);
+                        Canvas.SetTop(r, y);
+                    }
+                }
+            }
+        }
     }
 
 

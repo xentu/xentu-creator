@@ -52,10 +52,7 @@ namespace XentuCreator.Classes
 
         public void Trigger(string name) => PropertyChanged?.Invoke(this, new(name));
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
     }
 
 
@@ -76,14 +73,19 @@ namespace XentuCreator.Classes
         [JsonProperty("rot90")]
         public bool RotPos90 { get; set; }
 
+        [JsonProperty("rot180")]
+        public bool RotPos180 { get; set; }
+
         [JsonProperty("rot270")]
-        public bool RotNeg90 { get; set; }
+        public bool RotPos270 { get; set; }
+
+
         public CreatorSpriteSheetFrame() { }
 
 
         public bool ShouldSerializeFlipX() => FlipX == true;
         public bool ShouldSerializeFlipY() => FlipY == true;
         public bool ShouldSerializeRotPos90() => RotPos90 == true;
-        public bool ShouldSerializeRotNeg90() => RotNeg90 == true;
+        public bool ShouldSerializeRotNeg90() => RotPos270 == true;
     }
 }

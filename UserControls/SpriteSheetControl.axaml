@@ -62,12 +62,24 @@
 			</StackPanel>
 		</Border>
 
-		<ScrollViewer Grid.Row="1">
-			
-			<Image Name="ImagePreview" Width="256" Height="256" Stretch="None" Source="{Binding ImageFilePath}"
-				   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20" />
-			
-		</ScrollViewer>
+		<TabControl Grid.Row="1">
+			<TabItem Header="Animation Regions">
+				<ScrollViewer Grid.Row="1" Background="Black" Margin="-12 -8 -12 0">
+					<Grid Margin="10">
+						<Image Name="ImagePreview" Width="256" Height="256" Stretch="None" Source="{Binding ImageFilePath}"
+						   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20" />
+						<Canvas Name="RegionCanvas" />
+					</Grid>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Preview Animation">
+				<Grid Grid.Row="1" Background="Black" Margin="-12 -8 -12 0">
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7">Not Yet Implemented</TextBlock>	
+				</Grid>
+			</TabItem>
+		</TabControl>
+
+
 
 		<Border Grid.Row="2" Padding="5 10 0 5" Background="#111">
 			<Grid>
@@ -143,10 +155,20 @@
 							</Grid.ColumnDefinitions>
 							<TextBlock Classes="Label" Padding="5 0 0 0">Features</TextBlock>
 							<WrapPanel Grid.Column="1">
-								<CheckBox Name="CbFlipX" IsChecked="{Binding FlipX}" Margin="0 0 8 8">Flip X</CheckBox>
-								<CheckBox Name="CbFlipY" IsChecked="{Binding FlipY}" Margin="0 0 8 8">Flip Y</CheckBox>
-								<CheckBox Name="CbRot90" IsChecked="{Binding RotPos90}" Margin="0 0 8 8">Rot 90</CheckBox>
-								<CheckBox Name="CbRot270" IsChecked="{Binding RotNeg90}" Margin="0 0 8 8">Rot -90</CheckBox>
+								<CheckBox Name="CbFlipX" IsChecked="{Binding FlipX}" Margin="0 0 8 0">Flip X</CheckBox>
+								<CheckBox Name="CbFlipY" IsChecked="{Binding FlipY}" Margin="0 0 8 0">Flip Y</CheckBox>
+							</WrapPanel>
+						</Grid>
+						<Grid Margin="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+							<TextBlock Classes="Label" Padding="5 0 0 0">Rotate</TextBlock>
+							<WrapPanel Grid.Column="1">
+								<CheckBox Name="CbRot90" IsChecked="{Binding RotPos90}" Margin="0 0 8 8">90</CheckBox>
+								<CheckBox Name="CbRot180" IsChecked="{Binding RotPos180}" Margin="0 0 8 8">180</CheckBox>
+								<CheckBox Name="CbRot270" IsChecked="{Binding RotPos270}" Margin="0 0 8 8">270</CheckBox>
 							</WrapPanel>
 						</Grid>
 					</StackPanel>

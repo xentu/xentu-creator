@@ -76,7 +76,8 @@ namespace XentuCreator.Dialogs
 
         internal void DoCancel()
         {
-            
+            _dialogResult = false;
+            Close();
         }
     }
 }
