@@ -89,7 +89,7 @@ namespace XentuCreator.Classes
                 return resultSS;
             }
 
-            CreatorTab result = new(owner, CreatorTabType.Editor, registry, info.Name, File.ReadAllText(filePath));
+            CreatorTab result = new(owner, CreatorTabType.Editor, registry, info.Name, filePath, File.ReadAllText(filePath));
             result.FilePath = filePath;
 
             return result;
