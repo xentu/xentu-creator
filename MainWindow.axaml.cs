@@ -159,6 +159,9 @@ namespace XentuCreator
                 }
             };
 
+            // default console visibility.
+            _mainView.ShowConsole = false;
+
             SetLeftMarginPadding(10);
 
             _uiTimerThread = new Thread(CodeComplete_TimerCallback);
@@ -306,6 +309,7 @@ namespace XentuCreator
                     dir = dir.Replace("\\", "/");
                 }
 
+                _mainView.ShowConsole = true;
                 _trackingConsole = true;
                 compiler.StartInfo.WorkingDirectory = dir;
                 compiler.StartInfo.FileName = App.Config.DebugBinary;
@@ -377,6 +381,7 @@ namespace XentuCreator
                     return;
                 }
 
+                _mainView.ShowConsole = true;
                 using Process compiler = new();
                 string dir = _mainView.Project.LoadedFileInfo.DirectoryName + "\\";
                 compiler.StartInfo.WorkingDirectory = dir;
