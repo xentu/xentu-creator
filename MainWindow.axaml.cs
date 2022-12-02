@@ -116,7 +116,7 @@ namespace XentuCreator
                 IsWelcomeTab = true,
                 CloseButHidden = true
             };
-            _mainView.OpenTabs.Add(_welcomeTab);
+            //_mainView.OpenTabs.Add(_welcomeTab);
             _welcomePane.NewClicked += delegate(object? s, RoutedEventArgs e) { MenuNewGame_Click(s, e); };
             _welcomePane.OpenClicked += delegate (object? s, RoutedEventArgs e) { MenuOpenGame_Click(s, e); };
             _welcomePane.OpenRecentClicked += delegate (object? s, OpenRecentEventArgs e)
@@ -234,8 +234,12 @@ namespace XentuCreator
             _mainView.SetupWatcher(null);
             _folderView.DataContext = null;
             _mainView.OpenTabs.Clear();
-            _mainView.OpenTabs.Add(_welcomeTab);
-            this.Title = "XentuCreator";
+            //_mainView.OpenTabs.Add(_welcomeTab);
+            _welcomePane.IsVisible = true;
+            _textEditor.IsVisible = false;
+            _textEditor.Text = "";
+            _ssPaneGrid.Children.Clear();
+            this.Title = "Xentu Creator";
             _mainView.Events.AddLine("Ready");
 
             if (project != null)
@@ -244,13 +248,15 @@ namespace XentuCreator
                 string? file = project.LoadedFileInfo?.FullName;
                 if (dir != null && file != null)
                 {
-                    _folderView.DataContext = _mainView.FileSystem = CreatorNode.ListDirectory(dir);
+                    // todo: use system directory separator.
+                    _folderView.DataContext = _mainView.FileSystem = CreatorNode.ListDirectory(dir, $"{dir}\\game.json");
                 }
                 _mainView.SetupWatcher(dir);
                 _mainView.Loaded = true;
                 _rootLabel.Text = project.Game.title;
                 _welcomePane.DataView.ShowButtons = false;
-                this.Title = $"{project.Game.title} - XentuCreator";
+                this.Title = $"{project.Game.title} - Xentu Creator";
+                _welcomePane.IsVisible = false;
             }
             else
             {
@@ -630,6 +636,13 @@ namespace XentuCreator
             _mainView.SelectedTab = tab;
             _mainView.Trigger("CanSave");
             _mainView.Trigger("CanSaveAll");
+
+            if (_mainView.OpenTabs.Count == 0)
+            {
+                _textEditor.IsVisible = false;
+                _textEditor.Text = "";
+                _ssPaneGrid.Children.Clear();
+            }
         }
 
         private async void TabCloseClicked(object? sender, PointerReleasedEventArgs e)

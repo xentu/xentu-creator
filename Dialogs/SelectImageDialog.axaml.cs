@@ -1,9 +1,7 @@
 using Avalonia.Controls;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
-using XentuCreator.Classes;
 
 namespace XentuCreator.Dialogs
 {
