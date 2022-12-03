@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Avalonia.Controls;
+using Avalonia.Styling;
+using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -70,14 +72,15 @@ namespace XentuCreator.Classes
         [JsonProperty("flip_y")]
         public bool FlipY { get; set; }
 
-        [JsonProperty("rot90")]
-        public bool RotPos90 { get; set; }
+        [JsonProperty("rotate")]
+        public int Rotation { get; set; }
 
-        [JsonProperty("rot180")]
-        public bool RotPos180 { get; set; }
 
-        [JsonProperty("rot270")]
-        public bool RotPos270 { get; set; }
+
+        [JsonIgnore] public bool Rot90 { get => Rotation == 90; }
+        [JsonIgnore] public bool Rot180 { get => Rotation == 180; }
+        [JsonIgnore] public bool Rot270 { get => Rotation == 270; }
+        [JsonIgnore] public bool Rot0 { get => Rotation == 0; }
 
 
         public CreatorSpriteSheetFrame() { }
@@ -85,7 +88,35 @@ namespace XentuCreator.Classes
 
         public bool ShouldSerializeFlipX() => FlipX == true;
         public bool ShouldSerializeFlipY() => FlipY == true;
-        public bool ShouldSerializeRotPos90() => RotPos90 == true;
-        public bool ShouldSerializeRotNeg90() => RotPos270 == true;
+        public bool ShouldSerializeRotation() => Rotation != 0;
+
+
+        public bool GetCoords(out int x, out int y, out int w, out int h)
+        {
+            string[] cp = Coords.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.RemoveEmptyEntries);
+            if (cp.Length > 3 && 
+                int.TryParse(cp[0], out int _x) && 
+                int.TryParse(cp[1], out int _y) &&
+                int.TryParse(cp[2], out int _w) && 
+                int.TryParse(cp[3], out int _h))
+            {
+                x = _x;
+                y = _y;
+                w = _w;
+                h = _h;
+                return true;
+            }
+            x = y = w = h = -1;
+            return false;
+        }
+
+        internal CreatorSpriteSheetFrame Clone() => new CreatorSpriteSheetFrame
+        {
+            FrameTime = this.FrameTime,
+            Coords = this.Coords,
+            FlipX = this.FlipX,
+            FlipY = this.FlipY,
+            Rotation = this.Rotation
+        };
     }
 }

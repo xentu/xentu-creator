@@ -67,14 +67,42 @@
 				<ScrollViewer Grid.Row="1" Background="Black" Margin="-12 -8 -12 0">
 					<Grid Margin="10">
 						<Image Name="ImagePreview" Width="256" Height="256" Stretch="None" Source="{Binding ImageFilePath}"
-						   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20" />
+								HorizontalAlignment="Left" VerticalAlignment="Top" />
 						<Canvas Name="RegionCanvas" />
 					</Grid>
 				</ScrollViewer>
 			</TabItem>
 			<TabItem Header="Preview Animation">
 				<Grid Grid.Row="1" Background="Black" Margin="-12 -8 -12 0">
-					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7">Not Yet Implemented</TextBlock>	
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<!-- TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7">Not Yet Implemented</TextBlock -->
+					<ScrollViewer Margin="10">
+						<Image Name="AnimationCanvas" Stretch="Uniform" RenderOptions.BitmapInterpolationMode="HighQuality"
+							   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" RenderTransformOrigin="0 0" />
+						
+					</ScrollViewer>
+
+					<Border Name="PreviewControls" Grid.Row="1" Background="#222" Height="40" IsEnabled="False">
+						<StackPanel Orientation="Horizontal" Margin="10 0 0 0">
+							<Button Name="ButtonPlay" Content="Play" Height="26" Click="ButtonPlay_Clicked" Padding="7 5 7 0" />
+							<Button Name="ButtonStop" Content="Stop" Height="26" Click="ButtonStop_Clicked" Padding="7 5 7 0" Margin="5 0 0 0" IsEnabled="False" />
+							<Label Margin="30 0 0 0" VerticalAlignment="Center" Opacity="0.5">Zoom Level:</Label>
+							<ComboBox Name="ScaleCombo" Height="26" Margin="5 0 0 0" VerticalAlignment="Center" SelectedIndex="0">
+								<ComboBoxItem Tag="1">100%</ComboBoxItem>
+								<ComboBoxItem Tag="1.5">150%</ComboBoxItem>
+								<ComboBoxItem Tag="2">200%</ComboBoxItem>
+								<ComboBoxItem Tag="3">300%</ComboBoxItem>
+								<ComboBoxItem Tag="5">500%</ComboBoxItem>
+								<ComboBoxItem Tag="10">1000%</ComboBoxItem>
+								<ComboBoxItem Tag="15">1500%</ComboBoxItem>
+								<ComboBoxItem Tag="20">2000%</ComboBoxItem>
+							</ComboBox>
+						</StackPanel>
+					</Border>
+					
 				</Grid>
 			</TabItem>
 		</TabControl>
@@ -107,6 +135,7 @@
 						</ListBox>
 						<StackPanel Grid.Row="1" Margin="0 5 0 0" Orientation="Horizontal">
 							<Button Command="{Binding Command_NewAnimation}" Height="26" Content="New" Margin="0 0 5 0" />
+							<Button Command="{Binding Command_CopyAnimation}" Height="26" Content="Copy" Margin="0 0 5 0" />
 							<Button Command="{Binding Command_RenameAnimation}" IsEnabled="{Binding IsAnimationSelected}" Height="26" Content="Rename"  Margin="0 0 5 0" ToolTip.Tip="Rename Selected Animation" />
 							<Button Command="{Binding Command_RemoveAnimation}" IsEnabled="{Binding IsAnimationSelected}" Height="26" Content="&#xe800;" FontFamily="avares://XentuCreator/Assets/Fonts/xc.ttf#xc" />
 						</StackPanel>
@@ -166,9 +195,10 @@
 							</Grid.ColumnDefinitions>
 							<TextBlock Classes="Label" Padding="5 0 0 0">Rotate</TextBlock>
 							<WrapPanel Grid.Column="1">
-								<CheckBox Name="CbRot90" IsChecked="{Binding RotPos90}" Margin="0 0 8 8">90</CheckBox>
-								<CheckBox Name="CbRot180" IsChecked="{Binding RotPos180}" Margin="0 0 8 8">180</CheckBox>
-								<CheckBox Name="CbRot270" IsChecked="{Binding RotPos270}" Margin="0 0 8 8">270</CheckBox>
+								<RadioButton Name="CbRot0" IsChecked="{Binding Rot0}" Checked="Rotation_Checked" Margin="0 0 8 8">0</RadioButton>
+								<RadioButton Name="CbRot90" IsChecked="{Binding Rot90}" Checked="Rotation_Checked" Margin="0 0 8 8">90</RadioButton>
+								<RadioButton Name="CbRot180" IsChecked="{Binding Rot180}" Checked="Rotation_Checked" Margin="0 0 8 8">180</RadioButton>
+								<RadioButton Name="CbRot270" IsChecked="{Binding Rot270}" Checked="Rotation_Checked" Margin="0 0 8 8">270</RadioButton>
 							</WrapPanel>
 						</Grid>
 					</StackPanel>
