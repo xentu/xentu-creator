@@ -3,6 +3,7 @@
 A cross-browser IDE for creating games with the [Xentu](https://github.com/xentu/xentu-engine) game engine.
 
 ![Screenshot of the editor in Windows 11](https://github.com/xentu/xentu-creator/blob/main/screenshot.jpg?raw=true)
+![Screenshot of the new sprite sheet editor](https://github.com/xentu/xentu-creator/blob/main/screenshot2.jpg?raw=true)
 
 ## Features
 
@@ -12,6 +13,7 @@ A cross-browser IDE for creating games with the [Xentu](https://github.com/xentu
 - Rich text editor, with complex text selection, line-numbers, search, and more.
 - Customisable syntax highlighting.
 - Code completion and contextual insights for all the Xentu API.
+- Includes a sprite sheet designer with sprite preview, and animation playback.
 - Low memory footprint (on average uses about 60-70mb).
 - Game debugging, with a built-in console output window.
 

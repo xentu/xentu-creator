@@ -63,7 +63,7 @@
 		</Border>
 
 		<TabControl Grid.Row="1">
-			<TabItem Header="Animation Regions">
+			<TabItem Header="Sprite Regions">
 				<ScrollViewer Grid.Row="1" Background="Black" Margin="-12 -8 -12 0">
 					<Grid Margin="10">
 						<Image Name="ImagePreview" Width="256" Height="256" Stretch="None" Source="{Binding ImageFilePath}"
@@ -118,7 +118,7 @@
 				</Grid.ColumnDefinitions>
 
 
-				<HeaderedContentControl Grid.Column="0" Grid.RowSpan="2" Margin="8 0 8 3" Header="Animations" Background="Black">
+				<HeaderedContentControl Grid.Column="0" Grid.RowSpan="2" Margin="8 0 8 3" Header="Sprite Groups" Background="Black">
 					<Grid Margin="8 12 8 8">
 						<Grid.RowDefinitions>
 							<RowDefinition />
