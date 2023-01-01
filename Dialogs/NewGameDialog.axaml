@@ -38,7 +38,7 @@
 				<WrapPanel>
 					<RadioButton GroupName="Lang" Content="JavaScript" IsChecked="{Binding Path=Language, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static helpers:GameCodeLanguage.JavaScript}, Mode=TwoWay}" />
 					<RadioButton GroupName="Lang" Content="Lua" IsChecked="{Binding Path=Language, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static helpers:GameCodeLanguage.Lua}, Mode=TwoWay}" />
-					<!-- RadioButton GroupName="Lang" Content="Python" IsEnabled="False" / -->
+					<RadioButton GroupName="Lang" Content="Python" IsChecked="{Binding Path=Language, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static helpers:GameCodeLanguage.Python}, Mode=TwoWay}" />
 				</WrapPanel>
 			</DockPanel>
 

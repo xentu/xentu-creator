@@ -188,19 +188,6 @@
 								<CheckBox Name="CbFlipY" IsChecked="{Binding FlipY}" Margin="0 0 8 0">Flip Y</CheckBox>
 							</WrapPanel>
 						</Grid>
-						<Grid Margin="0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="100" />
-								<ColumnDefinition />
-							</Grid.ColumnDefinitions>
-							<TextBlock Classes="Label" Padding="5 0 0 0">Rotate</TextBlock>
-							<WrapPanel Grid.Column="1">
-								<RadioButton Name="CbRot0" IsChecked="{Binding Rot0}" Checked="Rotation_Checked" Margin="0 0 8 8">0</RadioButton>
-								<RadioButton Name="CbRot90" IsChecked="{Binding Rot90}" Checked="Rotation_Checked" Margin="0 0 8 8">90</RadioButton>
-								<RadioButton Name="CbRot180" IsChecked="{Binding Rot180}" Checked="Rotation_Checked" Margin="0 0 8 8">180</RadioButton>
-								<RadioButton Name="CbRot270" IsChecked="{Binding Rot270}" Checked="Rotation_Checked" Margin="0 0 8 8">270</RadioButton>
-							</WrapPanel>
-						</Grid>
 					</StackPanel>
 				</HeaderedContentControl>
 

@@ -64,6 +64,7 @@ namespace XentuCreator.Classes
             {
                 FileInfo info = new(name);
                 Language = registry.GetLanguageByExtension(info.Extension);
+                if (info.Extension == ".frag" || info.Extension == ".vert") Language = registry.GetLanguageByExtension(".hlsl");
                 if (Language == null) Language = registry.GetLanguageByExtension(".md");
                 LanguageScope = registry.GetScopeByLanguageId(Language.Id);
                 Document = new TextDocument(content);

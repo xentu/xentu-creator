@@ -15,9 +15,10 @@ namespace XentuCreator.Dialogs
         {
             new("Code File", ".js"),
             new("Code File", ".lua"),
+            new("Code File", ".py"),
             new("Sprite Sheet", ".xsf"),
-            new("Sprite Font", ".xff"),
-            new("Tiled TileMap", ".tmx"),
+            //new("Sprite Font", ".xff"),
+            //new("Tiled TileMap", ".tmx"),
             new("JSON File", ".json"),
             new("XML File", ".xml"),
             new("MarkDown File", ".md"),

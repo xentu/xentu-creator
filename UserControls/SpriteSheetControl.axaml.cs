@@ -151,18 +151,6 @@ namespace XentuCreator.UserControls
             }
             Model.TriggerFrameSelected();
         }
-
-
-        private void Rotation_Checked(object? sender, RoutedEventArgs e)
-        {
-            if (sender is RadioButton rb && int.TryParse(rb.Content?.ToString(), out int rotation))
-            {
-                if (frameGrid.DataContext is CreatorSpriteSheetFrame frame)
-                {
-                    frame.Rotation = rotation;
-                }
-            }
-        }
     }
 
 
@@ -465,10 +453,6 @@ namespace XentuCreator.UserControls
                     sd_canvas.ScaleTransform(s_x, s_y);
                     sd_canvas.DrawImage(_loadedRegionImage, sd_dest, sd_src, SD.GraphicsUnit.Pixel);
                 }
-
-                if (frame.Rotation == 90) sd_bmp.RotateFlip(SD.RotateFlipType.Rotate90FlipNone);
-                if (frame.Rotation == 180) sd_bmp.RotateFlip(SD.RotateFlipType.Rotate180FlipNone);
-                if (frame.Rotation == 270) sd_bmp.RotateFlip(SD.RotateFlipType.Rotate270FlipNone);
 
                 var sd_data = sd_bmp.LockBits(new SD.Rectangle(0, 0, dest_w, dest_h), SDI.ImageLockMode.ReadWrite, SDI.PixelFormat.Format32bppArgb);
                 Bitmap bitmap = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,

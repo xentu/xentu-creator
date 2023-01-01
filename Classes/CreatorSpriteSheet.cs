@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Styling;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -72,23 +70,12 @@ namespace XentuCreator.Classes
         [JsonProperty("flip_y")]
         public bool FlipY { get; set; }
 
-        [JsonProperty("rotate")]
-        public int Rotation { get; set; }
-
-
-
-        [JsonIgnore] public bool Rot90 { get => Rotation == 90; }
-        [JsonIgnore] public bool Rot180 { get => Rotation == 180; }
-        [JsonIgnore] public bool Rot270 { get => Rotation == 270; }
-        [JsonIgnore] public bool Rot0 { get => Rotation == 0; }
-
 
         public CreatorSpriteSheetFrame() { }
 
 
         public bool ShouldSerializeFlipX() => FlipX == true;
         public bool ShouldSerializeFlipY() => FlipY == true;
-        public bool ShouldSerializeRotation() => Rotation != 0;
 
 
         public bool GetCoords(out int x, out int y, out int w, out int h)
@@ -115,8 +102,7 @@ namespace XentuCreator.Classes
             FrameTime = this.FrameTime,
             Coords = this.Coords,
             FlipX = this.FlipX,
-            FlipY = this.FlipY,
-            Rotation = this.Rotation
+            FlipY = this.FlipY
         };
     }
 }

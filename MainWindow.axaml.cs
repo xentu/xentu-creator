@@ -34,7 +34,7 @@ namespace XentuCreator
     public partial class MainWindow : Window
     {
         // constants.
-        readonly string[] _editable_extensions = { ".js", ".json", ".lua", ".py", ".xml", ".txt", ".shader", ".xsf" };
+        readonly string[] _editable_extensions = { ".js", ".json", ".lua", ".py", ".xml", ".txt", ".vert", ".frag", ".xsf", ".md" };
         readonly ElementGenerator _generator = new();
         readonly TextMate.Installation _textMateInstallation;
         readonly RegistryOptions _registryOptions;

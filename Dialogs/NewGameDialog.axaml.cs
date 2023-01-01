@@ -3,8 +3,8 @@ using Avalonia.Interactivity;
 using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
-using XentuCreator.Helpers;
 using XentuCreator.Classes;
+using XentuCreator.Helpers;
 
 namespace XentuCreator.Dialogs
 {
@@ -49,6 +49,7 @@ namespace XentuCreator.Dialogs
 
             string ext = "js";
             if (_data.Language == GameCodeLanguage.Lua) ext = "lua";
+            if (_data.Language == GameCodeLanguage.Python) ext = "py";
             config.entry_point = $"/main.{ext}";
             config.viewport.width = _data.ViewportWidth;
             config.viewport.height = _data.ViewportHeight;

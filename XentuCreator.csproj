@@ -8,9 +8,9 @@
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationIcon>Assets\xentu-icon.ico</ApplicationIcon>
-    <FileVersion>0.0.2</FileVersion>
-    <AssemblyVersion>0.0.2</AssemblyVersion>
-    <Version>0.0.2</Version>
+    <FileVersion>0.0.4</FileVersion>
+    <AssemblyVersion>0.0.4</AssemblyVersion>
+    <Version>0.0.4</Version>
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
