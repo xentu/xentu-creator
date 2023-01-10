@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using AvaloniaEdit;
 using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
@@ -23,6 +24,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using TextMateSharp.Grammars;
 using XentuCreator.Classes;
 using XentuCreator.Dialogs;
@@ -69,6 +71,7 @@ namespace XentuCreator
         {
             InitializeComponent();
             _self = this;
+
             _ssPaneGrid = this.FindControl<Grid>("SsPaneGrid");
             _textEditor = this.FindControl<TextEditor>("Editor");
 
@@ -89,6 +92,15 @@ namespace XentuCreator
             _rootLabel = this.Find<TextBlock>("RootLabel");
             _textLog = this.Find<TerminalControl>("TextLog");
 
+            _textEditor.TextArea.TextView.DocumentChanged += async delegate (object? sender, EventArgs e)
+            {
+                await Task.Delay(10);
+                var tab = _mainView.SelectedTab;
+                if (tab?.TabType == CreatorTabType.Editor)
+                {
+                    ScrollTab(tab);
+                }
+            };
             _textEditor.Background = Brushes.Black;
             _textEditor.ShowLineNumbers = true;
             _textEditor.Options.ShowBoxForControlCharacters = true;
@@ -603,37 +615,48 @@ namespace XentuCreator
 
         #region Tab Events
 
-        private void TabSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private async void TabSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            CreatorTab? tab = e.AddedItems.Count > 0 ? e.AddedItems[0] as CreatorTab : null;
-            if (tab != null)
+            CreatorTab? lastTab = _mainView.SelectedTab;
+            if (lastTab?.TabType == CreatorTabType.Editor)
+            {
+                lastTab.ScrollTop = _textEditor.VerticalOffset;
+                lastTab.SelStart = _textEditor.SelectionStart;
+                lastTab.SelLength = _textEditor.SelectionLength;
+                lastTab.CaretOffset = _textEditor.CaretOffset;
+            }
+
+
+            CreatorTab? newTab = e.AddedItems.Count > 0 ? e.AddedItems[0] as CreatorTab : null;
+            _mainView.SelectedTab = newTab;
+            if (newTab != null)
             {
                 _textMateInstallation.SetGrammar(null);
                 _ssPaneGrid.Children.Clear();
                 //_textEditor.Document = null;
-                if (tab.TabType == CreatorTabType.Editor)
+                if (newTab.TabType == CreatorTabType.Editor)
                 {
-                    _textEditor.Document = tab.Document;
+                    _textEditor.Document = newTab.Document;
                     _textEditor.IsVisible = true;
-                    _textMateInstallation.SetGrammar(tab.LanguageScope);
+                    _textMateInstallation.SetGrammar(newTab.LanguageScope);
                     _welcomePane.IsVisible = false;
+
                     //_spriteSheetPane.IsVisible = false;
                 }
-                else if (tab.TabType == CreatorTabType.SpriteSheetEditor)
+                else if (newTab.TabType == CreatorTabType.SpriteSheetEditor)
                 {
                     _textEditor.IsVisible = false;
                     _welcomePane.IsVisible = false;
-                    _ssPaneGrid.Children.Add(tab.SpriteSheetPane);
+                    _ssPaneGrid.Children.Add(newTab.SpriteSheetPane);
                     //_spriteSheetPane.IsVisible = true;
                 }
-                else if (tab.TabType == CreatorTabType.Welcome)
+                else if (newTab.TabType == CreatorTabType.Welcome)
                 {
                     _textEditor.IsVisible = false;
                     _welcomePane.IsVisible = true;
                     //_spriteSheetPane.IsVisible = false;
                 }
             }
-            _mainView.SelectedTab = tab;
             _mainView.Trigger("CanSave");
             _mainView.Trigger("CanSaveAll");
 
@@ -644,6 +667,22 @@ namespace XentuCreator
                 _ssPaneGrid.Children.Clear();
             }
         }
+
+
+        private void ScrollTab(CreatorTab newTab)
+        {
+            //await Task.Delay(50);
+            var sv = _textEditor.FindDescendantOfType<ScrollViewer>();
+            sv.Offset = new Vector(0, newTab.ScrollTop);
+            if (newTab.CaretOffset > 0)
+            {
+                _textEditor.SelectionStart = newTab.SelStart;
+                _textEditor.SelectionLength = newTab.SelLength;
+                _textEditor.CaretOffset = newTab.CaretOffset;
+                _textEditor.Focus();
+            }
+        }
+
 
         private async void TabCloseClicked(object? sender, PointerReleasedEventArgs e)
         {

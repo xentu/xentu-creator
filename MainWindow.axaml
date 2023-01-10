@@ -201,6 +201,11 @@
 			</TabControl>
 		</Border>
 
+		<Button Name="ButtonPlay" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" 
+				Width="26" Height="26" Margin="2" Padding="0" Command="{Binding TriggerPlayRelease}">
+			<Image Source="/Assets/play.png" />
+		</Button>
+		
 		<Grid Name="MainPane" Grid.Row="3" Grid.Column="1">
 			<Grid.RowDefinitions>
 				<RowDefinition />
@@ -282,5 +287,6 @@
 				<ComboBoxItem Name="FF_UbuntuMonoBold" FontFamily="avares://XentuCreator/Assets/Fonts/UbuntuMono-Bold.ttf#Ubuntu Mono">Ubuntu Mono (Bold)</ComboBoxItem>
 			</ComboBox>
 		</StackPanel>
+
 	</Grid>
 </Window>

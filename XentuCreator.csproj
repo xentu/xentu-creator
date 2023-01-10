@@ -29,6 +29,7 @@
     <None Remove="Assets\Fonts\UbuntuMono-Bold.ttf" />
     <None Remove="Assets\Fonts\UbuntuMono-Regular.ttf" />
     <None Remove="Assets\Fonts\xc.ttf" />
+    <None Remove="Assets\play.png" />
     <None Remove="Assets\template_js.txt" />
     <None Remove="Assets\template_lua.txt" />
     <None Remove="Assets\xentu-icon.ico" />
@@ -49,6 +50,7 @@
     <AvaloniaResource Include="Assets\Fonts\UbuntuMono-Bold.ttf" />
     <AvaloniaResource Include="Assets\Fonts\UbuntuMono-Regular.ttf" />
     <AvaloniaResource Include="Assets\Fonts\xc.ttf" />
+    <AvaloniaResource Include="Assets\play.png" />
     <EmbeddedResource Include="Assets\template_js.txt" />
 	<EmbeddedResource Include="Assets\template_lua.txt" />
     <AvaloniaResource Include="Assets\xentu-logo.png" />
@@ -70,7 +72,7 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
     <PackageReference Include="AvaloniaEdit.TextMate" Version="0.10.12.2" />
     <PackageReference Include="AvaloniaEdit.TextMate.Grammars" Version="0.10.12" />
-    <PackageReference Include="XamlNameReferenceGenerator" Version="1.4.2" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
    </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

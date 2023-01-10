@@ -42,6 +42,13 @@ namespace XentuCreator.Classes
         public bool CloseButHidden { get; set; } = false;
         public bool IsWelcomeTab { get; set; } = false;
 
+        // track editor info.
+        public double ScrollTop { get; set; } = 0;
+        public int SelStart { get; set; } = 0;
+        public int SelLength { get; set; } = 0;
+        public int CaretOffset { get; set; } = 0;
+
+
         public bool HasChanged
         {
             get => _HasChanged;
