@@ -7,16 +7,6 @@ import AboutPage from './Pages/AboutPage';
 const container = document.getElementById('app');
 const root = createRoot(container!);
 
-declare global {
-	interface Window {
-	  api?: any;
-	}
-}
-
-window.api.onTriggerSave( () => {
-	console.log('save triggered');
-});
-
 root.render(
 	<HashRouter>
 		<Routes>

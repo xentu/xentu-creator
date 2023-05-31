@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on('pathChanged', (event, customData) => cb(customData));
     },
 
-    onTriggerSave: (cb: () => void) => {
-        ipcRenderer.on('triggerSave', (event) => cb());
+    onTriggerAction: (cb: (actionName: string) => void) => {
+        ipcRenderer.on('triggerAction', (event, actionName) => cb(actionName));
     }
 });

@@ -28,6 +28,8 @@ const menu = Menu.buildFromTemplate(
           label: 'New Game',
           accelerator: 'Ctrl+N',
           click: async () => {
+            const window = BrowserWindow.getAllWindows()[0];
+            window.webContents.send('triggerAction', 'new-game');
             console.log('debug settings clicked');
           }
         },
