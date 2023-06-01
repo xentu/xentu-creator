@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect, useRef, MouseEvent, Ref } from 'react';
 import FileExplorer from "../Components/FileExplorer";
 import TabCodeEditor from "../Components/TabCodeEditor";
 import TabItem from "../Components/TabItem";
@@ -24,11 +24,9 @@ export default function MainPage() {
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [tabs, setTabs] = useState([]);
 
-
 	// ########################################################################
 	// Event handlers (from back end).
 	// ########################################################################
-
 
 	useEffect(() => {
 		window.api.onTriggerAction((action:string) => {
@@ -90,7 +88,7 @@ export default function MainPage() {
 		setSelectedTabIndex(index);
 		console.log("setSelectedTab", index, tab);
 	};
-	
+
 
 	/**
 	 * Close a specific tab.
@@ -200,7 +198,7 @@ export default function MainPage() {
 			const tab = tabs[i];
 			if (tab == null) continue;
 			result.push(<TabCodeEditor key={"tabBody"+i}  filePath={tab.path} 
-												active={selectedTabIndex == i} 
+												active={selectedTabIndex == i}
 												labelChanged={(l: string) => setTabLabel(tab, l)}
 												dataChanged={() => handleDataChanged(tab)} 
 												/>);
