@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('api', {
     setTitle: (title: string) => ipcRenderer.send('set-title', title),
     listFiles: (scanPath: string) => ipcRenderer.invoke('list-files', scanPath),
     openFile: (filePath: string) => ipcRenderer.invoke('open-file', filePath),
+    saveFile: (filePath: string, data: string) => ipcRenderer.invoke('save-file', filePath, data),
 
     onPathChanged: (cb: (customData: string) => void) => {
         // Deliberately strip event as it includes `sender` (note: Not sure about that, I partly pasted it from somewhere)

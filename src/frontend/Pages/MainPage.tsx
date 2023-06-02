@@ -17,19 +17,23 @@ export default function MainPage() {
 	const [isTrackingMouse, setIsTrackingMouse] = useState(false);
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
+	const handleAction = useRef(null);
+
+	useEffect(() => {
+		window.api.onTriggerAction((action:string) => { handleAction.current(action); });
+	}, []);
 
 	// ########################################################################
 	// Event handlers (from back end).
 	// ########################################################################
 
-	useEffect(() => {
-		/* window.api.onTriggerAction((action:string) => {
-			console.log("Action triggered:", action);
-			if  (action == 'save') {
-				setActiveTabState(OpenTabState.Saving);
-			}
-		}); */
-	}, []);
+
+	handleAction.current = (action:string) => {
+		console.log("Action triggered:", action, tabs);
+		if (action == 'save' && tabs.length > 0) {
+			saveTab( findActiveTab() );
+		}
+	};
 
 
 	// ########################################################################
@@ -176,6 +180,26 @@ export default function MainPage() {
 			setSelectedTabIndex(tabs.length);
 			setTabs([...tabs, new OpenTab('loading...', filePath)]);
 		}
+	};
+
+	
+	/**
+	 * Save any changes on a sepcific tab.
+	 */
+	const saveTab = (tab: OpenTab) => {
+		const index = tabs.indexOf(tab);
+
+		const saveTabData = async(path:string, data:string) => {
+			const theJSON = await window.api.saveFile(path, data);
+			const theResponse = JSON.parse(theJSON);
+			console.log('SaveTabRes:', theResponse);
+		};
+		console.log("SaveTab:", tab);
+		saveTabData(tab.path, tab.data ?? '');
+
+		// update state.
+		tabs[index].changed = false;
+		setTabs([...tabs]);
 	};
 
 

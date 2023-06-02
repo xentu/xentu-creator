@@ -47,6 +47,7 @@ class XentuCreatorApp {
 		ipcMain.on('set-title', this.handleSetTitle);
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
+		ipcMain.handle('save-file', this.handleSaveFile);
 	}
 
 
@@ -124,6 +125,16 @@ class XentuCreatorApp {
 			path: filePath,
 			data: theData
 		});
+	}
+
+	async handleSaveFile(event:any, filePath: string, data:string) {
+		try {
+			await fs.outputFile(filePath, data, 'utf-8');
+			return JSON.stringify({	success: true,	message: 'Saved!'	});
+		}
+		catch (err) {
+			return JSON.stringify({ success: false, message: err });
+	 	}
 	}
 }
 
