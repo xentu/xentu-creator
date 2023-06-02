@@ -1,51 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import * as monaco from 'monaco-editor';
 import { Editor, loader } from '@monaco-editor/react';
+import { OpenTabState } from '../Classes/OpenTab';
 
 type TabCodeEditorProps = {
-	filePath:string, 
-	active?:boolean, 
+	filePath:string,
+	active: boolean,
 	labelChanged: Function, 
-	dataChanged: Function
- };
+	onSetData: Function
+};
 
- type TabCodeEditorState = {
+type TabCodeEditorState = {
 	data?: string; // like this
 	lang?: string;
- };
+};
 
-class TabCodeEditor extends React.Component<TabCodeEditorProps, TabCodeEditorState> {
-	state: TabCodeEditorState = {
-		data: "",
-		lang: "text"
-	};
-	doTest() {
-		console.log('test worked for', this.props.filePath);
-		//if (action == 'save' && active == true) {
-			//console.log("Save action triggered on tab:", filePath);
-			//doSave();
-		//}
-	}
-	componentDidMount() {
+
+export default function TabCodeEditor({ filePath, active, labelChanged, onSetData }: TabCodeEditorProps) {
+	const [data, setData] = useState('');
+	const [lang, setLang] = useState('text');
+
+	useEffect(() => {
 		const fetchData = async(thePath:string) => {
 			const theJSON = await window.api.openFile(thePath);
 			const theResponse = JSON.parse(theJSON);
-			this.setState({ 
-				lang: theResponse.lang,
-				data: theResponse.data
-			});
-			this.props.labelChanged(theResponse.label);
+			setLang(theResponse.lang);
+			setData(theResponse.data);
+			labelChanged(theResponse.label);
+			onSetData(theResponse.data, false);
 		};
-		fetchData(this.props.filePath);
-	}
-	render() {
-		return (
-			<div style={{display: this.props.active == true ? 'initial' : 'none' }}>
-				<Editor height="100vh" language={this.state.lang} theme="my-dark" value={this.state.data} onChange={e => this.props.dataChanged()} />
-			</div>
-		);
-	}
+		fetchData(filePath);
+	}, []);
+
+	return (
+		<div style={{display: active == true ? 'initial' : 'none' }}>
+			<Editor height="100vh" language={lang} theme="my-dark" value={data} onChange={(newValue, e) => onSetData(newValue, true)} />
+		</div>
+	);
 }
-
-
-export default TabCodeEditor;

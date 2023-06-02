@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, MouseEvent, Ref } from 'react';
 import FileExplorer from "../Components/FileExplorer";
 import TabCodeEditor from "../Components/TabCodeEditor";
 import TabItem from "../Components/TabItem";
+import OpenTab from "../Classes/OpenTab";
 
 
 declare global {
@@ -11,27 +12,23 @@ declare global {
 }
 
 
-type OpenTab = {
-	label?: string,
-	changed: boolean,
-	path: string
-};
-
-
 export default function MainPage() {
 	const [sidebarWidth, setSidebarWidth] = useState(240);
 	const [isTrackingMouse, setIsTrackingMouse] = useState(false);
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-	const [tabs, setTabs] = useState([]);
+	const [tabs, setTabs] = useState(new Array<OpenTab>());
 
 	// ########################################################################
 	// Event handlers (from back end).
 	// ########################################################################
 
 	useEffect(() => {
-		window.api.onTriggerAction((action:string) => {
+		/* window.api.onTriggerAction((action:string) => {
 			console.log("Action triggered:", action);
-		});
+			if  (action == 'save') {
+				setActiveTabState(OpenTabState.Saving);
+			}
+		}); */
 	}, []);
 
 
@@ -66,9 +63,13 @@ export default function MainPage() {
 	/**
 	 * Handle the data changing for a specific tab.
 	 * @param tab The tab where data changed.
+	 * @param newValue The new data being assigned for the tab.
+	 * @param changed Weather the data changed (false = just loaded).
 	 */
-	const handleDataChanged = (tab: any) : void => {
-		tab.changed = true;
+	const handleSetData = (tab: OpenTab, newVal: any, changed: boolean) : void => {
+		if (changed) tab.changed = true;
+		tab.data = newVal ?? null;
+		console.log("NewData:", tab);
 		const tabsCopy = [...tabs];
 		setTabs(tabsCopy);
 	};
@@ -86,7 +87,6 @@ export default function MainPage() {
 	const setSelectedTab = (tab: OpenTab) => {
 		const index = tabs.indexOf(tab);
 		setSelectedTabIndex(index);
-		console.log("setSelectedTab", index, tab);
 	};
 
 
@@ -97,7 +97,6 @@ export default function MainPage() {
 	 */
 	const closeTab = (tab: OpenTab) : boolean => {
 		const index = tabs.indexOf(tab);
-		console.log("Remove tab " + index);
 		if (confirm("Are you sure?")) {
 			tabs[index] = null;
 			// update the tabs.
@@ -141,6 +140,15 @@ export default function MainPage() {
 
 
 	/**
+	 * Get the currently active tab.
+	 * @returns 
+	 */
+	const findActiveTab = () : OpenTab|null => {
+		return tabs[selectedTabIndex];
+	};
+
+
+	/**
 	 * Find the first open tab.
 	 * @returns A tab or null.
 	 */
@@ -166,7 +174,7 @@ export default function MainPage() {
 				return;
 			}
 			setSelectedTabIndex(tabs.length);
-			setTabs([...tabs, { path: filePath, label: 'loading...' }]);
+			setTabs([...tabs, new OpenTab('loading...', filePath)]);
 		}
 	};
 
@@ -200,7 +208,7 @@ export default function MainPage() {
 			result.push(<TabCodeEditor key={"tabBody"+i}  filePath={tab.path} 
 												active={selectedTabIndex == i}
 												labelChanged={(l: string) => setTabLabel(tab, l)}
-												dataChanged={() => handleDataChanged(tab)} 
+												onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} 
 												/>);
 		}
 		return result;
