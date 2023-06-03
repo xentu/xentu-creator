@@ -4,6 +4,7 @@ import TabCodeEditor from "../Components/TabCodeEditor";
 import TabItem from "../Components/TabItem";
 import OpenTab from "../Classes/OpenTab";
 import * as monaco from 'monaco-editor';
+import WelcomePanel from '../Components/WelcomePanel';
 
 
 declare global {
@@ -32,6 +33,7 @@ window.findEditor = function(guid:string) {
 export default function MainPage() {
 	const [sidebarWidth, setSidebarWidth] = useState(240);
 	const [isTrackingMouse, setIsTrackingMouse] = useState(false);
+	const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
@@ -63,16 +65,25 @@ export default function MainPage() {
 
 
 	handleAction.current = (action:string) => {
-		if (tabs.length <= 0) return;
+		//console.log('handleAction', action);
 		// note: if actions ever stop working, make sure tabs has correct length.
+
 		switch (action) {
-			case 'save':
-				doSaveTab( findActiveTab() );
+			case 'hide-welcome':
+				setIsWelcomeVisible(false);
 				break;
-			case 'select-all':
-				doSelectAll();
-				break;
-		}		
+		}	
+
+		if (tabs.length > 0) {
+			switch (action) {
+				case 'save':
+					doSaveTab( findActiveTab() );
+					break;
+				case 'select-all':
+					doSelectAll();
+					break;
+			}
+		}
 	};
 
 
@@ -322,31 +333,34 @@ export default function MainPage() {
 
 
 	return (
-		<div className={isTrackingMouse ? 'columns is-tracking' : 'columns'} 
-			  onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
-			  onMouseLeave={e => setIsTrackingMouse(false)}>
+		<div>
+			<div className={isTrackingMouse ? 'columns is-tracking' : 'columns'} 
+				onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
+				onMouseLeave={e => setIsTrackingMouse(false)}>
 
-			<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px' }}>
-				<div className="column-head">
-					<strong>Xentu Sutori</strong>
+				<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px' }}>
+					<div className="column-head">
+						<strong>Xentu Sutori</strong>
+					</div>
+					<div className="column-body">
+						<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />
+					</div>
 				</div>
-				<div className="column-body">
-					<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />
-				</div>
-			</div>
 
-			<div id="splitter" onMouseDown={e => setIsTrackingMouse(true)} 
-									 onMouseUp={e => setIsTrackingMouse(false)} />
+				<div id="splitter" onMouseDown={e => setIsTrackingMouse(true)} 
+										onMouseUp={e => setIsTrackingMouse(false)} />
+			
+				<div id="main" className="column">
+					<div className="column-head tab-labels">
+						{renderTabLabels()}
+					</div>
+					<div className="column-body" data-count={tabs.length}>
+						{renderTabBodies()}
+					</div>
+				</div>
 		
-			<div id="main" className="column">
-				<div className="column-head tab-labels">
-					{renderTabLabels()}
-				</div>
-				<div className="column-body" data-count={tabs.length}>
-					{renderTabBodies()}
-				</div>
 			</div>
-	
+			<WelcomePanel visible={isWelcomeVisible} />
 		</div>
 	);
 }

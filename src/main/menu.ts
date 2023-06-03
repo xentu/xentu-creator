@@ -37,6 +37,7 @@ class XentuCreatorMenu {
                   if (result.canceled == false) {
                     const selectedPath = result.filePaths[0];
                     window.webContents.send('pathChanged', selectedPath);
+                    this.triggerAction('hide-welcome');
                   }
                 }).catch(err => { console.log(err) });
               }
