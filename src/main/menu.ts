@@ -77,7 +77,8 @@ class XentuCreatorMenu {
             ] : [
               { role: 'delete' },
               { type: 'separator' },
-              { role: 'selectAll' }
+              /* { role: 'selectAll' } */
+              { label: 'Select All', accelerator: 'Ctrl+A', click: async() => this.triggerAction('select-all') }
             ]) as MenuItemConstructorOptions[]
           ]
         },

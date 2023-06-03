@@ -105,6 +105,7 @@ class XentuCreatorApp {
 		});
 	}
 
+
 	async handleOpenFile(event:any, filePath: string) {
 		const theData = await fs.readFile(filePath, 'utf-8');
 		const ext = filePath.split('.').pop();
@@ -127,6 +128,7 @@ class XentuCreatorApp {
 		});
 	}
 
+	
 	async handleSaveFile(event:any, filePath: string, data:string) {
 		try {
 			await fs.outputFile(filePath, data, 'utf-8');

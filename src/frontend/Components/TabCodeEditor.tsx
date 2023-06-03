@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import * as monaco from 'monaco-editor';
 import { Editor, loader } from '@monaco-editor/react';
-import { OpenTabState } from '../Classes/OpenTab';
 
 type TabCodeEditorProps = {
+	guid: string,
 	filePath:string,
 	active: boolean,
 	labelChanged: Function, 
@@ -16,7 +16,7 @@ type TabCodeEditorState = {
 };
 
 
-export default function TabCodeEditor({ filePath, active, labelChanged, onSetData }: TabCodeEditorProps) {
+export default function TabCodeEditor({ guid, filePath, active, labelChanged, onSetData }: TabCodeEditorProps) {
 	const [data, setData] = useState('');
 	const [lang, setLang] = useState('text');
 
@@ -34,7 +34,7 @@ export default function TabCodeEditor({ filePath, active, labelChanged, onSetDat
 
 	return (
 		<div style={{display: active == true ? 'initial' : 'none' }}>
-			<Editor height="100vh" language={lang} theme="my-dark" value={data} onChange={(newValue, e) => onSetData(newValue, true)} />
+			<Editor className={`monaco-${guid}`} height="100vh" language={lang} theme="my-dark" value={data} onChange={(newValue, e) => onSetData(newValue, true)} />
 		</div>
 	);
 }
