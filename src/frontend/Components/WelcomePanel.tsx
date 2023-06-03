@@ -5,6 +5,12 @@ type WelcomePanelProps = {
 	visible: boolean
 }
 
+declare global {
+	interface Window {
+	  api?: any;
+	}
+}
+
 export default function WelcomePanel({ visible }: WelcomePanelProps) {
 	const c_visible = visible ? '' : 'hidden';
 	return (
@@ -19,7 +25,7 @@ export default function WelcomePanel({ visible }: WelcomePanelProps) {
 					</div>
 					<div className="buttons">
 						<a className="button">New Game</a>
-						<a className="button">Open Project...</a>
+						<a className="button" onClick={() => window.api.openFolder()}>Open Project...</a>
 					</div>
 				</div>
 			</div>

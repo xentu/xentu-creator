@@ -37,11 +37,18 @@ export default function MainPage() {
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
+	const [projectTitle, setProjectTitle] = useState('Untitled');
 	const handleAction = useRef(null);
 
 	
 	useEffect(() => {
 		window.api.onTriggerAction((action:string) => { handleAction.current(action); });
+
+		window.api.onProjectTitleChanged((newTitle:string) => {
+			setProjectTitle(newTitle);
+			console.log("Title", newTitle);
+		});
+
 	}, []);
 
 
@@ -340,7 +347,7 @@ export default function MainPage() {
 
 				<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px' }}>
 					<div className="column-head">
-						<strong>Xentu Sutori</strong>
+						<strong>{projectTitle}</strong>
 					</div>
 					<div className="column-body">
 						<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />

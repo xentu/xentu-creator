@@ -9,12 +9,19 @@ contextBridge.exposeInMainWorld('api', {
     setTitle: (title: string) => ipcRenderer.send('set-title', title),
     listFiles: (scanPath: string) => ipcRenderer.invoke('list-files', scanPath),
     openFile: (filePath: string) => ipcRenderer.invoke('open-file', filePath),
+    openFolder: () => ipcRenderer.invoke('open-folder'),
     saveFile: (filePath: string, data: string) => ipcRenderer.invoke('save-file', filePath, data),
 
-    onPathChanged: (cb: (customData: string) => void) => {
+    onProjectPathChanged: (cb: (customData: string) => void) => {
         // Deliberately strip event as it includes `sender` (note: Not sure about that, I partly pasted it from somewhere)
         // Note: The first argument is always event, but you can have as many arguments as you like, one is enough for me.
-        ipcRenderer.on('pathChanged', (event, customData) => cb(customData));
+        ipcRenderer.on('projectPathChanged', (event, customData) => cb(customData));
+    },
+
+    onProjectTitleChanged: (cb: (customData: string) => void) => {
+        // Deliberately strip event as it includes `sender` (note: Not sure about that, I partly pasted it from somewhere)
+        // Note: The first argument is always event, but you can have as many arguments as you like, one is enough for me.
+        ipcRenderer.on('projectTitleChanged', (event, customData) => cb(customData));
     },
 
     onTriggerAction: (cb: (actionName: string) => void) => {

@@ -1,5 +1,5 @@
-import { app, BrowserWindow, Menu, ipcMain } from 'electron';
-import AppEventBridge from '../classes/AppEventBridge';
+import { app, BrowserWindow, Menu, dialog, ipcMain } from 'electron';
+import XentuProject from './classes/XentuProject';
 import XentuCreatorMenu from './menu';
 const path = require( 'path' );
 const fs = require( 'fs-extra' );
@@ -19,16 +19,14 @@ if (require('electron-squirrel-startup')) {
 
 class XentuCreatorApp {
 	mainMenu: XentuCreatorMenu;
-	eventsForMainWindow: AppEventBridge;
-	eventsForActiveTab: AppEventBridge;
+	project: XentuProject;
 	t: number = 55;
 
 
 	constructor() {
 		// setup variables.
-		this.eventsForMainWindow = new AppEventBridge();
-		this.eventsForActiveTab = new AppEventBridge();
 		this.mainMenu = new XentuCreatorMenu(this);
+		this.project = null;
 
 		// hook window events.
 		app.on('ready', this.createWindow);
@@ -47,6 +45,7 @@ class XentuCreatorApp {
 		ipcMain.on('set-title', this.handleSetTitle);
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
+		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
 	}
 
@@ -128,6 +127,33 @@ class XentuCreatorApp {
 		});
 	}
 
+
+	async handleOpenFolder(event:any) {
+		const window = BrowserWindow.getAllWindows()[0];
+
+		const dlgResult = await dialog.showOpenDialog(window, { properties: ['openDirectory'] });
+		if (dlgResult.canceled == false) {
+			// read the selected path.
+			const selectedPath = dlgResult.filePaths[0];
+			// read the project file if one exists.
+			const projectFile = path.join(selectedPath, 'game.json');
+			const projectFileExists = await fs.pathExists(projectFile);
+
+			if (projectFileExists) {
+				this.project = await XentuProject.Load(projectFile);
+			}
+			else {
+				this.project = new XentuProject();
+			}
+
+			console.log("Entry Point: " + this.project.entry_point);
+			this.project.path = selectedPath;
+			window.webContents.send('projectPathChanged', selectedPath);
+			window.webContents.send('projectTitleChanged', this.project.title);
+			window.webContents.send('triggerAction', 'hide-welcome');
+		}
+	}
+
 	
 	async handleSaveFile(event:any, filePath: string, data:string) {
 		try {
@@ -137,6 +163,12 @@ class XentuCreatorApp {
 		catch (err) {
 			return JSON.stringify({ success: false, message: err });
 	 	}
+	}
+
+
+	triggerAction(action: string) {
+		const window = BrowserWindow.getAllWindows()[0];
+		window.webContents.send('triggerAction', action);
 	}
 }
 

@@ -1,5 +1,5 @@
 //const { app, Menu, MenuItemConstructorOptions, shell } = require('electron')
-import { app, BrowserWindow, Menu, MenuItemConstructorOptions, dialog, shell } from "electron";
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions, shell } from "electron";
 
 const isMac = process.platform === 'darwin';
 
@@ -30,28 +30,18 @@ class XentuCreatorMenu {
         {
           label: '&File',
           submenu: [
-            { label: 'New Game', accelerator: 'Ctrl+N', click: async () => this.triggerAction('new-game') },
-            { label: 'Open Project...', accelerator: 'Ctrl+O', click: async () => {
-                const window = BrowserWindow.getAllWindows()[0];
-                dialog.showOpenDialog(window, { properties: ['openDirectory'] }).then(result => {
-                  if (result.canceled == false) {
-                    const selectedPath = result.filePaths[0];
-                    window.webContents.send('pathChanged', selectedPath);
-                    this.triggerAction('hide-welcome');
-                  }
-                }).catch(err => { console.log(err) });
-              }
-            },
+            { label: 'New Game', accelerator: 'Ctrl+N', click: async () => this.Owner.triggerAction('new-game') },
+            { label: 'Open Project...', accelerator: 'Ctrl+O', click: async () => this.Owner.handleOpenFolder() },
             { type: 'separator' },
-            { label: 'Close Project', id: 'MenuFileClose', click: async () => this.triggerAction('close-project') },
+            { label: 'Close Project', id: 'MenuFileClose', click: async () => this.Owner.triggerAction('close-project') },
             { type: 'separator' },
-            { label: 'Save', id: 'MenuFileSave', accelerator: 'Ctrl+S', click: async () => this.triggerAction('save') },
-            { label: 'Save As...', id: 'MenuFileSaveAs', accelerator: 'Ctrl+Shift+A', click: async () => this.triggerAction('save-as') },
-            { label: 'Save All', id: 'MenuFileSaveAll', accelerator: 'Ctrl+Shift+S', click: async () => this.triggerAction('save-all') },
+            { label: 'Save', id: 'MenuFileSave', accelerator: 'Ctrl+S', click: async () => this.Owner.triggerAction('save') },
+            { label: 'Save As...', id: 'MenuFileSaveAs', accelerator: 'Ctrl+Shift+A', click: async () => this.Owner.triggerAction('save-as') },
+            { label: 'Save All', id: 'MenuFileSaveAll', accelerator: 'Ctrl+Shift+S', click: async () => this.Owner.triggerAction('save-all') },
             { type: 'separator' },
-            { label: 'Game Properties', id: 'MenuFileProperties', click: async () => this.triggerAction('game-properties') },
-            { label: 'Reveal In Explorer', id: 'MenuFileReveal', click: async () => this.triggerAction('reveal-in-explorer') },
-            { label: 'Export...', id: 'MenuFileExport', click: async () => this.triggerAction('export-game') },
+            { label: 'Game Properties', id: 'MenuFileProperties', click: async () => this.Owner.triggerAction('game-properties') },
+            { label: 'Reveal In Explorer', id: 'MenuFileReveal', click: async () => this.Owner.triggerAction('reveal-in-explorer') },
+            { label: 'Export...', id: 'MenuFileExport', click: async () => this.Owner.triggerAction('export-game') },
             { type: 'separator' },
             isMac ? { role: 'close' } : { role: 'quit' }
           ] as MenuItemConstructorOptions[]
@@ -79,15 +69,15 @@ class XentuCreatorMenu {
               { role: 'delete' },
               { type: 'separator' },
               /* { role: 'selectAll' } */
-              { label: 'Select All', accelerator: 'Ctrl+A', click: async() => this.triggerAction('select-all') }
+              { label: 'Select All', accelerator: 'Ctrl+A', click: async() => this.Owner.triggerAction('select-all') }
             ]) as MenuItemConstructorOptions[]
           ]
         },
         {
           label: '&Run', id: 'MenuRun',
           submenu: [
-            { label: 'Start Debugging', accelerator: 'F5', click: async () => this.triggerAction('start-debug') },
-            { label: 'Run Without Debugging', accelerator: 'F6', click: async () => this.triggerAction('start-without-debug') }
+            { label: 'Start Debugging', accelerator: 'F5', click: async () => this.Owner.triggerAction('start-debug') },
+            { label: 'Run Without Debugging', accelerator: 'F6', click: async () => this.Owner.triggerAction('start-without-debug') }
           ]
         },
         {
@@ -110,8 +100,8 @@ class XentuCreatorMenu {
         {
           label: '&Tools', id: 'MenuTools',
           submenu: [
-            { label: 'Options', accelerator: 'F8', click: async () => this.triggerAction('options') },
-            { label: 'Clear Console', click: async () => this.triggerAction('clear-console') }
+            { label: 'Options', accelerator: 'F8', click: async () => this.Owner.triggerAction('options') },
+            { label: 'Clear Console', click: async () => this.Owner.triggerAction('clear-console') }
           ]
         },
         // { role: 'windowMenu' }
@@ -126,13 +116,6 @@ class XentuCreatorMenu {
     )
   
     Menu.setApplicationMenu(this.TheMenu);
-  }
-
-
-  private triggerAction(action: string) {
-    const window = BrowserWindow.getAllWindows()[0];
-    window.webContents.send('triggerAction', action);
-    //console.log('triggerAction' + action);
   }
 
 

@@ -25,7 +25,7 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen }: FileExp
 		};
 		//fetchFiles(path).catch(console.error);
 
-		window.api.onPathChanged((newPath:string) => {
+		window.api.onProjectPathChanged((newPath:string) => {
 			console.log("Window", newPath);
 			fetchFiles(newPath).catch(console.error);
 			setActivePath(newPath);
