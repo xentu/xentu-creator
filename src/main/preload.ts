@@ -24,7 +24,7 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on('projectTitleChanged', (event, customData) => cb(customData));
     },
 
-    onTriggerAction: (cb: (actionName: string) => void) => {
-        ipcRenderer.on('triggerAction', (event, actionName) => cb(actionName));
+    onTriggerAction: (cb: (actionName: string, data:string) => void) => {
+        ipcRenderer.on('triggerAction', (event, actionName, data) => cb(actionName, data));
     }
 });

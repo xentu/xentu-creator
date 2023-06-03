@@ -42,7 +42,7 @@ export default function MainPage() {
 
 	
 	useEffect(() => {
-		window.api.onTriggerAction((action:string) => { handleAction.current(action); });
+		window.api.onTriggerAction((action:string, data:string) => { handleAction.current(action, data); });
 
 		window.api.onProjectTitleChanged((newTitle:string) => {
 			setProjectTitle(newTitle);
@@ -71,7 +71,7 @@ export default function MainPage() {
 	// ########################################################################
 
 
-	handleAction.current = (action:string) => {
+	handleAction.current = (action:string, data?:string) => {
 		//console.log('handleAction', action);
 		// note: if actions ever stop working, make sure tabs has correct length.
 
@@ -88,6 +88,13 @@ export default function MainPage() {
 					break;
 				case 'select-all':
 					doSelectAll();
+					break;
+				case 'file-created':
+				case 'file-changed':
+				case 'file-removed':
+				case 'dir-created':
+				case 'dir-removed':
+					console.log(`Action ${action} for ${data}`);
 					break;
 			}
 		}
