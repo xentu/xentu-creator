@@ -100,7 +100,7 @@ class XentuCreatorMenu {
         {
           label: '&Tools', id: 'MenuTools',
           submenu: [
-            { label: 'Options', accelerator: 'F8', click: async () => this.Owner.triggerAction('options') },
+            { label: 'Options', accelerator: 'F8', click: async () => this.Owner.triggerAction('show-settings') },
             { label: 'Clear Console', click: async () => this.Owner.triggerAction('clear-console') }
           ]
         },

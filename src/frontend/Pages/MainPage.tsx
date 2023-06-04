@@ -6,6 +6,8 @@ import OpenTab from "../Classes/OpenTab";
 import * as monaco from 'monaco-editor';
 import WelcomePanel from '../Components/WelcomePanel';
 
+import DialogContainer from "../Components/DialogContainer";
+import SettingsDialog from '../Dialogs/Settings';
 
 declare global {
 	interface Window {
@@ -38,6 +40,7 @@ export default function MainPage() {
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
 	const [projectTitle, setProjectTitle] = useState('Untitled');
+	const [dialog, setDialog] = useState('');
 	const handleAction = useRef(null);
 
 	
@@ -76,6 +79,9 @@ export default function MainPage() {
 		// note: if actions ever stop working, make sure tabs has correct length.
 
 		switch (action) {
+			case 'show-settings':
+				setDialog('settings');
+				break;
 			case 'hide-welcome':
 				setIsWelcomeVisible(false);
 				break;
@@ -346,6 +352,15 @@ export default function MainPage() {
 	};
 
 
+	const renderDialog = () => {
+		const result = [];
+		switch (dialog) {
+			case 'settings': result.push(<SettingsDialog />); break;
+		}
+		return result;
+	};
+
+
 	return (
 		<div>
 			<div className={isTrackingMouse ? 'columns is-tracking' : 'columns'} 
@@ -374,7 +389,12 @@ export default function MainPage() {
 				</div>
 		
 			</div>
+
 			<WelcomePanel visible={isWelcomeVisible} />
+			
+			<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
+				{renderDialog()}
+			</DialogContainer>
 		</div>
 	);
 }
