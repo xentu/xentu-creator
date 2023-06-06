@@ -6,7 +6,7 @@ type DialogContainerProps = {
 }
 
 export default function DialogContainer(props:PropsWithChildren<DialogContainerProps>) {
-	const c_visible = props.visible ? '' : 'hidden';
+	const c_visible = props.visible ? '' : 'is-hidden';
 	return (
 		<div className={`dialog-container ${c_visible}`}>
 			<div className={'dialog'}>

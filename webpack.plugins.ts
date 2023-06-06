@@ -16,11 +16,11 @@ export const plugins = [
 	new CopyPlugin({
 		patterns: [
 			{
-				from: path.resolve(__dirname, 'resources', 'images'),
+				from: path.resolve(__dirname, 'src/frontend/resources', 'images'),
 				to: path.resolve(__dirname, '.webpack/renderer', 'images')
 			},
 			{
-				from: path.resolve(__dirname, 'resources', 'css'),
+				from: path.resolve(__dirname, 'src/frontend/resources', 'css'),
 				to: path.resolve(__dirname, '.webpack/renderer', 'css')
 			}
 		]

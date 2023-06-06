@@ -52,6 +52,11 @@ export default function MainPage() {
 			console.log("Title", newTitle);
 		});
 
+		window.api.getAccentColor().then((accentColor:string) => {
+			console.log('ac', accentColor);
+			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
+		});		
+
 	}, []);
 
 
@@ -355,7 +360,7 @@ export default function MainPage() {
 	const renderDialog = () => {
 		const result = [];
 		switch (dialog) {
-			case 'settings': result.push(<SettingsDialog />); break;
+			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} />); break;
 		}
 		return result;
 	};

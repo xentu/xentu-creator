@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, Menu, dialog, ipcMain, systemPreferences } from 'electron';
 import XentuProject from './classes/XentuProject';
 import XentuCreatorMenu from './menu';
 
@@ -50,6 +50,7 @@ class XentuCreatorApp {
 		ipcMain.handle('open-file', this.handleOpenFile);
 		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
+		ipcMain.handle('get-accent-color', this.handleGetAccentColor);
 	}
 
 
@@ -71,11 +72,17 @@ class XentuCreatorApp {
 				preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
 			},
 		});
-	
+
+		/* mainWindow.once('page-title-updated', () => {
+			const window = BrowserWindow.getAllWindows()[0];
+			window.webContents.send('triggerAction', 'theme-color', systemPreferences.getAccentColor());
+		}); */
+		
 		// and load the index.html of the app.
 		mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+
 		//setMenuDisabled(true);
-		//mainWindow.webContents.openDevTools();
+		mainWindow.webContents.openDevTools();
 	}
 
 
@@ -91,7 +98,7 @@ class XentuCreatorApp {
 	}
 
 
-	handleListFiles(event:any, scanPath: string): void {
+	handleListFiles(event:any, scanPath: string) {
 		const files = fs.readdirSync( scanPath );
 		return files.map( (filename:String) => {
 			  const filePath = path.resolve( scanPath, filename );
@@ -107,6 +114,9 @@ class XentuCreatorApp {
 		});
 	}
 
+	handleGetAccentColor() {
+		return systemPreferences.getAccentColor();
+	}
 
 	async handleOpenFile(event:any, filePath: string) {
 		const theData = await fs.readFile(filePath, 'utf-8');
@@ -184,13 +194,13 @@ class XentuCreatorApp {
 		window.webContents.send('triggerAction', action, data);
 	}
 
+
 	triggerFileAction(action:string, data:string = null) {
 		const window = BrowserWindow.getAllWindows()[0];
 		window.webContents.send('projectPathChanged', this.project.path);
 		window.webContents.send('triggerAction', action, data);
 	}
-	
 }
 
 
-new XentuCreatorApp();
+const myCreator = new XentuCreatorApp();

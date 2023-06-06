@@ -12,7 +12,7 @@ declare global {
 }
 
 export default function WelcomePanel({ visible }: WelcomePanelProps) {
-	const c_visible = visible ? '' : 'hidden';
+	const c_visible = visible ? '' : 'is-hidden';
 	return (
 		<div className={`welcome-panel columns ${c_visible}`}>
 
