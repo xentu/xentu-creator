@@ -165,7 +165,7 @@ html, body, #app, #app > div {
 	position: absolute;
    top: 0;
    z-index: 100;
-   background: #202020b3;
+   background: #0000006b;
    width: 100%;
    height: 100%;
 	display: flex;
@@ -181,7 +181,8 @@ html, body, #app, #app > div {
 	flex: 1;
 	position: relative;
 	max-width: 900px;
-   margin: auto;
+	max-height: 100vh;
+	margin: auto;
 }
 .dialog-close {
 	position: absolute;
@@ -202,12 +203,62 @@ html, body, #app, #app > div {
 
 
 
-.settings-dialog { display: flex; height: 100%; }
-.settings-sidebar { flex-basis: 200px; background-color: #3c3c3c; border-radius: 3px 0 0 3px; }
+.settings-dialog {display: flex;max-height: 400px;height: 100vh;}
+.settings-sidebar { flex-basis: 200px; background-color: #3c3c3c; border-radius: 3px 0 0 3px; padding-top: 10px; }
 .settings-sidebar > div { padding:10px; }
-.settings-sidebar > div h2 { font-size: 14px; font-weight: 600; padding: 5px; opacity: 0.6; }
+.settings-sidebar > div h2 { font-size: 15px; font-weight: 500; padding: 5px; opacity: 0.8; }
 .settings-sidebar > div li {padding: 7px 8px; color: #fff; cursor: pointer;  border-radius: 3px; margin-bottom:2px; }
 .settings-sidebar > div li:hover { background:#464646; }
 .settings-sidebar > div li.is-active {background-color: var(--accent); }
 .settings-main { overflow-y: scroll; width: 100%; }
 .settings-page { padding: 20px; }
+.settings-page h2 { font-size: 26px; margin: 5px 0 20px; }
+
+
+.setting { display: flex; max-width:calc(100% - 20px); border-top: 1px solid #444; padding: 20px 0; }
+.setting-left { flex: 1 0; }
+.setting-left div {font-weight: 500; font-size: 15px; margin-bottom: 5px;}
+.setting-left small { opacity: 0.6; }
+
+
+.setting-right select {
+	padding: 5px;
+	min-width: 160px;
+	border-radius: 5px;
+   border-color: #444;
+}
+
+.setting-right input[type='text'],
+.setting-right input[type='number'] {
+	min-width: 160px;
+	border-radius: 5px;
+	box-shadow: none;
+	border: 1px solid #444;
+	padding: 6px 8px;
+}
+
+
+.toggle-button {
+	display: block;
+	position: relative;
+	background: var(--accent);
+	width: 38px;
+	height: 24px;
+	border-radius: 12px;
+}
+.toggle-button:before {
+	content: '';
+	display: block;
+	width: 20px; height: 20px;
+	border-radius: 12px;
+	background: #fff;
+	position: absolute;
+	top: 2px; left: 2px;
+	transition: left 200ms;
+}
+.toggle-button.is-toggled:before {
+	left: 16px;
+	transition: left 200ms;
+}
+
+
