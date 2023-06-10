@@ -33,7 +33,7 @@ export default function TabCodeEditor({ guid, filePath, active, labelChanged, on
 
 	return (
 		<div style={{display: active == true ? 'initial' : 'none' }}>
-			<Editor className={`monaco-${guid}`} height="100vh" language={lang} theme="my-dark" value={data} onChange={(newValue, e) => onSetData(newValue, true)} />
+			<Editor className={`monaco-${guid}`} language={lang} theme="my-dark" value={data} onChange={(newValue, e) => onSetData(newValue, true)} />
 		</div>
 	);
 }

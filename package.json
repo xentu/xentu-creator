@@ -52,6 +52,7 @@
 		"react-dom": "^18.2.0",
 		"react-router-dom": "^6.8.1",
 		"sqlite-async": "^1.2.0",
-		"sqlite3": "^5.1.4"
+		"sqlite3": "^5.1.4",
+		"xterm-for-react": "^1.0.4"
 	}
 }

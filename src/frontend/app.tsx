@@ -8,6 +8,7 @@ import WelcomePanel from './Components/WelcomePanel';
 import OpenTab from "./Classes/OpenTab";
 import SettingsDialog from './Dialogs/SettingsDialog';
 import { SettingsContext } from './Context/SettingsManager';
+import { XTerm } from 'xterm-for-react';
 require('./windowFuncs');
 
 
@@ -25,7 +26,8 @@ const root = createRoot(container!);
 
 function App() {
 	const [sidebarWidth, setSidebarWidth] = useState(240);
-	const [isTrackingMouse, setIsTrackingMouse] = useState(false);
+	const [consoleHeight, setConsoleHeight] = useState(150);
+	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
 	const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
@@ -33,7 +35,9 @@ function App() {
 	const [projectTitle, setProjectTitle] = useState('Untitled');
 	const [settings, setSettings] = useState({});
 	const [dialog, setDialog] = useState('');
+	const [xtermCommand, setXtermCommand] = useState('');
 	const handleAction = useRef(null);
+	const xtermRef = useRef(null);
 
 
 	// ########################################################################
@@ -52,6 +56,40 @@ function App() {
 		window.api.getSettings().then((foundSettings:any) => {
 			setSettings(foundSettings);
 		});
+		window.onresize = () => { handleAction.current('resize', ''); }
+
+		xtermRef.current.terminal.writeln("Hello, World!");
+		xtermRef.current.terminal.write("$ ");
+
+		xtermRef.current.terminal.onData( (e:any) => {
+			const term = xtermRef.current.terminal;
+			switch (e) {
+				case '\u0003': // Ctrl+C
+					//xtermRef.current.terminal.write('^C');
+					//prompt(term);
+					break;
+				case '\r': // Enter
+					//runCommand(term, command);
+				 	setXtermCommand('');
+					term.write("\r\n$ ");
+					break;
+				case '\u007F': // Backspace (DEL)
+					// Do not delete the prompt
+					if (term._core.buffer.x > 2) {
+						term.write('\b \b');
+					if (xtermCommand.length > 0) {
+						setXtermCommand(xtermCommand.substring(0, xtermCommand.length - 1));
+					}
+				 }
+				 break;
+			  default: // Print all other characters for demo
+				 if (e >= String.fromCharCode(0x20) && e <= String.fromCharCode(0x7E) || e >= '\u00a0') {
+					setXtermCommand(xtermCommand + e);
+					term.write(e);
+				 }
+			}
+		 });
+
 	}, []);
 
 
@@ -78,7 +116,7 @@ function App() {
 	 * 
 	 */
 	handleAction.current = (action:string, data?:string) => {
-		//console.log('handleAction', action);
+		console.log('handleAction', action);
 		// note: if actions ever stop working, make sure tabs has correct length.
 
 		switch (action) {
@@ -105,6 +143,13 @@ function App() {
 				case 'dir-removed':
 					console.log(`Action ${action} for ${data}`);
 					break;
+				case 'resize':
+					const tab = findActiveTab();
+					if (tab && tab.guid) {
+						const editor = window.findEditor(tab.guid);
+						editor.layout({  });
+					}
+					break;
 			}
 		}
 	};
@@ -119,8 +164,14 @@ function App() {
 	 * Handles the mouse moving.
 	 */
 	const handleMouseMove = (x: any, y: any) => {
-		if (isTrackingMouse) {
-			setSidebarWidth(x + 2);
+		switch (isTrackingMouse) {
+			case 'splitter':
+				setSidebarWidth(x + 2);
+				break;
+			case 'splitter2':
+				const h = document.getElementById('main').clientHeight;
+				setConsoleHeight(h - y - 5);
+				break;
 		}
 	};
 
@@ -373,9 +424,10 @@ function App() {
 	return (
 		<div>
 			<SettingsContext.Provider value={settings}>
-				<div className={isTrackingMouse ? 'columns is-tracking' : 'columns'} 
+
+				<div className={isTrackingMouse != '' ? 'columns is-tracking' : 'columns'} 
 					onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
-					onMouseLeave={e => setIsTrackingMouse(false)}>
+					onMouseLeave={e => setIsTrackingMouse('')}>
 
 					<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px' }}>
 						<div className="column-head">
@@ -386,19 +438,33 @@ function App() {
 						</div>
 					</div>
 
-					<div id="splitter" onMouseDown={e => setIsTrackingMouse(true)} 
-											onMouseUp={e => setIsTrackingMouse(false)} />
+					<div id="splitter" onMouseDown={e => setIsTrackingMouse('splitter')} 
+											onMouseUp={e => setIsTrackingMouse('')} />
 				
 					<div id="main" className="column">
 						<div className="column-head tab-labels">
 							{renderTabLabels()}
 						</div>
 						<div className="column-body" data-count={tabs.length}>
-							{renderTabBodies()}
-						</div>
+							<div className="main-rows">
+								<div className="tab-bodies">
+									{renderTabBodies()}
+								</div>
+								<div id="splitter2" />
+								<div className="console-window" style={{flexBasis: consoleHeight + 'px' }}>
+									<XTerm ref={xtermRef} options={{ rows: 8 }} />
+								</div>
+							</div>
+						</div>						
 					</div>
-			
 				</div>
+
+
+				<div className={'status-bar'}>
+					Idle.
+				</div>
+
+
 
 				<WelcomePanel visible={isWelcomeVisible} />
 				
