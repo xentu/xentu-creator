@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import SettingBool from '../Components/SettingBoolean';
 import SettingCombo from '../Components/SettingCombo';
 import Dictionary from '../../main/classes/Dictionary';
@@ -34,11 +34,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 	}
 
 	const updateSetting = async (arr:any) => {
-		console.log('update setting ', arr);
-		const merged = {
-			...settings,
-			...arr
-		};
+		const merged = { ...settings, ...arr };
 		onSettingsChanged(merged);
 		await window.api.setSettings(merged);
 	};

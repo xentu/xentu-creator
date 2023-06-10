@@ -1,5 +1,4 @@
-import React, { useState, CSSProperties } from 'react';
-import Dictionary from '../../main/classes/Dictionary';
+import React, { CSSProperties } from 'react';
 
 type SettingInputProps = {
 	title: string,

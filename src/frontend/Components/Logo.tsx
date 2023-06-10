@@ -1,5 +1,3 @@
-import React from 'react';
-
 type LogoProps = {
 	src: string,
 	size?: number,

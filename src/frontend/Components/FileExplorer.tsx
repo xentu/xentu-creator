@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import FileExplorerEntry from './FileExplorerEntry';
 
 declare global {
@@ -18,22 +18,17 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen }: FileExp
 	const [activePath, setActivePath] = useState('');
 
 	useEffect(() => {
-
 		const fetchFiles = async(thePath:string) => {
 			const files = await window.api.listFiles(thePath);
 			setEntries(files);
 		};
-		//fetchFiles(path).catch(console.error);
-
 		window.api.onProjectPathChanged((newPath:string) => {
 			fetchFiles(newPath).catch(console.error);
 			//setActivePath(newPath);
 		});
-
 	}, []);
 
 	const setActive = (newPath: string, isDirectory: boolean) => {
-		//console.log('SetActive', newPath);
 		setActivePath(newPath);
 		if (isDirectory == false) {
 			onFileOpen(newPath);

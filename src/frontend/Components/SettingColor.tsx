@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import Dictionary from '../../main/classes/Dictionary';
+import React from 'react';
 
 type SettingTextProps = {
 	title: string,

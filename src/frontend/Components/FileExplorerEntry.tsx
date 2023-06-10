@@ -36,9 +36,7 @@ export default function FileExplorerEntry({ label, path, directory, ext, setActi
 	const c_active = path == activePath ? 'is-active' : '';
 
 	useEffect(() => {
-		//console.log('UseEffect called');
 		if (isOpen == true) {
-			//console.log('UseEffect found isOpen to be true');
 			const fetchFiles = async() => {
 				const files = await window.api.listFiles(path);
 				setEntries(files);

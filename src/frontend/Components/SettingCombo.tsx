@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Dictionary from '../../main/classes/Dictionary';
 
 type SettingComboProps = {
