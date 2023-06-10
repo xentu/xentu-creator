@@ -21,6 +21,7 @@ if (require('electron-squirrel-startup')) {
 
 class XentuCreatorApp {
 	mainMenu: XentuCreatorMenu;
+	theSettings: any = {};
 	project: XentuProject;
 	fileWatcher?: any;
 	t: number = 55;
@@ -32,7 +33,7 @@ class XentuCreatorApp {
 		this.project = null;
 
 		// hook window events.
-		app.on('ready', this.createWindow);
+		//app.on('ready', this.createWindow);
 		app.on('window-all-closed', async () => {
 			if (process.platform !== 'darwin') {
 				app.quit();
@@ -51,6 +52,8 @@ class XentuCreatorApp {
 		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
 		ipcMain.handle('get-accent-color', this.handleGetAccentColor);
+		ipcMain.handle('get-settings', () => { return this.handleGetSettings() });
+		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
 	}
 
 
@@ -86,6 +89,49 @@ class XentuCreatorApp {
 	}
 
 
+	/**
+	 * Loads settings from a JSON file.
+	 */
+	async loadSettings() {
+		const appPath = app.getPath('userData');
+		console.log("AppPath: ", appPath);
+		const settingsFile = path.join(appPath, 'settings.json');
+		const exists = await fs.pathExists(settingsFile);
+
+		let settings = {
+			editor: {
+				colorTheme: 'default',
+				fontFamily: 'default',
+				fontSize: 14,
+				enableCodeLens: true,
+				enableLineNumbers: true,
+				enableCodeCompletion: false
+			},
+			debugging: {
+				mainBinary: '${userData}/binaries/win_x64/xentu_debug.exe',
+				binaryOptions: [
+					{ platform: 'Windows', arch: 'x64', version: '0.0.4' },
+					{ platform: 'Linux/FreeBSD', arch: 'x64', version: '0.0.4' },
+					{ platform: 'Mac OS', arch: 'x64', version: '0.0.4' }
+				]
+			}
+		};
+
+		if (exists) {
+			settings = await fs.readJson(settingsFile);
+		}
+
+		this.theSettings = settings;
+	}
+
+
+	async saveSettings() {
+		const appPath = app.getPath('userData');
+		const settingsFile = path.join(appPath, 'settings.json');
+		await fs.writeJson(settingsFile, this.theSettings);
+	}
+
+
 	// #########################################################################
 	// API event handlers.
 	// #########################################################################
@@ -96,7 +142,6 @@ class XentuCreatorApp {
 		const win = BrowserWindow.fromWebContents(webContents);
 		win.setTitle(title);
 	}
-
 
 	handleListFiles(event:any, scanPath: string) {
 		const files = fs.readdirSync( scanPath );
@@ -116,6 +161,15 @@ class XentuCreatorApp {
 
 	handleGetAccentColor() {
 		return systemPreferences.getAccentColor();
+	}
+
+	handleGetSettings() {
+		return this.theSettings;
+	}
+
+	async handleSetSettings(event:any, newSettings: any) {
+		this.theSettings = newSettings;
+		await this.saveSettings();
 	}
 
 	async handleOpenFile(event:any, filePath: string) {
@@ -139,7 +193,6 @@ class XentuCreatorApp {
 			data: theData
 		});
 	}
-
 
 	async handleOpenFolder(event:any) {
 		const window = BrowserWindow.getAllWindows()[0];
@@ -176,7 +229,6 @@ class XentuCreatorApp {
 			window.webContents.send('triggerAction', 'hide-welcome', null );
 		}
 	}
-
 	
 	async handleSaveFile(event:any, filePath: string, data:string) {
 		try {
@@ -188,19 +240,25 @@ class XentuCreatorApp {
 	 	}
 	}
 
-
 	triggerAction(action:string, data:string = null) {
 		const window = BrowserWindow.getAllWindows()[0];
 		window.webContents.send('triggerAction', action, data);
 	}
-
 
 	triggerFileAction(action:string, data:string = null) {
 		const window = BrowserWindow.getAllWindows()[0];
 		window.webContents.send('projectPathChanged', this.project.path);
 		window.webContents.send('triggerAction', action, data);
 	}
+
+
 }
 
 
 const myCreator = new XentuCreatorApp();
+
+
+app.on('ready', async function() {
+	await myCreator.loadSettings();
+	myCreator.createWindow();
+});

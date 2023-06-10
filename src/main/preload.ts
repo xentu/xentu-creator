@@ -12,6 +12,8 @@ contextBridge.exposeInMainWorld('api', {
     openFolder: () => ipcRenderer.invoke('open-folder'),
     saveFile: (filePath: string, data: string) => ipcRenderer.invoke('save-file', filePath, data),
     getAccentColor: () => ipcRenderer.invoke('get-accent-color'),
+    getSettings: () => ipcRenderer.invoke('get-settings'),
+    setSettings: (settings: any) => ipcRenderer.send('set-settings', settings),
 
     onProjectPathChanged: (cb: (customData: string) => void) => {
         // Deliberately strip event as it includes `sender` (note: Not sure about that, I partly pasted it from somewhere)

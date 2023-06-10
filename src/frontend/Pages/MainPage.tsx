@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, MouseEvent, Ref } from 'react';
+import { useState, useEffect, useRef, createContext, MouseEvent } from 'react';
 import FileExplorer from "../Components/FileExplorer";
 import TabCodeEditor from "../Components/TabCodeEditor";
 import TabItem from "../Components/TabItem";
@@ -7,7 +7,8 @@ import * as monaco from 'monaco-editor';
 import WelcomePanel from '../Components/WelcomePanel';
 
 import DialogContainer from "../Components/DialogContainer";
-import SettingsDialog from '../Dialogs/Settings';
+import SettingsDialog from '../Dialogs/SettingsDialog';
+import { SettingsContext, SettingsSchema } from '../Context/SettingsManager';
 
 declare global {
 	interface Window {
@@ -40,6 +41,7 @@ export default function MainPage() {
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
 	const [projectTitle, setProjectTitle] = useState('Untitled');
+	const [settings, setSettings] = useState({});
 	const [dialog, setDialog] = useState('');
 	const handleAction = useRef(null);
 
@@ -55,8 +57,11 @@ export default function MainPage() {
 		window.api.getAccentColor().then((accentColor:string) => {
 			console.log('ac', accentColor);
 			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
-		});		
+		});
 
+		window.api.getSettings().then((foundSettings:any) => {
+			setSettings(foundSettings);
+		});
 	}, []);
 
 
@@ -360,7 +365,7 @@ export default function MainPage() {
 	const renderDialog = () => {
 		const result = [];
 		switch (dialog) {
-			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} />); break;
+			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
 		}
 		return result;
 	};
@@ -368,38 +373,40 @@ export default function MainPage() {
 
 	return (
 		<div>
-			<div className={isTrackingMouse ? 'columns is-tracking' : 'columns'} 
-				onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
-				onMouseLeave={e => setIsTrackingMouse(false)}>
+			<SettingsContext.Provider value={settings}>
+				<div className={isTrackingMouse ? 'columns is-tracking' : 'columns'} 
+					onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
+					onMouseLeave={e => setIsTrackingMouse(false)}>
 
-				<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px' }}>
-					<div className="column-head">
-						<strong>{projectTitle}</strong>
+					<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px' }}>
+						<div className="column-head">
+							<strong>{projectTitle}</strong>
+						</div>
+						<div className="column-body">
+							<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />
+						</div>
 					</div>
-					<div className="column-body">
-						<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />
+
+					<div id="splitter" onMouseDown={e => setIsTrackingMouse(true)} 
+											onMouseUp={e => setIsTrackingMouse(false)} />
+				
+					<div id="main" className="column">
+						<div className="column-head tab-labels">
+							{renderTabLabels()}
+						</div>
+						<div className="column-body" data-count={tabs.length}>
+							{renderTabBodies()}
+						</div>
 					</div>
+			
 				</div>
 
-				<div id="splitter" onMouseDown={e => setIsTrackingMouse(true)} 
-										onMouseUp={e => setIsTrackingMouse(false)} />
-			
-				<div id="main" className="column">
-					<div className="column-head tab-labels">
-						{renderTabLabels()}
-					</div>
-					<div className="column-body" data-count={tabs.length}>
-						{renderTabBodies()}
-					</div>
-				</div>
-		
-			</div>
-
-			<WelcomePanel visible={isWelcomeVisible} />
-			
-			<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
-				{renderDialog()}
-			</DialogContainer>
+				<WelcomePanel visible={isWelcomeVisible} />
+				
+				<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
+					{renderDialog()}
+				</DialogContainer>
+			</SettingsContext.Provider>
 		</div>
 	);
 }
