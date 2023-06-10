@@ -10,6 +10,7 @@ body {
 	--main-bg: #111;
 	--main-bg2: #1a1a1a;
 	--main-text: #c1c1c1;
+	--editor-bg: #2e3231;
 }
 
 html, body, #app, #app > div {
@@ -51,7 +52,7 @@ html, body, #app, #app > div {
 	cursor: pointer;
 }
 
-.columns .column .column-head.tab-labels .tab-label.is-active { background-color: black; }
+.columns .column .column-head.tab-labels .tab-label.is-active { background-color: var(--editor-bg); }
 .columns .column .column-head.tab-labels .tab-label:hover { background-color: var(--main-bg); }
 .columns .column .column-head.tab-labels .tab-label .icon-cancel { opacity: 0.8; }
 .columns .column .column-head.tab-labels .tab-label .icon-cancel:not(:hover) { opacity: 0.5; }
@@ -86,7 +87,7 @@ html, body, #app, #app > div {
 }
 
 #main .column-body {
-	background-color: #000;
+	background-color: var(--editor-bg);
 	padding-top: 5px;
 }
 
