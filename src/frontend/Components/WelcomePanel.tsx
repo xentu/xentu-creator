@@ -23,7 +23,7 @@ export default function WelcomePanel({ visible }: WelcomePanelProps) {
 						<span>Version 0.0.6</span>
 					</div>
 					<div className="buttons">
-						<a className="button">New Game</a>
+						<a className="button" onClick={() => window.api.newGame()}>New Game</a>
 						<a className="button" onClick={() => window.api.openFolder()}>Open Project...</a>
 					</div>
 				</div>

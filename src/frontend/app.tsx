@@ -9,6 +9,7 @@ import OpenTab from "./Classes/OpenTab";
 import SettingsDialog from './Dialogs/SettingsDialog';
 import { SettingsContext } from './Context/SettingsManager';
 import { XTerm } from 'xterm-for-react';
+import NewGameDialog from './Dialogs/NewGameDialog';
 require('./windowFuncs');
 
 
@@ -36,6 +37,9 @@ function App() {
 	const [settings, setSettings] = useState({});
 	const [dialog, setDialog] = useState('');
 	const [xtermCommand, setXtermCommand] = useState('');
+	const [showSidebar, setShowSidebar] = useState(true);
+	const [showConsole, setShowConsole] = useState(true);
+	const [showStatusBar, setShowStatusBar] = useState(true);
 	const handleAction = useRef(null);
 	const xtermRef = useRef(null);
 
@@ -120,6 +124,20 @@ function App() {
 		// note: if actions ever stop working, make sure tabs has correct length.
 
 		switch (action) {
+			case 'toggle-sidebar':
+				setShowSidebar(!showSidebar);
+				break;
+			case 'toggle-console':
+				const show = !showConsole;
+				setShowConsole(show);
+				doEditorResize();
+				break;
+			case 'toggle-statusbar':
+				setShowStatusBar(!showStatusBar);
+				break;
+			case 'show-new-game':
+				setDialog('new-game')
+				break;
 			case 'show-settings':
 				setDialog('settings');
 				break;
@@ -336,6 +354,17 @@ function App() {
 	};
 
 
+	const doEditorResize = () => {
+		const tab = findActiveTab();
+		if (tab && tab.guid) {
+			const editor = window.findEditor(tab.guid);
+			editor.layout();
+			console.log('editor resized');
+		}
+		window.dispatchEvent(new Event("resize"));
+	};
+
+
 	/**
 	 * 
 	 */
@@ -416,20 +445,25 @@ function App() {
 		const result = [];
 		switch (dialog) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
+			case 'new-game': result.push(<NewGameDialog key={'new-game'} createGameCallback={(opts:any) => { console.log("newGame", opts); }} />); break;
 		}
 		return result;
 	};
 
 
+	const c_tracking = isTrackingMouse ? 'is-tracking' : '';
+	const c_statusbar = showStatusBar ? '' : 'hide-statusbar';
+	const c_console = showConsole ? '' : 'hide-console';
+
 	return (
 		<div>
 			<SettingsContext.Provider value={settings}>
 
-				<div className={isTrackingMouse != '' ? 'columns is-tracking' : 'columns'} 
+				<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
 					onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
 					onMouseLeave={e => setIsTrackingMouse('')}>
 
-					<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px' }}>
+					<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px', display: showSidebar ? 'flex' : 'none' }}>
 						<div className="column-head">
 							<strong>{projectTitle}</strong>
 						</div>
@@ -451,7 +485,7 @@ function App() {
 									{renderTabBodies()}
 								</div>
 								<div id="splitter2" />
-								<div className="console-window" style={{flexBasis: consoleHeight + 'px' }}>
+								<div id="console" style={{ flexBasis: consoleHeight + 'px', display: showConsole ? 'block' : 'none' }}>
 									<XTerm ref={xtermRef} options={{ rows: 8 }} />
 								</div>
 							</div>
@@ -460,10 +494,7 @@ function App() {
 				</div>
 
 
-				<div className={'status-bar'}>
-					Idle.
-				</div>
-
+				<div id='status-bar'>Idle.</div>
 
 
 				<WelcomePanel visible={isWelcomeVisible} />

@@ -1,6 +1,6 @@
 ## Main
-- Add Status Bar
-- Add Console
+- Add Status Bar [done]
+- Add Console [done]
 - Add ability to create new projects.
 
 

@@ -50,6 +50,7 @@ class XentuCreatorApp {
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
 		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
+		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
 		ipcMain.handle('get-accent-color', this.handleGetAccentColor);
 		ipcMain.handle('get-settings', () => { return this.handleGetSettings() });
@@ -228,6 +229,11 @@ class XentuCreatorApp {
 			window.webContents.send('projectTitleChanged', this.project.title);
 			window.webContents.send('triggerAction', 'hide-welcome', null );
 		}
+	}
+
+	async handleNewGame(event:any) {
+		const window = BrowserWindow.getAllWindows()[0];
+		window.webContents.send('triggerAction', 'show-new-game', null );
 	}
 	
 	async handleSaveFile(event:any, filePath: string, data:string) {

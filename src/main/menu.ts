@@ -85,9 +85,9 @@ class XentuCreatorMenu {
           submenu: [
             //{ role: 'reload' },
             //{ role: 'forceReload' },
-            { type: 'checkbox', label: 'Sidebar', checked: true, accelerator: 'Ctrl+B' },
-            { type: 'checkbox', label: 'Status Bar', checked: true, accelerator: 'Ctrl+Shift+B' },
-            { type: 'checkbox', label: 'Console', checked: true, accelerator: 'Ctrl+Shift+C' },
+            { type: 'checkbox', label: 'Sidebar', checked: true, accelerator: 'Ctrl+B', click: async () => this.Owner.triggerAction('toggle-sidebar') },
+            { type: 'checkbox', label: 'Status Bar', checked: true, accelerator: 'Ctrl+Shift+B', click: async () => this.Owner.triggerAction('toggle-statusbar') },
+            { type: 'checkbox', label: 'Console', checked: true, accelerator: 'Ctrl+Shift+C', click: async () => this.Owner.triggerAction('toggle-console') },
             { type: 'separator' },
             { role: 'resetZoom' },
             { role: 'zoomIn' },
