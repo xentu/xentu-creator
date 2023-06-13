@@ -62,6 +62,12 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 									description='This is the right-hand bar'
 									checked={settings.editor.enableCodeLens}
 									setChecked={(v:boolean) => { updateSetting({ editor: { enableCodeLens:v } }) }} />
+
+					<SettingInput slug='mainBinary' key='mainBinary' title='Main Binary'
+									  description='Provide a path to the game engine binary'
+									  value={settings.debugging.mainBinary}
+									  setValue={(s:string) => { updateSetting({ debugging: { mainBinary:s }})}} />
+
 				</div>
 				<div className="settings-page" style={{display:page==1?'block':'none'}}>
 					{renderTestData('b')}

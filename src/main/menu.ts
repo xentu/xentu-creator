@@ -76,7 +76,10 @@ class XentuCreatorMenu {
         {
           label: '&Run', id: 'MenuRun',
           submenu: [
-            { label: 'Start Debugging', accelerator: 'F5', click: async () => this.Owner.triggerAction('start-debug') },
+            { label: 'Start Debugging', accelerator: 'F5', click: async () => {
+              this.Owner.beginDebugging();
+              // this.Owner.triggerAction('start-debug')
+            } },
             { label: 'Run Without Debugging', accelerator: 'F6', click: async () => this.Owner.triggerAction('start-without-debug') }
           ]
         },

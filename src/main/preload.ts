@@ -30,5 +30,9 @@ contextBridge.exposeInMainWorld('api', {
 
     onTriggerAction: (cb: (actionName: string, data:string) => void) => {
         ipcRenderer.on('triggerAction', (event, actionName, data) => cb(actionName, data));
+    },
+
+    onConsoleData: (cb: (data:string) => void) => {
+        ipcRenderer.on('consoleData', (event, data) => cb(data));
     }
 });

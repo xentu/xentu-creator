@@ -1,4 +1,5 @@
 import { app, BrowserWindow, Menu, dialog, ipcMain, systemPreferences } from 'electron';
+import { spawn } from "node:child_process";
 import XentuProject from './classes/XentuProject';
 import XentuCreatorMenu from './menu';
 
@@ -69,8 +70,8 @@ class XentuCreatorApp {
 	createWindow(): void {
 		// Create the browser window.
 		const mainWindow = new BrowserWindow({
-			height: 600,
-			width: 1024,
+			height: 720,
+			width: 1200,
 			icon: path.join(__dirname, '/../renderer/images/xentu-icon.ico'),
 			webPreferences: {
 				preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
@@ -257,6 +258,24 @@ class XentuCreatorApp {
 		window.webContents.send('triggerAction', action, data);
 	}
 
+	beginDebugging() {
+		const window = BrowserWindow.getAllWindows()[0];
+		const exePath = this.theSettings.debugging.mainBinary;
+		const workingDir = this.project.path;
+		const test = spawn(exePath, [], { cwd: workingDir });
+		
+		test.stdout.on('data', (data:any) => {
+			window.webContents.send('consoleData', data.toString());
+		});
+      
+		test.stderr.on('data', (data:any) => {
+			window.webContents.send('consoleData', data.toString());
+		});
+
+		test.on('exit', (code) => {
+			window.webContents.send('consoleData', "\r\n$ ");
+		});
+	}
 
 }
 

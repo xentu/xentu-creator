@@ -41,6 +41,7 @@ function App() {
 	const [showConsole, setShowConsole] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
 	const handleAction = useRef(null);
+	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
 
 
@@ -51,6 +52,7 @@ function App() {
 	
 	useEffect(() => {
 		window.api.onTriggerAction((action:string, data:string) => { handleAction.current(action, data); });
+		window.api.onConsoleData((data:string) => { handleConsole.current(data); });
 		window.api.onProjectTitleChanged((newTitle:string) => {
 			setProjectTitle(newTitle);
 		});
@@ -170,6 +172,13 @@ function App() {
 					break;
 			}
 		}
+	};
+
+
+	handleConsole.current = (data:string) => {
+		const term = xtermRef.current.terminal;
+		term.write(data);
+		//console.log(data);
 	};
 
 
