@@ -30,7 +30,7 @@ class XentuCreatorMenu {
         {
           label: '&File',
           submenu: [
-            { label: 'New Game', accelerator: 'Ctrl+N', click: async () => this.Owner.triggerAction('new-game') },
+            { label: 'New Game', accelerator: 'Ctrl+N', click: async () => this.Owner.triggerAction('show-new-game') },
             { label: 'Open Project...', accelerator: 'Ctrl+O', click: async () => this.Owner.handleOpenFolder() },
             { type: 'separator' },
             { label: 'Close Project', id: 'MenuFileClose', click: async () => this.Owner.triggerAction('close-project') },

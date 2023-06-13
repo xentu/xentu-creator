@@ -15,10 +15,21 @@ declare global {
 	}
 }
 
-const fruitOptions = new Dictionary<string>();
-fruitOptions.add('apple', 'Apple');
-fruitOptions.add('banana', 'Banana');
-fruitOptions.add('orange', 'Orange');
+const colorThemes = new Dictionary<string>();
+colorThemes.add('dark', 'Dark');
+colorThemes.add('light', 'Light');
+colorThemes.add('os-decides', 'OS Decides');
+
+const fontFamilies = new Dictionary<string>();
+fontFamilies.add('default', 'Default');
+
+const fontSizes = new Dictionary<string>();
+fontSizes.add('16', '16');
+
+const platformList = new Dictionary<string>();
+platformList.add('x86', 'x86');
+platformList.add('x64', 'x64');
+platformList.add('Arm64', 'Arm64');
 
 
 export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProps) {
@@ -27,16 +38,17 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 
 	const renderTestData = (str:string) => {
 		const res = [];
-		for (var i=0; i<50; i++) {
+		for (var i=0; i<20; i++) {
 			res.push(<div key={'test-data'+i}>{str}</div>);
 		}
 		return res;
 	}
 
-	const updateSetting = async (arr:any) => {
-		const merged = { ...settings, ...arr };
-		onSettingsChanged(merged);
-		await window.api.setSettings(merged);
+	const updateSetting = async (group:any, option:any, newValue:any) => {
+		const clone = JSON.parse(JSON.stringify(settings));
+		clone[group][option] = newValue;
+		onSettingsChanged(clone);
+		await window.api.setSettings(clone);
 	};
 
 	return (
@@ -58,19 +70,51 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 
 					<h2>Editor</h2>
 
-					<SettingBool slug='enableCodeLens' key='enableCodeLens' title='Enable CodeLens'
+					<SettingCombo slug='colorTheme' key={'colorTheme'} title='Color Theme'
+									  description='Change the color theme of the code editor'
+									  options={colorThemes} value={settings.editor.colorTheme}
+									  setValue={(v:string) => { updateSetting('editor', 'colorTheme', v) }} />
+
+					<SettingCombo slug='fontFamily' key={'fontFamily'} title='Color Theme'
+									  description='Change the font family of the code editor'
+									  options={fontFamilies} value={settings.editor.fontFamily}
+									  setValue={(v:string) => { updateSetting('editor', 'fontFamily', v) }} />
+
+					<SettingInput slug='fontSize' key={'fontSize'} title='Font Size'
+									  description='Change the default font size for the code editor'
+									  type='number' value={settings.editor.fontSize}
+									  setValue={(v:string) => { updateSetting('editor', 'fontSize', v ) }} />
+
+					<SettingBool slug='enableCodeLens' key={'enableCodeLens'} title='Enable CodeLens'
 									description='This is the right-hand bar'
 									checked={settings.editor.enableCodeLens}
-									setChecked={(v:boolean) => { updateSetting({ editor: { enableCodeLens:v } }) }} />
+									setChecked={(v:boolean) => { updateSetting('editor', 'enableCodeLens', v) }} />
 
-					<SettingInput slug='mainBinary' key='mainBinary' title='Main Binary'
-									  description='Provide a path to the game engine binary'
-									  value={settings.debugging.mainBinary}
-									  setValue={(s:string) => { updateSetting({ debugging: { mainBinary:s }})}} />
+					<SettingBool slug='enableLineNumbers' key={'enableLineNumbers'} title='Enable Line Numbers'
+									description='This is the right-hand bar'
+									checked={settings.editor.enableLineNumbers}
+									setChecked={(v:boolean) => { updateSetting('editor', 'enableLineNumbers', v) }} />
+
+					<SettingBool slug='enableCodeCompletion' key={'enableCodeCompletion'} title='Enable Code Completion'
+									description='This is the right-hand bar'
+									checked={settings.editor.enableCodeCompletion}
+									setChecked={(v:boolean) => { updateSetting('editor', 'enableCodeCompletion', v) }} />
 
 				</div>
 				<div className="settings-page" style={{display:page==1?'block':'none'}}>
-					{renderTestData('b')}
+					
+					<h2>Debugging</h2>
+					
+					<SettingBool slug='enableDebugging' key={'enableDebugging'} title='Enable Debugging'
+									description='This is the right-hand bar'
+									checked={settings.debugging.enableDebugging}
+									setChecked={(v:boolean) => { updateSetting('debugging', 'enableDebugging', v) }} />
+
+					<SettingInput slug='mainBinary' key={'mainBinary'} title='Main Binary'
+									  description='Provide a path to the game engine binary'
+									  value={settings.debugging.mainBinary}
+									  setValue={(s:string) => { updateSetting('debugging', 'mainBinary', s) }} />
+
 				</div>
 				<div className="settings-page" style={{display:page==2?'block':'none'}}>
 					{renderTestData('c')}

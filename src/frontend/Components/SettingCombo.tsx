@@ -12,13 +12,10 @@ type SettingComboProps = {
 
 export default function SettingCombo({ title, slug, value, setValue, options, description = '' }: SettingComboProps) {
 	const renderOptions = () => {
-		const result= new Array<any>();
-		let index = 0;
+		const result = new Array<any>();
 		options.keys().forEach((key:string) => {
 			const label = options.get(key);
-			result.push(<>
-				<option key={`${slug}-${key}`} value={key} selected={value==key}>{label}</option>
-			</>);
+			result.push(<option key={slug+'-'+key} value={key}>{label}</option>);
 		});
 		return result;
 	};
@@ -29,7 +26,7 @@ export default function SettingCombo({ title, slug, value, setValue, options, de
 				<small>{description}</small>
 			</div>
 			<div className="setting-right">
-				<select onChange={(e:any) => { setValue(e.target.value) }}>
+				<select key={slug} onChange={(e:any) => { setValue(e.target.value) }} value={value}>
 					{renderOptions()}
 				</select>
 			</div>

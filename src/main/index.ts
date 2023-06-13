@@ -110,7 +110,9 @@ class XentuCreatorApp {
 				enableCodeCompletion: false
 			},
 			debugging: {
+				enableDebugging: true,
 				mainBinary: '${userData}/binaries/win_x64/xentu_debug.exe',
+				extraArguments: '',
 				binaryOptions: [
 					{ platform: 'Windows', arch: 'x64', version: '0.0.4' },
 					{ platform: 'Linux/FreeBSD', arch: 'x64', version: '0.0.4' },
