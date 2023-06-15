@@ -10,6 +10,7 @@ import SettingsDialog from './Dialogs/SettingsDialog';
 import { SettingsContext } from './Context/SettingsManager';
 import { XTerm } from 'xterm-for-react';
 import NewGameDialog from './Dialogs/NewGameDialog';
+import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
 require('./windowFuncs');
 
 
@@ -36,7 +37,6 @@ function App() {
 	const [projectTitle, setProjectTitle] = useState('Untitled');
 	const [settings, setSettings] = useState({});
 	const [dialog, setDialog] = useState('');
-	const [xtermCommand, setXtermCommand] = useState('');
 	const [showSidebar, setShowSidebar] = useState(true);
 	const [showConsole, setShowConsole] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
@@ -74,25 +74,31 @@ function App() {
 					//xtermRef.current.terminal.write('^C');
 					//prompt(term);
 					break;
-				case '\r': // Enter
-					//runCommand(term, command);
-				 	setXtermCommand('');
-					term.write("\r\n$ ");
+				case '\r': case '\n': // Enter
+					var clear = false;
+					switch (term.v ?? '') {
+						case 'clear': term.reset(); clear = true; break;
+						default:	term.write("\r\nCommand not recognised."); break;
+					}
+					term.v = '';
+					term.write(clear ? '$ ' : "\r\n$ ");
 					break;
 				case '\u007F': // Backspace (DEL)
 					// Do not delete the prompt
 					if (term._core.buffer.x > 2) {
 						term.write('\b \b');
-					if (xtermCommand.length > 0) {
-						setXtermCommand(xtermCommand.substring(0, xtermCommand.length - 1));
+						if (term.v.length > 0) {
+							term.v = term.v.substring(0, term.v.length - 1);
+						}
+				 	}
+				 	break;
+			  	default: // Print all other characters for demo
+				 	if (e >= String.fromCharCode(0x20) && e <= String.fromCharCode(0x7E) || e >= '\u00a0') {
+						if (typeof term.v == 'undefined') term.v = '';
+						term.v = term.v + e;
+						term.write(e);
 					}
-				 }
-				 break;
-			  default: // Print all other characters for demo
-				 if (e >= String.fromCharCode(0x20) && e <= String.fromCharCode(0x7E) || e >= '\u00a0') {
-					setXtermCommand(xtermCommand + e);
-					term.write(e);
-				 }
+					break;
 			}
 		 });
 
@@ -122,7 +128,7 @@ function App() {
 	 * 
 	 */
 	handleAction.current = (action:string, data?:string) => {
-		console.log('handleAction', action);
+		//console.log('handleAction', action);
 		// note: if actions ever stop working, make sure tabs has correct length.
 
 		switch (action) {
@@ -143,8 +149,17 @@ function App() {
 			case 'show-settings':
 				setDialog('settings');
 				break;
+			case 'show-game-properties':
+				setDialog('game-properties');
+				break;
 			case 'hide-welcome':
 				setIsWelcomeVisible(false);
+				break;
+			case 'clear-console':
+				const term = xtermRef.current.terminal;
+				term.reset();
+				term.v = '';
+				term.write('$ ');
 				break;
 		}	
 
@@ -455,6 +470,7 @@ function App() {
 		switch (dialog) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
 			case 'new-game': result.push(<NewGameDialog key={'new-game'} createGameCallback={(opts:any) => { console.log("newGame", opts); }} />); break;
+			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => { /* todo: */ }} />); break;
 		}
 		return result;
 	};

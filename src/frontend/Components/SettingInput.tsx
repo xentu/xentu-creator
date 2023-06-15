@@ -6,10 +6,11 @@ type SettingInputProps = {
 	description?: string,
 	value: string,
 	setValue: React.Dispatch<React.SetStateAction<string>>,
-	type?: string
+	type?: string,
+	small?: boolean
 }
 
-export default function SettingInput({ title, slug, value, setValue, description = '', type = 'text' }: SettingInputProps) {
+export default function SettingInput({ title, slug, value, setValue, description = '', type = 'text', small = false }: SettingInputProps) {
 	const style = {} as CSSProperties;
 	if (type == 'color') {
 		style.width = '27px';
@@ -17,12 +18,12 @@ export default function SettingInput({ title, slug, value, setValue, description
 	}
 
 	return (
-		<div className="setting setting-boolean">
+		<div className="setting setting-input">
 			<div className="setting-left">
 				<div>{title}</div>
 				<small>{description}</small>
 			</div>
-			<div className="setting-right">
+			<div className={["setting-right", small?'is-small':''].join(' ')}>
 				<input type={type} value={value} onChange={(e:any) => { setValue(e.target.value) }} style={style} />
 			</div>
 		</div>

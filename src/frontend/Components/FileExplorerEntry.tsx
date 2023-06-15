@@ -12,7 +12,7 @@ monaco.editor.defineTheme('my-dark', {
 	inherit: true,
 	rules: [],
 	colors: {
-		"editor.background": '#2e3231'
+		"editor.background": '#2c3835'
 	},
 });
 
