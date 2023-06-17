@@ -1,5 +1,5 @@
 //const { app, Menu, MenuItemConstructorOptions, shell } = require('electron')
-import { app, BrowserWindow, Menu, MenuItemConstructorOptions, shell } from "electron";
+import { app, Menu, shell, globalShortcut, ipcMain } from "electron";
 
 const isMac = process.platform === 'darwin';
 
@@ -10,131 +10,54 @@ class XentuCreatorMenu {
 
   constructor(owner: any) {
     this.Owner = owner;
-    this.TheMenu = Menu.buildFromTemplate(
-      [
-        // { role: 'appMenu' }
-        ...(isMac ? [{
-          label: app.name,
-          submenu: [
-            { role: 'about' },
-            { type: 'separator' },
-            { role: 'services' },
-            { type: 'separator' },
-            { role: 'hide' },
-            { role: 'hideothers' },
-            { role: 'unhide' },
-            { type: 'separator' },
-            { role: 'quit' }
-          ]
-        }] : []) as MenuItemConstructorOptions[],
-        {
-          label: '&File',
-          submenu: [
-            { label: 'New Game', accelerator: 'Ctrl+N', click: async () => this.Owner.triggerAction('show-new-game') },
-            { label: 'Open Project...', accelerator: 'Ctrl+O', click: async () => this.Owner.handleOpenFolder() },
-            { type: 'separator' },
-            { label: 'Close Project', id: 'MenuFileClose', click: async () => this.Owner.triggerAction('close-project') },
-            { type: 'separator' },
-            { label: 'Save', id: 'MenuFileSave', accelerator: 'Ctrl+S', click: async () => this.Owner.triggerAction('save') },
-            { label: 'Save Copy...', id: 'MenuFileSaveAs', accelerator: 'Ctrl+Shift+A', click: async () => this.Owner.triggerAction('save-as') },
-            { label: 'Save All', id: 'MenuFileSaveAll', accelerator: 'Ctrl+Shift+S', click: async () => this.Owner.triggerAction('save-all') },
-            { type: 'separator' },
-            { label: 'Game Properties', id: 'MenuFileProperties', click: async () => this.Owner.triggerAction('show-game-properties') },
-            { label: 'Reveal In Explorer', id: 'MenuFileReveal', click: async () => this.Owner.triggerAction('reveal-in-explorer') },
-            { label: 'Export...', id: 'MenuFileExport', click: async () => this.Owner.triggerAction('export-game') },
-            { type: 'separator' },
-            isMac ? { role: 'close' } : { role: 'quit' }
-          ] as MenuItemConstructorOptions[]
-        },
-        {
-          label: '&Edit', id: 'MenuEdit',
-          submenu: [
-            { role: 'undo' },
-            { role: 'redo' },
-            { type: 'separator' },
-            { role: 'cut' },
-            { role: 'copy' },
-            { role: 'paste' },
-            ...(isMac ? [
-              { role: 'pasteAndMatchStyle' },
-              { role: 'delete' },
-              { role: 'selectAll' },
-              { type: 'separator' },
-              { label: 'Speech', submenu: [
-                  { role: 'startSpeaking' },
-                  { role: 'stopSpeaking' }
-                ]
-              }
-            ] : [
-              { role: 'delete' },
-              { type: 'separator' },
-              /* { role: 'selectAll' } */
-              { label: 'Select All', accelerator: 'Ctrl+A', click: async() => this.Owner.triggerAction('select-all') }
-            ]) as MenuItemConstructorOptions[]
-          ]
-        },
-        {
-          label: '&Run', id: 'MenuRun',
-          submenu: [
-            { label: 'Start Debugging', accelerator: 'F5', click: async () => {
-              this.Owner.beginDebugging();
-              // this.Owner.triggerAction('start-debug')
-            } },
-            { label: 'Run Without Debugging', accelerator: 'F6', click: async () => this.Owner.triggerAction('start-without-debug') }
-          ]
-        },
-        {
-          label: '&View',
-          submenu: [
-            //{ role: 'reload' },
-            //{ role: 'forceReload' },
-            { type: 'checkbox', label: 'Sidebar', checked: true, accelerator: 'Ctrl+B', click: async () => this.Owner.triggerAction('toggle-sidebar') },
-            { type: 'checkbox', label: 'Status Bar', checked: true, accelerator: 'Ctrl+Shift+B', click: async () => this.Owner.triggerAction('toggle-statusbar') },
-            { type: 'checkbox', label: 'Console', checked: true, accelerator: 'Ctrl+Shift+C', click: async () => this.Owner.triggerAction('toggle-console') },
-            { type: 'separator' },
-            { role: 'resetZoom' },
-            { role: 'zoomIn' },
-            { role: 'zoomOut' },
-            { type: 'separator' },
-            { role: 'toggleDevTools' },
-            { role: 'togglefullscreen' }
-          ]
-        },
-        {
-          label: '&Tools', id: 'MenuTools',
-          submenu: [
-            { label: 'Options', accelerator: 'F8', click: async () => this.Owner.triggerAction('show-settings') },
-            { label: 'Clear Console', click: async () => this.Owner.triggerAction('clear-console') }
-          ]
-        },
-        // { role: 'windowMenu' }
-        {
-          role: 'help',
-          label: '&Help',
-          submenu: [
-            { label: 'Learn More', click: async () => await shell.openExternal('https://electronjs.org') }
-          ]
-        }
-      ]
-    )
-  
-    Menu.setApplicationMenu(this.TheMenu);
+
+    ipcMain.on('menu-close',          () => this.Owner.triggerAction('close-project'));
+    ipcMain.on('menu-save',           () => this.Owner.triggerAction('save'));
+    ipcMain.on('menu-save-copy',      () => this.Owner.triggerAction('save-as'));
+    ipcMain.on('menu-save-all',       () => this.Owner.triggerAction('save-all'));
+    ipcMain.on('menu-game-props',     () => this.Owner.triggerAction('show-game-properties'));
+    ipcMain.on('menu-reveal',         () => this.Owner.triggerAction('reveal-in-explorer'));
+    ipcMain.on('menu-export',         () => this.Owner.triggerAction('export-game'));
+    ipcMain.on('menu-exit',           () => this.Owner.mainWindow.close());
+    ipcMain.on('menu-undo',           () => this.Owner.mainWindow.webContents.undo());
+    ipcMain.on('menu-redo',           () => this.Owner.mainWindow.webContents.redo());
+    ipcMain.on('menu-cut',            () => this.Owner.mainWindow.webContents.cut());
+    ipcMain.on('menu-copy',           () => this.Owner.mainWindow.webContents.copy());
+    ipcMain.on('menu-paste',          () => this.Owner.mainWindow.webContents.paste());
+    ipcMain.on('menu-delete',         () => this.Owner.mainWindow.webContents.delete());
+    ipcMain.on('menu-select-all',     () => this.Owner.triggerAction('select-all'));
+    ipcMain.on('menu-run',            () => this.Owner.beginDebugging());
+    ipcMain.on('menu-run-wo-debug',   () => this.Owner.triggerAction('start-without-debug'));
+    ipcMain.on('menu-sidebar',        () => this.Owner.triggerAction('toggle-sidebar'));
+    ipcMain.on('menu-status-bar',     () => this.Owner.triggerAction('toggle-statusbar'));
+    ipcMain.on('menu-console',        () => this.Owner.triggerAction('toggle-console'));
+    ipcMain.on('menu-actual-size',    () => this.Owner.mainWindow.webContents.zoomFactor = 1.0);
+    ipcMain.on('menu-zoom-in',        () => this.Owner.mainWindow.webContents.zoomFactor = Math.min(this.Owner.mainWindow.webContents.getZoomFactor() + 0.05, 1.5));
+    ipcMain.on('menu-zoom-out',       () => this.Owner.mainWindow.webContents.zoomFactor = Math.max(this.Owner.mainWindow.webContents.getZoomFactor() - 0.05, 0.8));
+    ipcMain.on('menu-dev-tools',      () => this.Owner.mainWindow.webContents.openDevTools());
+    ipcMain.on('menu-fullscreen',     () => this.Owner.mainWindow.setFullScreen(!this.Owner.mainWindow.isFullScreen()));
+    ipcMain.on('menu-options',        () => this.Owner.triggerAction('show-settings'));
+    ipcMain.on('menu-clear-console',  () => this.Owner.triggerAction('clear-console'));
+    ipcMain.on('menu-help',     async () => await shell.openExternal('https://electronjs.org'));
+
+    /* app.whenReady().then(() => {
+      globalShortcut.register('Ctrl+N',       () => owner.newGame());
+      globalShortcut.register('Ctrl+O',       () => owner.openFolder());
+      globalShortcut.register('Ctrl+S',       () => owner.triggerAction('save'));
+      globalShortcut.register('Ctrl+Shift+A', () => owner.triggerAction('save-as'));
+      globalShortcut.register('Ctrl+Shift+S', () => owner.triggerAction('save-all'));
+      globalShortcut.register('F1',     async () => await shell.openExternal('https://electronjs.org'));
+      globalShortcut.register('F5',           () => owner.beginDebugging());
+      globalShortcut.register('F6',           () => owner.triggerAction('start-without-debug'));
+      globalShortcut.register('F8',           () => owner.triggerAction('show-settings'));
+      globalShortcut.register('F11',          () => this.Owner.mainWindow.setFullScreen(!this.Owner.mainWindow.isFullScreen()));
+      globalShortcut.register('Ctrl+B',       () => owner.triggerAction('toggle-sidebar'));
+      globalShortcut.register('Ctrl+Shift+B', () => owner.triggerAction('toggle-statusbar'));
+      globalShortcut.register('Ctrl+Shift+C', () => owner.triggerAction('toggle-console'));
+    }); */
+
+    Menu.setApplicationMenu(null); //this.TheMenu);
   }
-
-
-  /**
-	 * Set weather the main menu is in a disabled state (project not open).
-	 */
-	public setMenuDisabled(disabled: boolean): void {
-		const ids = ['MenuFileClose', 'MenuFileSave', 'MenuFileSaveAs', 
-						 'MenuFileSaveAll', 'MenuFileProperties', 'MenuFileReveal',
-						 'MenuFileExport', 'MenuEdit', 'MenuRun'
-						];
-		const menu = Menu.getApplicationMenu();
-		ids.forEach(id => {
-			menu.getMenuItemById(id).enabled = !disabled;
-		});
-	}
 }
 
 export default XentuCreatorMenu;

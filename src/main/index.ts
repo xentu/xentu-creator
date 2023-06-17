@@ -22,6 +22,7 @@ if (require('electron-squirrel-startup')) {
 
 class XentuCreatorApp {
 	mainMenu: XentuCreatorMenu;
+	mainWindow: BrowserWindow;
 	theSettings: any = {};
 	project: XentuProject;
 	fileWatcher?: any;
@@ -30,7 +31,7 @@ class XentuCreatorApp {
 
 	constructor() {
 		// setup variables.
-		this.mainMenu = new XentuCreatorMenu(this);
+		this.mainMenu = new XentuCreatorMenu(this, ipcMain);
 		this.project = null;
 
 		// hook window events.
@@ -69,7 +70,7 @@ class XentuCreatorApp {
 	 */
 	createWindow(): void {
 		// Create the browser window.
-		const mainWindow = new BrowserWindow({
+		this.mainWindow = new BrowserWindow({
 			height: 720,
 			width: 1200,
 			icon: path.join(__dirname, '/../renderer/images/xentu-icon.ico'),
@@ -82,12 +83,13 @@ class XentuCreatorApp {
 			const window = BrowserWindow.getAllWindows()[0];
 			window.webContents.send('triggerAction', 'theme-color', systemPreferences.getAccentColor());
 		}); */
+		this.mainWindow.setBackgroundColor('#333333');
 		
 		// and load the index.html of the app.
-		mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+		this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
 		//setMenuDisabled(true);
-		mainWindow.webContents.openDevTools();
+		//this.mainWindow.webContents.openDevTools();
 	}
 
 

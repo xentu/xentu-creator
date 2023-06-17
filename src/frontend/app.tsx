@@ -11,6 +11,7 @@ import { SettingsContext } from './Context/SettingsManager';
 import { XTerm } from 'xterm-for-react';
 import NewGameDialog from './Dialogs/NewGameDialog';
 import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
+import MainMenu from './Components/MainMenu';
 require('./windowFuncs');
 
 
@@ -483,6 +484,8 @@ function App() {
 	return (
 		<div>
 			<SettingsContext.Provider value={settings}>
+
+				<MainMenu enabled={true} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} />
 
 				<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
 					onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}

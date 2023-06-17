@@ -16,6 +16,39 @@ contextBridge.exposeInMainWorld('api', {
     getSettings: () => ipcRenderer.invoke('get-settings'),
     setSettings: (settings: any) => ipcRenderer.send('set-settings', settings),
 
+
+    /* menu ipc */
+    menuCloseFolder:     () => ipcRenderer.send('menu-close'),
+    menuSave:            () => ipcRenderer.send('menu-save'),
+    menuSaveCopy:        () => ipcRenderer.send('menu-save-copy'),
+    menuSaveAll:         () => ipcRenderer.send('menu-save-all'),
+    menuGameProperties:  () => ipcRenderer.send('menu-game-props'),
+    menuReveal:          () => ipcRenderer.send('menu-reveal'),
+    menuExport:          () => ipcRenderer.send('menu-export'),
+    menuExit:            () => ipcRenderer.send('menu-exit'),
+    menuUndo:            () => ipcRenderer.send('menu-undo'),
+    menuRedo:            () => ipcRenderer.send('menu-redo'),
+    menuCut:             () => ipcRenderer.send('menu-cut'),
+    menuCopy:            () => ipcRenderer.send('menu-copy'),
+    menuPaste:           () => ipcRenderer.send('menu-paste'),
+    menuDelete:          () => ipcRenderer.send('menu-delete'),
+    menuSelectAll:       () => ipcRenderer.send('menu-select-all'),
+    menuRun:             () => ipcRenderer.send('menu-run'),
+    menuRunWithoutDebug: () => ipcRenderer.send('menu-run-wo-debug'),
+    menuSidebar:         () => ipcRenderer.send('menu-sidebar'),
+    menuStatusBar:       () => ipcRenderer.send('menu-status-bar'),
+    menuConsole:         () => ipcRenderer.send('menu-console'),
+    menuActualSize:      () => ipcRenderer.send('menu-actual-size'),
+    menuZoomIn:          () => ipcRenderer.send('menu-zoom-in'),
+    menuZoomOut:         () => ipcRenderer.send('menu-zoom-out'),
+    menuDevTools:        () => ipcRenderer.send('menu-dev-tools'),
+    menuFullScreen:      () => ipcRenderer.send('menu-fullscreen'),
+    menuOptions:         () => ipcRenderer.send('menu-options'),
+    menuClearConsole:    () => ipcRenderer.send('menu-clear-console'),
+    menuHelp:            () => ipcRenderer.send('menu-help'),
+    /* menu ipc */
+    
+
     onProjectPathChanged: (cb: (customData: string) => void) => {
         // Deliberately strip event as it includes `sender` (note: Not sure about that, I partly pasted it from somewhere)
         // Note: The first argument is always event, but you can have as many arguments as you like, one is enough for me.
