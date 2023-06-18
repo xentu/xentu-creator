@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import SettingBool from '../Components/SettingBoolean';
 import SettingCombo from '../Components/SettingCombo';
 import Dictionary from '../../main/classes/Dictionary';
@@ -35,14 +35,17 @@ platformList.add('Arm64', 'Arm64');
 export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProps) {
 	const settings = useContext(SettingsContext);
 	const [page, setPage] = useState(0);
+	const [binaryReport, setBinaryReport] = useState('');
 
-	const renderTestData = (str:string) => {
-		const res = [];
-		for (var i=0; i<20; i++) {
-			res.push(<div key={'test-data'+i}>{str}</div>);
-		}
-		return res;
-	}
+
+	useEffect(() => {
+		const fetchReport = async() => {
+			const rawReport = await window.api.listBinaries();
+			setBinaryReport(JSON.stringify(rawReport, null, "\t"));
+		};
+		fetchReport().catch(console.error);
+	}, []);
+
 
 	const updateSetting = async (group:any, option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(settings));
@@ -91,6 +94,15 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 		return res;
 	};
 
+	const doUpdateBinaries = async (overwrite:boolean) => {
+		const result = await window.api.refreshBinaries(overwrite);
+		alert(result.message);
+		if (result.updated) {
+			const rawReport = await window.api.listBinaries();
+			setBinaryReport(JSON.stringify(rawReport, null, "\t"));
+		}
+	}
+
 	return (
 		<div className={`settings-dialog`}>
 			<div className="settings-sidebar">
@@ -100,8 +112,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 					<ul>
 						<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>Editor</li>
 						<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>Theme</li>
-						<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>Debug</li>
-						<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>Updates</li>
+						<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>Binaries</li>
 					</ul>
 				</div>
 					
@@ -152,26 +163,26 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 					<p>Customize the visual theme for Xentu Creator.</p>
 					{renderSettings()}
 				</div>
-
-
-				<div className="settings-page" style={{display:page==2?'block':'none'}}>
-
-					<h2>Debugging</h2>
-					<p>Settings for running &amp; debugging your games.</p>
-					<SettingBool slug='enableDebugging' key={'enableDebugging'} title='Enable Debugging'
-									description='This is the right-hand bar'
-									checked={settings.debugging.enableDebugging}
-									setChecked={(v:boolean) => { updateSetting('debugging', 'enableDebugging', v) }} />
-					<SettingInput slug='mainBinary' key={'mainBinary'} title='Main Binary'
-									  description='Provide a path to the game engine binary'
-									  value={settings.debugging.mainBinary}
-									  setValue={(s:string) => { updateSetting('debugging', 'mainBinary', s) }} />
-				</div>
 				
 
-				<div className="settings-page" style={{display:page==3?'block':'none'}}>
-					<h2>Updates</h2>
-					<p>Check for updates to the IDE and game binaries.</p>
+				<div className="settings-page" style={{display:page==2?'block':'none'}}>
+					<h2>Binaries</h2>
+					<p>
+						Use this page to download the engine binaries you need to test, 
+						play or deploy your games.
+					</p>
+
+					<div>
+						<div className="buttons">
+							<a className="button" onClick={(e:any) => doUpdateBinaries(false)}>Refresh Binaries</a>
+							<a className="button" onClick={(e:any) => doUpdateBinaries(true)}>Force Refresh Binaries (slower)</a>
+						</div>
+					</div>
+
+					<div>
+						<pre className="binary-report">{binaryReport}</pre>
+					</div>
+
 				</div>
 
 			</div>

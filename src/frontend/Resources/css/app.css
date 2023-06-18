@@ -24,6 +24,17 @@ html, body, #app, #app > div {
 
 /**
  * ----------------------------------------------------------------------------
+ * Buttons
+ * ----------------------------------------------------------------------------
+ */
+
+.button { background-color: #222; display: inline-block; line-height: 30px; padding: 0 10px; border-radius: 3px; font-weight: 500; color: #ddd; cursor: pointer; }
+.button:hover { opacity: 0.7; }
+.buttons .button + .button { margin-left: 8px; }
+
+
+/**
+ * ----------------------------------------------------------------------------
  * Layout Styles
  * ----------------------------------------------------------------------------
  */
@@ -120,15 +131,17 @@ html, body, #app, #app > div {
 .welcome-panel-left .welcome-panel-inner { width: 240px; text-align: center; }
 .welcome-panel-left .welcome-panel-inner h1 { font-size: 30px; color: #fff; font-weight: 600; }
 .welcome-panel-left .welcome-panel-inner span { font-size: 15px; color: #777; font-weight: 600; margin-bottom: 20px; display: block; }
-.welcome-panel-left .welcome-panel-inner .button { background-color: #222; display: inline-block; line-height: 30px; padding: 0 10px; border-radius: 3px; font-weight: 500; color: #ddd; cursor: pointer; }
-.welcome-panel-left .welcome-panel-inner .button:hover { opacity: 0.7; }
-.welcome-panel-left .welcome-panel-inner .button + .button { margin-left: 8px; }
 .welcome-panel-right .welcome-panel-inner { width: 240px; }
 @keyframes dialogFadeOut {
 	0% { background: #000000b3; }
 	90% { background: #00000000; }
 	100% { background: #00000000; display: none; }
 }
+
+
+.theme-is-light .welcome-panel { background-color:#fff; }
+.welcome-panel h1, .welcome-panel h3 { color: #333!important; }
+
 
 
 /**
@@ -160,7 +173,7 @@ html, body, #app, #app > div {
 .settings-main { overflow-y: scroll; width: 100%; }
 .settings-page { padding: 20px; }
 .settings-page h2 { font-size: 26px; margin: 5px 0 5px; }
-.settings-page h2 + p { margin-bottom:20px; }
+.settings-page h2 + p { margin-bottom:20px; font-size: 14px; line-height: 19px; }
 .setting { display: flex; max-width:calc(100% - 20px); border-top: 1px solid #444; padding: 20px 0; }
 .setting-left { flex: 1 0; }
 .setting-left div {font-weight: 500; font-size: 15px; margin-bottom: 5px;}
@@ -221,24 +234,47 @@ html, body, #app, #app > div {
  */
 
 
-::-webkit-scrollbar {
-	width: 14px;
-	height: 14px;
+.theme-is-light ::-webkit-scrollbar { width: 14px; height: 14px; }
+.theme-is-light ::-webkit-scrollbar-button {
+	background: #c2c2c2;	
+	width: 10px;
+	height: 13px;
+	background-size: 10px 10px;
+	background-repeat: no-repeat;
+ 	background-position: center center;
 }
-::-webkit-scrollbar-button {
+.theme-is-light ::-webkit-scrollbar { width: 14px; height: 14px; }
+.theme-is-light ::-webkit-scrollbar-button { background: #c2c2c2;	width: 10px; height: 13px; }
+.theme-is-light ::-webkit-scrollbar-button:single-button { display:none; }
+.theme-is-light ::-webkit-scrollbar-track-piece { background: #c2c2c2; }
+.theme-is-light ::-webkit-scrollbar-thumb { background: #ffffff; }
+.theme-is-light ::-webkit-scrollbar-corner { background-color: #c2c2c2; }
+
+
+
+.theme-is-dark    ::-webkit-scrollbar, 
+.dialog-container ::-webkit-scrollbar { width: 14px; height: 14px; }
+.theme-is-dark    ::-webkit-scrollbar-button,
+.dialog-container ::-webkit-scrollbar-button {
 	background: #2e2e2e;	
 	width: 10px;
 	height: 13px;
-    background-size: 10px 10px;
-    background-repeat: no-repeat;
-    background-position: center center;
+   background-size: 10px 10px;
+   background-repeat: no-repeat;
+   background-position: center center;
 }
-
-::-webkit-scrollbar { width: 14px; height: 14px; }
-::-webkit-scrollbar-button { background: #2e2e2e;	width: 10px; height: 13px; }
-::-webkit-scrollbar-button:single-button { display:none; }
-::-webkit-scrollbar-track-piece { background: #2e2e2e; }
-::-webkit-scrollbar-thumb { background: #424242; }
+.theme-is-dark    ::-webkit-scrollbar,
+.dialog-container ::-webkit-scrollbar { width: 14px; height: 14px; }
+.theme-is-dark    ::-webkit-scrollbar-button,
+.dialog-container ::-webkit-scrollbar-button { background: #2e2e2e;	width: 10px; height: 13px; }
+.theme-is-dark    ::-webkit-scrollbar-button:single-button,
+.dialog-container ::-webkit-scrollbar-button:single-button { display:none; }
+.theme-is-dark    ::-webkit-scrollbar-track-piece,
+.dialog-container ::-webkit-scrollbar-track-piece { background: #2e2e2e; }
+.theme-is-dark    ::-webkit-scrollbar-thumb,
+.dialog-container ::-webkit-scrollbar-thumb { background: #424242; }
+.theme-is-dark    ::-webkit-scrollbar-corner,
+.dialog-container ::-webkit-scrollbar-corner { background-color: #2e2e2e; }
 
 
 /**
@@ -347,4 +383,19 @@ html, body, #app, #app > div {
 
 #console {
 	border-top: 1px solid var(--footerBackgroundDark);
+}
+
+
+/**
+ * Binary Report
+ * ----------------------------------------------------------------------------
+ */
+
+
+.binary-report { 
+	background: #333; margin-top: 20px; padding: 10px; font-size: 14px; 
+	font-family: 'Consolas', cursive; tab-size: 20px; overflow: scroll;
+	height: 335px;
+   border: 3px solid #333;
+   border-radius: 3px;
 }

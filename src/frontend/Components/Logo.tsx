@@ -6,7 +6,7 @@ type LogoProps = {
 
 export default function Logo({ src, size = 32, alt }: LogoProps) {
 	return (
-		<a href="/">
+		<a>
 			<img src={src}
 				width={size}
 				height={size}

@@ -76,7 +76,6 @@ function App({loadedSettings }: appProps) {
 		xtermRef.current.terminal.writeln("Hello, World!");
 		xtermRef.current.terminal.write("$ ");
 		window.xterm = xtermRef.current.terminal;
-		console.log('xterm', xtermRef.current);
 
 		xtermRef.current.terminal.onData( (e:any) => {
 			const term = xtermRef.current.terminal;

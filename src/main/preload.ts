@@ -15,6 +15,8 @@ contextBridge.exposeInMainWorld('api', {
     getAccentColor: () => ipcRenderer.invoke('get-accent-color'),
     getSettings: () => ipcRenderer.invoke('get-settings'),
     setSettings: (settings: any) => ipcRenderer.send('set-settings', settings),
+    refreshBinaries: (overwrite:boolean) => ipcRenderer.invoke('refresh-binaries', overwrite),
+    listBinaries: () => ipcRenderer.invoke('list-binaries'),
 
 
     /* menu ipc */
