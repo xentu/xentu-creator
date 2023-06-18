@@ -12,7 +12,7 @@ const config: ForgeConfig = {
 	rebuildConfig: {},
 	makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
 	packagerConfig: {
-		icon: '../images/xentu-icon' // no file extension required
+		icon: './xentu-icon.ico' // no file extension required
 	},
 	plugins: [
 		new WebpackPlugin({
