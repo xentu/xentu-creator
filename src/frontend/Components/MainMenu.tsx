@@ -13,12 +13,13 @@ declare global {
 type MainMenuProps = {
 	enabled: boolean,
 	showSidebar: boolean,
-	showStatusBar: boolean,
+	showStatus: boolean,
 	showConsole: boolean,
+	showThemeEditor: boolean
 }
 
 
-export default function MainMenu({ enabled, showSidebar, showStatusBar, showConsole }: MainMenuProps) {
+export default function MainMenu({ enabled, showSidebar, showStatus, showConsole, showThemeEditor }: MainMenuProps) {
 	const [selected, setSelected] = useState('');
 	const c_active = enabled ? '' : ' is-disabled';
 	//const settings = useContext(SettingsContext);
@@ -31,8 +32,8 @@ export default function MainMenu({ enabled, showSidebar, showStatusBar, showCons
 				<hr />
 				<MenuEntry click2={() => setSelected('')} label='Close Project' />
 				<MenuEntry click2={() => setSelected('')} label='Save' hotKey='Ctrl+S' click={() => window.api.menuSave()} />
-				<MenuEntry click2={() => setSelected('')} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
-				<MenuEntry click2={() => setSelected('')} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} />
+				<MenuEntry click2={() => setSelected('')} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} disabled={true} />
+				<MenuEntry click2={() => setSelected('')} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} disabled={true} />
 				<hr />
 				<MenuEntry click2={() => setSelected('')} label='Game Properties' click={() => window.api.menuGameProperties()} />
 				<MenuEntry click2={() => setSelected('')} label='Reveal In Explorer' click={() => window.api.menuReveal()} disabled={true} />
@@ -56,8 +57,9 @@ export default function MainMenu({ enabled, showSidebar, showStatusBar, showCons
 			</MenuItem>
 			<MenuItem label='View' click={() => setSelected('view')} active={selected=='view'}>
 				<MenuEntry click2={() => setSelected('')} label='Sidebar' hotKey='Ctrl+B' click={() => window.api.menuSidebar()} checked={showSidebar} />
-				<MenuEntry click2={() => setSelected('')} label='Status Bar' hotKey='Ctrl+Shift+B' click={() => window.api.menuStatusBar()} checked={showStatusBar} />
+				<MenuEntry click2={() => setSelected('')} label='Status Bar' hotKey='Ctrl+Shift+B' click={() => window.api.menuStatusBar()} checked={showStatus} />
 				<MenuEntry click2={() => setSelected('')} label='Console' hotKey='Ctrl+Shift+C' click={() => window.api.menuConsole()} checked={showConsole} />
+				<MenuEntry click2={() => setSelected('')} label='Theme Editor' hotKey='Ctrl+Shift+D' click={() => window.api.menuThemeEditor()} checked={showThemeEditor} />
 				<hr />
 				<MenuEntry click2={() => setSelected('')} label='Actual Size' click={() => window.api.menuActualSize()} />
 				<MenuEntry click2={() => setSelected('')} label='Zoom In' click={() => window.api.menuZoomIn()} />

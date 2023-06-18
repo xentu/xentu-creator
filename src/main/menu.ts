@@ -31,6 +31,7 @@ class XentuCreatorMenu {
     ipcMain.on('menu-sidebar',        () => this.Owner.triggerAction('toggle-sidebar'));
     ipcMain.on('menu-status-bar',     () => this.Owner.triggerAction('toggle-statusbar'));
     ipcMain.on('menu-console',        () => this.Owner.triggerAction('toggle-console'));
+    ipcMain.on('menu-theme-editor',   () => this.Owner.triggerAction('toggle-theme-editor'));
     ipcMain.on('menu-actual-size',    () => this.Owner.mainWindow.webContents.zoomFactor = 1.0);
     ipcMain.on('menu-zoom-in',        () => this.Owner.mainWindow.webContents.zoomFactor = Math.min(this.Owner.mainWindow.webContents.getZoomFactor() + 0.05, 1.5));
     ipcMain.on('menu-zoom-out',       () => this.Owner.mainWindow.webContents.zoomFactor = Math.max(this.Owner.mainWindow.webContents.getZoomFactor() - 0.05, 0.8));

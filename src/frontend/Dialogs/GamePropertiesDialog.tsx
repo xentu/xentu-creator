@@ -69,6 +69,7 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 				
 				<div className="settings-page" style={{display:page==0?'block':'none'}}>
 					<h2>General</h2>
+					<p>Configure basic info about your game.</p>
 
 					<SettingInput slug='gameName' key={'gameName'} title='Game Name'
 									  description='The name of your game'
@@ -94,6 +95,7 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 
 				<div className="settings-page" style={{display:page==1?'block':'none'}}>
 					<h2>Graphics</h2>
+					<p>Configure the graphical settings for your game.</p>
 
 					<SettingDualInput slug='viewport' key={'viewport'} title='Viewport (width, height)'
 									  description='The size of your rendered viewport'
@@ -128,6 +130,7 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 
 				<div className="settings-page" style={{display:page==2?'block':'none'}}>
 					<h2>Sound</h2>
+					<p>Configure the audio settings for your game.</p>
 					
 					<SettingCombo slug='sampleRate' key={'sampleRate'} title='Sample Rate'
 									  description='Change the color theme of the code editor'
@@ -147,8 +150,10 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 				</div>
 
 				<div className="settings-page" style={{display:page==3?'block':'none'}}>
+					
 					<h2>Dependencies</h2>
-					{renderTestData('c')}
+					<p>Configure which dependencies to use with your game.</p>
+					
 				</div>
 
 			</div>

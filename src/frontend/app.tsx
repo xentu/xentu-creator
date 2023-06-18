@@ -12,22 +12,29 @@ import { XTerm } from 'xterm-for-react';
 import NewGameDialog from './Dialogs/NewGameDialog';
 import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
 import MainMenu from './Components/MainMenu';
+import ThemeEditor from './Components/ThemeEditor';
 require('./windowFuncs');
 
 
 declare global {
 	interface Window {
 	  api?: any;
-	  findEditor: Function
+	  findEditor: Function,
+	  xterm: any
 	}
 }
+
+
+type appProps = {
+	loadedSettings: any
+};
 
 
 const container = document.getElementById('app');
 const root = createRoot(container!);
 
 
-function App() {
+function App({loadedSettings }: appProps) {
 	const [sidebarWidth, setSidebarWidth] = useState(240);
 	const [consoleHeight, setConsoleHeight] = useState(150);
 	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
@@ -36,11 +43,12 @@ function App() {
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
 	const [projectTitle, setProjectTitle] = useState('Untitled');
-	const [settings, setSettings] = useState({});
+	const [settings, setSettings] = useState(loadedSettings);
 	const [dialog, setDialog] = useState('');
 	const [showSidebar, setShowSidebar] = useState(true);
 	const [showConsole, setShowConsole] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
+	const [showThemeEditor, setShowThemeEditor] = useState(true);
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
@@ -60,13 +68,15 @@ function App() {
 		window.api.getAccentColor().then((accentColor:string) => {
 			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
 		});
-		window.api.getSettings().then((foundSettings:any) => {
+		/* window.api.getSettings().then((foundSettings:any) => {
 			setSettings(foundSettings);
-		});
+		}); */
 		window.onresize = () => { handleAction.current('resize', ''); }
 
 		xtermRef.current.terminal.writeln("Hello, World!");
 		xtermRef.current.terminal.write("$ ");
+		window.xterm = xtermRef.current.terminal;
+		console.log('xterm', xtermRef.current);
 
 		xtermRef.current.terminal.onData( (e:any) => {
 			const term = xtermRef.current.terminal;
@@ -119,6 +129,9 @@ function App() {
 		doUpdateWindowTitle();
 	}, [selectedTabIndex]);
 
+	useEffect(() => {
+		updateRootCssVariables();
+	}, [settings]);
 
 	// ########################################################################
 	// Event handlers (from back end).
@@ -143,6 +156,9 @@ function App() {
 				break;
 			case 'toggle-statusbar':
 				setShowStatusBar(!showStatusBar);
+				break;
+			case 'toggle-theme-editor':
+				setShowThemeEditor(!showThemeEditor);
 				break;
 			case 'show-new-game':
 				setDialog('new-game')
@@ -259,6 +275,46 @@ function App() {
 	// Functions
 	// ########################################################################
 
+	const updateRootCssVariables = () => {
+		const th = settings.theme[settings.editor.colorTheme];
+		const dark = settings.editor.colorTheme == 'dark';
+		
+		document.getElementById('root-styles').innerHTML = `
+			:root {
+				--mainBackground: ${th.mainBackground};
+				--mainBackgroundHs: ` + window.hexToHs(th.mainBackground) + `;
+				--mainBackgroundL: ` + window.hexToHsl(th.mainBackground)[2] + `%;
+				--mainBackgroundSemiDark: hsl(var(--mainBackgroundHs), calc(var(--mainBackgroundL) - 5%));
+				--mainBackgroundDark: hsl(var(--mainBackgroundHs), calc(var(--mainBackgroundL) - 10%));
+				--mainText: ${th.mainText};
+				--sidebarBackground: ${th.sidebarBackground};
+				--sidebarText: ${th.sidebarText};
+				--sidebarItemBackground: ${th.sidebarItemBackground};
+				--sidebarItemText: ${th.sidebarItemText};
+				--sidebarHoverBackground: ${th.sidebarHoverBackground};
+				--sidebarHoverText: ${th.sidebarHoverText};
+				--sidebarActiveBackground: ${th.sidebarActiveBackground};
+				--sidebarActiveText: ${th.sidebarActiveText};
+				--editorBackground: ${th.editorBackground};
+				--editorText: ${th.editorText};
+				--footerBackground: ${th.footerBackground};
+				--footerBackgroundHs: ` + window.hexToHs(th.footerBackground) + `;
+				--footerBackgroundL: ` + window.hexToHsl(th.footerBackground)[2] + `%;
+				--footerBackgroundDark: hsl(var(--footerBackgroundHs), calc(var(--footerBackgroundL) - 5%));
+				--footerText: ${th.footerText};
+			}
+		`;
+		window.changeThemeColors(dark, th.editorBackground);
+
+		window.xterm.setOption('theme', { 
+			background: settings.theme[dark?'dark':'light'].terminalBackground,
+			foreground: settings.theme[dark?'dark':'light'].terminalText,
+		});
+
+		/* xtermRef.current.terminal.setOption('theme', {
+			background: th.terminalBackground
+	  	}); */
+	};
 
 	/**
 	 * Find an open tab by it's file path, or null if the file isn't open.
@@ -480,12 +536,13 @@ function App() {
 	const c_tracking = isTrackingMouse ? 'is-tracking' : '';
 	const c_statusbar = showStatusBar ? '' : 'hide-statusbar';
 	const c_console = showConsole ? '' : 'hide-console';
+	const isDark = settings.editor.colorTheme == 'dark';
 
 	return (
-		<div>
+		<div className={isDark?'theme-is-dark':'theme-is-light'}>
 			<SettingsContext.Provider value={settings}>
 
-				<MainMenu enabled={true} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} />
+				<MainMenu enabled={true} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} />
 
 				<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
 					onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
@@ -514,7 +571,14 @@ function App() {
 								</div>
 								<div id="splitter2" />
 								<div id="console" style={{ flexBasis: consoleHeight + 'px', display: showConsole ? 'block' : 'none' }}>
-									<XTerm ref={xtermRef} options={{ rows: 8 }} />
+									<XTerm ref={xtermRef} options={{ 
+										rows: 8, 
+										allowTransparency: true,
+										/* theme: {
+											background: settings.theme[isDark?'dark':'light'].terminalBackground,
+											foreground: settings.theme[isDark?'dark':'light'].terminalText
+										} */
+									}} />
 								</div>
 							</div>
 						</div>						
@@ -526,6 +590,10 @@ function App() {
 
 
 				<WelcomePanel visible={isWelcomeVisible} />
+
+				<ThemeEditor shown={showThemeEditor} 
+								 onClose={(e:any) => setShowThemeEditor(!showThemeEditor)}
+								 onSettingsChanged={(s:any) => setSettings(s)} />
 				
 				<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
 					{renderDialog()}
@@ -536,4 +604,6 @@ function App() {
 }
 
 
-root.render(<App />);
+window.api.getSettings().then((foundSettings:any) => {
+	root.render(<App loadedSettings={foundSettings} />);
+});

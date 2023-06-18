@@ -11,7 +11,7 @@ declare global {
 
 
 //import '../../node_modules/bulma/css/bulma.min.css';
-//import './app.css';
+//import './Resources/css/app.css';
 import './app';
 
 
@@ -31,15 +31,16 @@ window.addEventListener('keyup', (e: KeyboardEvent) => {
 	if (shortcutEquals(pressed, ['ctrl', 's'])) window.api.menuSave();
 	if (shortcutEquals(pressed, ['ctrl', 'shift', 'a'])) window.api.menuSaveAs();
 	if (shortcutEquals(pressed, ['ctrl', 'shift', 's'])) window.api.menuSaveAll();
-
+	
 	if (shortcutEquals(pressed, ['f1'])) window.api.menuHelp();
 	if (shortcutEquals(pressed, ['f5'])) window.api.menuRun();
 	if (shortcutEquals(pressed, ['f6'])) window.api.menuRunWithoutDebug();
 	if (shortcutEquals(pressed, ['f8'])) window.api.menuOptions();
 	if (shortcutEquals(pressed, ['f11'])) window.api.menuFullScreen();
-
+	
 	if (shortcutEquals(pressed, ['ctrl', 'a'])) window.api.menuSelectAll();
 	if (shortcutEquals(pressed, ['ctrl', 'b'])) window.api.menuSidebar();
 	if (shortcutEquals(pressed, ['ctrl', 'shift', 'b'])) window.api.menuStatusBar();
 	if (shortcutEquals(pressed, ['ctrl', 'shift', 'c'])) window.api.menuConsole();
+	if (shortcutEquals(pressed, ['ctrl', 'shift', 'd'])) window.api.menuThemeEditor();
 }, true)

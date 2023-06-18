@@ -43,8 +43,7 @@ html, body, #app, #app > div {
 	cursor: pointer;
 	user-select: none;
 }
-.columns .column .column-head.tab-labels .tab-label.is-active { background-color: var(--editor-bg); }
-.columns .column .column-head.tab-labels .tab-label:hover { background-color: var(--main-bg); }
+.columns .column .column-head.tab-labels .tab-label:hover { background-color: #8b8b8b40; }
 .columns .column .column-head.tab-labels .tab-label .icon-cancel { opacity: 0.8; }
 .columns .column .column-head.tab-labels .tab-label .icon-cancel:not(:hover) { opacity: 0.5; }
 .columns .column .column-body { flex: 1 1 50%; }
@@ -60,7 +59,7 @@ html, body, #app, #app > div {
  */
 
 
-#splitter { flex: 0 0 5px; margin-left: -5px; margin-top: 30px; background: #00000040; cursor: ew-resize; }
+#splitter { flex: 0 0 5px; margin-left: -5px; margin-top: 30px; background: transparent; cursor: ew-resize; }
 #splitter2 { flex: 0 0 5px; background: #00000040; background-color: transparent; /* cursor: ns-resize; */ }
 
 
@@ -93,7 +92,8 @@ html, body, #app, #app > div {
 .file-explorer-wrapper li > a > img {line-height: unset;flex: 0 0;flex-basis: 16px; margin: 0 8px 0 5px; }
 .file-explorer-wrapper li > a > span { flex-shrink: 1; }
 .file-explorer-wrapper li:not(.has-children).is-active a { background:var(--accent); color:#fff; }
-.file-explorer-wrapper li:not(.has-children) > a > i { visibility: hidden; }
+.file-explorer-wrapper li:not(.has-children) > a > i.icon-right-open { visibility: hidden; }
+.file-explorer-wrapper li:not(.has-children) > a > i.file-icon  { flex: 0 0;flex-basis: 16px; margin: 0 8px 0 5px; }
 .file-explorer-wrapper li.has-children:not(.is-open) > ul { display:none; }
 .file-explorer-wrapper li.is-open > a > i:before { content: '\e803'; }
 .file-explorer-wrapper li ul { margin-left: 19px; }
@@ -159,7 +159,8 @@ html, body, #app, #app > div {
 .settings-sidebar > div li.is-active {background-color: var(--accent); }
 .settings-main { overflow-y: scroll; width: 100%; }
 .settings-page { padding: 20px; }
-.settings-page h2 { font-size: 26px; margin: 5px 0 20px; }
+.settings-page h2 { font-size: 26px; margin: 5px 0 5px; }
+.settings-page h2 + p { margin-bottom:20px; }
 .setting { display: flex; max-width:calc(100% - 20px); border-top: 1px solid #444; padding: 20px 0; }
 .setting-left { flex: 1 0; }
 .setting-left div {font-weight: 500; font-size: 15px; margin-bottom: 5px;}
@@ -199,7 +200,7 @@ html, body, #app, #app > div {
  * ----------------------------------------------------------------------------
  */
 
-#status-bar { height: 25px; padding: 6px 8px; background: #0a0a0a; border-top: 1px solid #1a1a1a; user-select: none; }
+#status-bar { height: 25px; padding: 6px 8px; border-top: 1px solid #1a1a1acc; user-select: none; position: relative; }
 .hide-statusbar #status-bar { display: none; }
 
 
@@ -255,13 +256,13 @@ html, body, #app, #app > div {
 #main-menu { display:flex; background-color: var(--main-bg2); padding: 5px; }
 #main-menu * { user-select: none; }
 #main-menu:focus-visible { outline:0; }
-.menu-label { color: var(--menu-text); }
+.menu-label { /* color: var(--menu-text); */ }
 .menu-sub { display: none; }
 #main-menu .menu-item .menu-label { padding: 5px 6px; display:inline-block; }
-#main-menu .menu-item .menu-label:hover { cursor:pointer; background: var(--menu-item-hover); }
+#main-menu .menu-item .menu-label:hover { cursor:pointer; background: var(--mainBackgroundSemiDark); }
 #main-menu .menu-item .menu-hotkey { opacity: 0.7; }
 #main-menu .menu-item.is-active { position: relative; }
-#main-menu .menu-item.is-active > .menu-label { background: var(--accent); }
+#main-menu .menu-item.is-active > .menu-label { background: var(--mainBackgroundDark); }
 #main-menu .menu-item.is-active > .menu-sub {
 	position: absolute;
 	display: flex;
@@ -282,3 +283,68 @@ html, body, #app, #app > div {
 #main-menu .menu-entry.is-disabled .menu-entry-label { opacity: 0.5; }
 #main-menu .menu-entry-label span:first-of-type { position: absolute; left:-20px; }
 #main-menu .menu-entry:not(.is-checked) .menu-entry-label span:first-of-type { display:none; }
+
+
+/**
+ * ----------------------------------------------------------------------------
+ * Style Editor
+ * ----------------------------------------------------------------------------
+ */
+
+.style-editor {
+	z-index: 999; position: absolute; bottom: 0; right: 30px; width: 220px;
+	height: 260px; background: #444; border: 2px solid #666; border-bottom: 0;
+	border-radius: 10px 10px 0 0; padding: 15px; transition: bottom 500ms;
+}
+.style-editor.is-shown { transition: bottom 250ms; bottom: -251px; }
+.style-editor.is-closed { transition: bottom 250ms; bottom: -500px; }
+.style-editor > div { position: relative; }
+.style-editor > div .icon-cancel { position: absolute; right: 0px; top: 0px; }
+.style-editor > div h4 { font-size: 14px; font-weight:500; background: #444; user-select: none; margin-right: 20px; }
+.style-editor > div h4:hover { opacity: 0.7; }
+.style-editor > div h4 + div {margin-top: 10px; height: 235px; overflow-y: scroll; }
+.style-editor > div h4 + div label {display: flex;flex-direction: row;align-items: center; margin-right:5px; }
+.style-editor > div h4 + div label input { width: 25px; border:0px; background:transparent; }
+.style-editor > div h4 + div label input:focus-within { background: #333; }
+.style-editor > div h4 + div label span { flex-grow: 1; }
+
+
+/**
+ * Theme Editor Styles
+ * ----------------------------------------------------------------------------
+ */
+
+#main-menu, .columns .column .column-head, .menu-label {
+	background-color: var(--mainBackground);
+	color: var(--mainText);
+}
+
+#sidebar .column-body {
+	background-color: var(--sidebarBackground);
+	color: var(--sidebarText);
+}
+
+.file-explorer-wrapper li:hover:not(:has(li:hover)) > a {
+	background-color: var(--sidebarHoverBackground);
+	color: var(--sidebarHoverText);
+}
+
+.file-explorer-wrapper li:not(.has-children).is-active a {
+	background-color: var(--sidebarActiveBackground);
+	color: var(--sidebarActiveText);
+}
+
+#main .column-body, .columns .column .column-head.tab-labels .tab-label.is-active {
+	background-color: var(--editorBackground);
+	color: var(--editorText);
+}
+
+#status-bar {
+	background-color: var(--footerBackground);
+	border-top: 1px solid var(--footerBackgroundDark);
+	color: var(--footerText);
+}
+
+#console {
+	border-top: 1px solid var(--footerBackgroundDark);
+}

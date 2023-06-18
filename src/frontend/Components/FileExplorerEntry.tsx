@@ -74,7 +74,9 @@ export default function FileExplorerEntry({ label, path, directory, ext, setActi
 		<li className={['file-entry', c_label, c_open, c_active].join(' ')}>
 			<a onClick={() => labelClicked()}>
 				<i className="icon-right-open"></i>
-				<Icon type={ext} />
+				{directory == true && <Icon type={ext} />}
+				{directory == false && <i className="file-icon icon-file-code"></i>}
+				{/*<Icon type={ext} /> */}
 				<span>{label}</span>
 			</a>
 			{directory == true && <ul className="file-folder">

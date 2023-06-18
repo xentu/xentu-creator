@@ -31,7 +31,7 @@ class XentuCreatorApp {
 
 	constructor() {
 		// setup variables.
-		this.mainMenu = new XentuCreatorMenu(this, ipcMain);
+		this.mainMenu = new XentuCreatorMenu(this);
 		this.project = null;
 
 		// hook window events.
@@ -89,7 +89,7 @@ class XentuCreatorApp {
 		this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
 		//setMenuDisabled(true);
-		//this.mainWindow.webContents.openDevTools();
+		this.mainWindow.webContents.openDevTools();
 	}
 
 
@@ -104,12 +104,49 @@ class XentuCreatorApp {
 
 		let settings = {
 			editor: {
-				colorTheme: 'default',
+				colorTheme: 'dark',
 				fontFamily: 'default',
 				fontSize: 14,
+				enableMinimap: true,
 				enableCodeLens: true,
-				enableLineNumbers: true,
-				enableCodeCompletion: false
+				enableLineNumbers: true
+			},
+			theme: {
+				dark: {
+					mainBackground: "#3d3d3d",
+					mainText: "#ffffff",
+					sidebarBackground: "#2b2b2b",
+					sidebarText: "#ffffff",
+					sidebarItemBackground: "#000000",
+					sidebarItemText: "#ffffff",
+					editorBackground: "#212121",
+					editorText: "#ffffff",
+					footerBackground: "#171717",
+					footerText: "#ffffff",
+					sidebarHoverBackground: "#383838",
+					sidebarHoverText: "#ffffff",
+					sidebarActiveBackground: "#7a3a98",
+					terminalBackground: "#000000",
+					terminalText: "#ffffff"
+				},
+				light: {
+					mainBackground: "#4d88fe",
+					mainText: "#ffffff",
+					sidebarBackground: "#d2e1fe",
+					sidebarText: "#000000",
+					sidebarItemBackground: "#8297bf",
+					sidebarItemText: "#ffffff",
+					editorBackground: "#ffffff",
+					editorText: "#000000",
+					footerBackground: "#d2e1fe",
+					footerText: "#000000",
+					sidebarHoverBackground: "#9ebeff",
+					sidebarHoverText: "#3744a9",
+					sidebarActiveBackground: "#4d88fe",
+					sidebarActiveText: "#ffffff",
+					terminalBackground: "#ffffff",
+					terminalText: "#000000"
+				}
 			},
 			debugging: {
 				enableDebugging: true,
@@ -134,7 +171,7 @@ class XentuCreatorApp {
 	async saveSettings() {
 		const appPath = app.getPath('userData');
 		const settingsFile = path.join(appPath, 'settings.json');
-		await fs.writeJson(settingsFile, this.theSettings);
+		await fs.writeJson(settingsFile, this.theSettings, { spaces: '\t' });
 	}
 
 

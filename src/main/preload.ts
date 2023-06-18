@@ -42,6 +42,7 @@ contextBridge.exposeInMainWorld('api', {
     menuZoomIn:          () => ipcRenderer.send('menu-zoom-in'),
     menuZoomOut:         () => ipcRenderer.send('menu-zoom-out'),
     menuDevTools:        () => ipcRenderer.send('menu-dev-tools'),
+    menuThemeEditor:     () => ipcRenderer.send('menu-theme-editor'),
     menuFullScreen:      () => ipcRenderer.send('menu-fullscreen'),
     menuOptions:         () => ipcRenderer.send('menu-options'),
     menuClearConsole:    () => ipcRenderer.send('menu-clear-console'),

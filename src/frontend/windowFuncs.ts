@@ -1,4 +1,5 @@
 import * as monaco from 'monaco-editor';
+const convert = require('color-convert');
 
 
 /**
@@ -8,7 +9,9 @@ declare global {
 	interface Window {
 	  api?: any;
 	  findEditor: Function,
-	  changeDarkThemeBg: Function
+	  changeThemeColors: Function,
+	  hexToHsl: Function,
+	  hexToHs: Function
 	}
 }
 
@@ -28,9 +31,9 @@ window.findEditor = function(guid:string) {
 };
 
 
-window.changeDarkThemeBg = function(color:string = '#2e3231') {
-	monaco.editor.defineTheme('my-dark', {
-		base: 'vs-dark',
+window.changeThemeColors = function(isDark:boolean, color:string = '#2e3231') {
+	monaco.editor.defineTheme('my-theme', {
+		base: isDark ? 'vs-dark' : 'vs',
 		inherit: true,
 		rules: [],
 		colors: {
@@ -38,3 +41,13 @@ window.changeDarkThemeBg = function(color:string = '#2e3231') {
 		},
 	});
 };
+
+
+window.hexToHsl = function(hex:string) {
+	return convert.hex.hsl(hex);
+}
+
+window.hexToHs = function(hex:string) {
+	const hsl = convert.hex.hsl(hex);
+	return `${hsl[0]}, ${hsl[1]}%`;
+}
