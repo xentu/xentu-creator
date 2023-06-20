@@ -8,6 +8,7 @@ import WelcomePanel from './Components/WelcomePanel';
 import OpenTab from "./Classes/OpenTab";
 import SettingsDialog from './Dialogs/SettingsDialog';
 import { SettingsContext } from './Context/SettingsManager';
+import { ProjectContext, ProjectSchema } from './Context/ProjectManager';
 import { XTerm } from 'xterm-for-react';
 import NewGameDialog from './Dialogs/NewGameDialog';
 import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
@@ -34,7 +35,7 @@ const container = document.getElementById('app');
 const root = createRoot(container!);
 
 
-function App({loadedSettings }: appProps) {
+function App({ loadedSettings }: appProps) {
 	const [sidebarWidth, setSidebarWidth] = useState(240);
 	const [consoleHeight, setConsoleHeight] = useState(150);
 	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
@@ -42,13 +43,13 @@ function App({loadedSettings }: appProps) {
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
-	const [projectTitle, setProjectTitle] = useState('Untitled');
+	const [project, setProject] = useState({} as ProjectSchema);
 	const [settings, setSettings] = useState(loadedSettings);
 	const [dialog, setDialog] = useState('');
 	const [showSidebar, setShowSidebar] = useState(true);
 	const [showConsole, setShowConsole] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
-	const [showThemeEditor, setShowThemeEditor] = useState(true);
+	const [showThemeEditor, setShowThemeEditor] = useState(false);
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
@@ -62,8 +63,8 @@ function App({loadedSettings }: appProps) {
 	useEffect(() => {
 		window.api.onTriggerAction((action:string, data:string) => { handleAction.current(action, data); });
 		window.api.onConsoleData((data:string) => { handleConsole.current(data); });
-		window.api.onProjectTitleChanged((newTitle:string) => {
-			setProjectTitle(newTitle);
+		window.api.onProjectChanged((newProject:object) => {
+			setProject(newProject as ProjectSchema);
 		});
 		window.api.getAccentColor().then((accentColor:string) => {
 			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
@@ -526,7 +527,7 @@ function App({loadedSettings }: appProps) {
 		switch (dialog) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
 			case 'new-game': result.push(<NewGameDialog key={'new-game'} createGameCallback={(opts:any) => { console.log("newGame", opts); }} />); break;
-			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => { /* todo: */ }} />); break;
+			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => setProject(s)} />); break;
 		}
 		return result;
 	};
@@ -535,68 +536,72 @@ function App({loadedSettings }: appProps) {
 	const c_tracking = isTrackingMouse ? 'is-tracking' : '';
 	const c_statusbar = showStatusBar ? '' : 'hide-statusbar';
 	const c_console = showConsole ? '' : 'hide-console';
+	const c_roboto = settings.editor.fontFamily == 'roboto' ? 'font-roboto' : '';
 	const isDark = settings.editor.colorTheme == 'dark';
 
 	return (
-		<div className={isDark?'theme-is-dark':'theme-is-light'}>
+		<div className={[isDark?'theme-is-dark':'theme-is-light', c_roboto].join(' ')}>
 			<SettingsContext.Provider value={settings}>
+				<ProjectContext.Provider value={project}>
 
-				<MainMenu enabled={true} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} />
+					<MainMenu enabled={true} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} />
 
-				<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
-					onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
-					onMouseLeave={e => setIsTrackingMouse('')}>
+					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
+						onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
+						onMouseLeave={e => setIsTrackingMouse('')}>
 
-					<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px', display: showSidebar ? 'flex' : 'none' }}>
-						<div className="column-head">
-							<strong>{projectTitle}</strong>
-						</div>
-						<div className="column-body">
-							<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />
-						</div>
-					</div>
-
-					<div id="splitter" onMouseDown={e => setIsTrackingMouse('splitter')} 
-											onMouseUp={e => setIsTrackingMouse('')} />
-				
-					<div id="main" className="column">
-						<div className="column-head tab-labels">
-							{renderTabLabels()}
-						</div>
-						<div className="column-body" data-count={tabs.length}>
-							<div className="main-rows">
-								<div className="tab-bodies">
-									{renderTabBodies()}
-								</div>
-								<div id="splitter2" />
-								<div id="console" style={{ flexBasis: consoleHeight + 'px', display: showConsole ? 'block' : 'none' }}>
-									<XTerm ref={xtermRef} options={{ 
-										rows: 8, 
-										allowTransparency: true,
-										/* theme: {
-											background: settings.theme[isDark?'dark':'light'].terminalBackground,
-											foreground: settings.theme[isDark?'dark':'light'].terminalText
-										} */
-									}} />
-								</div>
+						<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px', display: showSidebar ? 'flex' : 'none' }}>
+							<div className="column-head">
+								<strong>{project?.game?.title}</strong>
 							</div>
-						</div>						
+							<div className="column-body">
+								<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />
+							</div>
+						</div>
+
+						<div id="splitter" onMouseDown={e => setIsTrackingMouse('splitter')} 
+												onMouseUp={e => setIsTrackingMouse('')} />
+					
+						<div id="main" className="column">
+							<div className="column-head tab-labels">
+								{renderTabLabels()}
+							</div>
+							<div className="column-body" data-count={tabs.length}>
+								<div className="main-rows">
+									<div className="tab-bodies">
+										{renderTabBodies()}
+									</div>
+									<div id="splitter2" />
+									<div id="console" style={{ flexBasis: consoleHeight + 'px', display: showConsole ? 'block' : 'none' }}>
+										<XTerm ref={xtermRef} options={{ 
+											rows: 8, 
+											allowTransparency: true,
+											/* theme: {
+												background: settings.theme[isDark?'dark':'light'].terminalBackground,
+												foreground: settings.theme[isDark?'dark':'light'].terminalText
+											} */
+										}} />
+									</div>
+								</div>
+							</div>						
+						</div>
 					</div>
-				</div>
 
 
-				<div id='status-bar'>Idle.</div>
+					<div id='status-bar'>Idle.</div>
 
 
-				<WelcomePanel visible={isWelcomeVisible} />
+					<WelcomePanel visible={isWelcomeVisible} />
 
-				<ThemeEditor shown={showThemeEditor} 
-								 onClose={(e:any) => setShowThemeEditor(!showThemeEditor)}
-								 onSettingsChanged={(s:any) => setSettings(s)} />
-				
-				<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
-					{renderDialog()}
-				</DialogContainer>
+					<ThemeEditor shown={showThemeEditor} 
+									onClose={(e:any) => setShowThemeEditor(!showThemeEditor)}
+									onSettingsChanged={(s:any) => setSettings(s)} />
+					
+					<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
+						{renderDialog()}
+					</DialogContainer>
+
+				</ProjectContext.Provider>
 			</SettingsContext.Provider>
 		</div>
 	);

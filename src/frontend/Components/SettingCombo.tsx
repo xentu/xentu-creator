@@ -5,7 +5,7 @@ type SettingComboProps = {
 	title: string,
 	slug: string,
 	description?: string,
-	value: string,
+	value: any,
 	setValue: React.Dispatch<React.SetStateAction<string>>,
 	options: Dictionary<string>
 }

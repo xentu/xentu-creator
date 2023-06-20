@@ -27,7 +27,7 @@ const themeOpts = {
 
 export default function ThemeEditor({ shown, onClose, onSettingsChanged }: StyleEditorProps) {
 	const settings = useContext(SettingsContext);
-	const [slide, isSlide] = useState(true);
+	const [slide, isSlide] = useState(false);
 
 
 	const updateSetting2 = async (group:any, subgroup:any, option:any, newValue:any) => {

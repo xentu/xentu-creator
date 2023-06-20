@@ -4,7 +4,7 @@ type SettingInputProps = {
 	title: string,
 	slug: string,
 	description?: string,
-	value: string,
+	value: any,
 	setValue: React.Dispatch<React.SetStateAction<string>>,
 	type?: string,
 	small?: boolean

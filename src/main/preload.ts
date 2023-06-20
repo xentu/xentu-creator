@@ -15,6 +15,7 @@ contextBridge.exposeInMainWorld('api', {
     getAccentColor: () => ipcRenderer.invoke('get-accent-color'),
     getSettings: () => ipcRenderer.invoke('get-settings'),
     setSettings: (settings: any) => ipcRenderer.send('set-settings', settings),
+    setProject: (project: any) => ipcRenderer.send('set-project', project),
     refreshBinaries: (overwrite:boolean) => ipcRenderer.invoke('refresh-binaries', overwrite),
     listBinaries: () => ipcRenderer.invoke('list-binaries'),
 
@@ -58,10 +59,10 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on('projectPathChanged', (event, customData) => cb(customData));
     },
 
-    onProjectTitleChanged: (cb: (customData: string) => void) => {
+    onProjectChanged: (cb: (customData: string) => void) => {
         // Deliberately strip event as it includes `sender` (note: Not sure about that, I partly pasted it from somewhere)
         // Note: The first argument is always event, but you can have as many arguments as you like, one is enough for me.
-        ipcRenderer.on('projectTitleChanged', (event, customData) => cb(customData));
+        ipcRenderer.on('projectChanged', (event, customData) => cb(JSON.parse(customData)));
     },
 
     onTriggerAction: (cb: (actionName: string, data:string) => void) => {

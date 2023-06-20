@@ -4,9 +4,9 @@ type SettingDualInputProps = {
 	title: string,
 	slug: string,
 	description?: string,
-	value1: string,
+	value1: any,
 	setValue1: React.Dispatch<React.SetStateAction<string>>,
-	value2: string,
+	value2: any,
 	setValue2: React.Dispatch<React.SetStateAction<string>>,
 	type?: string
 }

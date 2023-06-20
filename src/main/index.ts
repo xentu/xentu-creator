@@ -36,7 +36,8 @@ class XentuCreatorApp {
 	mainMenu: XentuCreatorMenu;
 	mainWindow: BrowserWindow;
 	theSettings: any = {};
-	project: XentuProject;
+	theProject: any = {}; //: XentuProject;
+	projectPath: string = "";
 	fileWatcher?: any;
 	t: number = 55;
 
@@ -44,7 +45,7 @@ class XentuCreatorApp {
 	constructor() {
 		// setup variables.
 		this.mainMenu = new XentuCreatorMenu(this);
-		this.project = null;
+		this.theProject = null;
 
 		// hook window events.
 		//app.on('ready', this.createWindow);
@@ -71,6 +72,7 @@ class XentuCreatorApp {
 		ipcMain.handle('get-accent-color', this.handleGetAccentColor);
 		ipcMain.handle('get-settings', () => { return this.handleGetSettings() });
 		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
+		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
 	}
 
 
@@ -103,7 +105,7 @@ class XentuCreatorApp {
 		this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
 		//setMenuDisabled(true);
-		this.mainWindow.webContents.openDevTools();
+		//this.mainWindow.webContents.openDevTools();
 	}
 
 
@@ -188,6 +190,10 @@ class XentuCreatorApp {
 		await fs.writeJson(settingsFile, this.theSettings, { spaces: '\t' });
 	}
 
+	async saveProject() {
+		const projectFile = path.join(this.projectPath, 'game.json');
+		await fs.writeJson(projectFile, this.theProject, { spaces: '\t' });
+	}
 
 	async downloadFile(theUrl:string, theDest:string):Promise<void> {
 		return new Promise((resolve, reject):void => {
@@ -254,6 +260,10 @@ class XentuCreatorApp {
 		await this.saveSettings();
 	}
 
+	async handleSetProject(event:any, newProject: any) {
+		this.theProject = newProject;
+		await this.saveProject();
+	}
 
 	async handleOpenFile(event:any, filePath: string) {
 		const theData = await fs.readFile(filePath, 'utf-8');
@@ -290,10 +300,28 @@ class XentuCreatorApp {
 			const projectFileExists = await fs.pathExists(projectFile);
 
 			if (projectFileExists) {
-				this.project = await XentuProject.Load(projectFile);
+				this.theProject = await fs.readJson(projectFile); // await XentuProject.Load(projectFile);
 			}
 			else {
-				this.project = new XentuProject();
+				this.theProject = {
+					"game": {
+						"title": "Hello World",
+						"entry_point": "/game.js",
+						"version": "0.0.0",
+						"v_sync": true,
+						"fullscreen": false,
+						"update_frequency": 60,
+						"draw_frequency": 60,
+						"window": { "width": 800,	"height": 600 },
+						"viewport": { "width": 500, "height": 500, "mode": 1 },
+						"audio": {
+							"frequency": 44100,
+							"channels": 2,
+							"depth": 16,
+							"codecs": ["wav", "ogg", "flac"]
+						}
+					}
+				}
 			}
 
 			this.fileWatcher = chokidar.watch(selectedPath, {
@@ -307,9 +335,9 @@ class XentuCreatorApp {
 			.on('addDir',		(path:string) => this.triggerFileAction('dir-created', path))
   			.on('unlinkDir',	(path:string) => this.triggerFileAction('dir-removed', path));
 
-			this.project.path = selectedPath;
+			this.projectPath = selectedPath;
 			window.webContents.send('projectPathChanged', selectedPath);
-			window.webContents.send('projectTitleChanged', this.project.title);
+			window.webContents.send('projectChanged', JSON.stringify(this.theProject));
 			window.webContents.send('triggerAction', 'hide-welcome', null );
 		}
 	}
@@ -426,7 +454,7 @@ class XentuCreatorApp {
 
 	triggerFileAction(action:string, data:string = null) {
 		const window = BrowserWindow.getAllWindows()[0];
-		window.webContents.send('projectPathChanged', this.project.path);
+		window.webContents.send('projectPathChanged', this.projectPath);
 		window.webContents.send('triggerAction', action, data);
 	}
 
@@ -471,7 +499,7 @@ class XentuCreatorApp {
 		}
 		
 		let exeFile = path.join(exePath, 'xentu_debug.exe');
-		if (myCreator.project.entry_point.includes('.py')) {
+		if (myCreator.theProject.game.entry_point.includes('.py')) {
 			exeFile = path.join(exePath, 'xentu_py_debug.exe');
 		}
 
@@ -480,7 +508,7 @@ class XentuCreatorApp {
 			return;
 		}
 
-		const workingDir = this.project.path;
+		const workingDir = this.projectPath;
 		const test = spawn(exeFile, [], { cwd: workingDir });
 		
 		test.stdout.on('data', (data:any) => {

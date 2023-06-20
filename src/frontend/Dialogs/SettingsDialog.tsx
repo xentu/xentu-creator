@@ -21,7 +21,8 @@ colorThemes.add('light', 'Light');
 //colorThemes.add('os-decides', 'OS Decides');
 
 const fontFamilies = new Dictionary<string>();
-fontFamilies.add('default', 'Default');
+fontFamilies.add('default', 'Default (System Defined)');
+fontFamilies.add('roboto', 'Roboto');
 
 const fontSizes = new Dictionary<string>();
 fontSizes.add('16', '16');
@@ -105,7 +106,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 
 	return (
 		<div className={`settings-dialog`}>
-			<div className="settings-sidebar">
+			<div className="dialog-sidebar">
 				
 				<div>
 					<h2>Options</h2>
@@ -117,10 +118,10 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 				</div>
 					
 			</div>
-			<div className="settings-main">
+			<div className="dialog-main">
 
 
-				<div className="settings-page" style={{display:page==0?'block':'none'}}>
+				<div className="dialog-page" style={{display:page==0?'block':'none'}}>
 
 					<h2>Editor</h2>
 					<p>Settings for the code editor.</p>
@@ -130,8 +131,8 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 									  options={colorThemes} value={settings.editor.colorTheme}
 									  setValue={(v:string) => { updateSetting('editor', 'colorTheme', v) }} />
 
-					<SettingCombo slug='fontFamily' key={'fontFamily'} title='Color Theme'
-									  description='Change the font family of the code editor'
+					<SettingCombo slug='fontFamily' key={'fontFamily'} title='UI Font Family'
+									  description='Change the font family for the UI'
 									  options={fontFamilies} value={settings.editor.fontFamily}
 									  setValue={(v:string) => { updateSetting('editor', 'fontFamily', v) }} />
 
@@ -158,14 +159,14 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 				</div>
 
 
-				<div className="settings-page" style={{display:page==1?'block':'none'}}>
+				<div className="dialog-page" style={{display:page==1?'block':'none'}}>
 					<h2>Theme</h2>
 					<p>Customize the visual theme for Xentu Creator.</p>
 					{renderSettings()}
 				</div>
 				
 
-				<div className="settings-page" style={{display:page==2?'block':'none'}}>
+				<div className="dialog-page" style={{display:page==2?'block':'none'}}>
 					<h2>Binaries</h2>
 					<p>
 						Use this page to download the engine binaries you need to test, 

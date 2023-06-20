@@ -5,6 +5,7 @@ import Dictionary from '../../main/classes/Dictionary';
 import SettingInput from '../Components/SettingInput';
 import SettingDualInput from '../Components/SettingDualInput';
 import { SettingsContext } from '../Context/SettingsManager';
+import { ProjectContext, ProjectSchema } from '../Context/ProjectManager';
 
 type GamePropertiesDialogProps = {
 	onPropertiesChanged: Function
@@ -36,6 +37,7 @@ channelList.add('3', 'Quad Channel');
 
 export default function GamePropertiesDialog({ onPropertiesChanged }: GamePropertiesDialogProps) {
 	const settings = useContext(SettingsContext);
+	const project = useContext(ProjectContext);
 	const [page, setPage] = useState(0);
 
 	const renderTestData = (str:string) => {
@@ -46,13 +48,23 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 		return res;
 	}
 
-	const updateSetting = async (group:any, option:any, newValue:any) => {
-		// todo: save here.
+	const updateProjectProperty = async (option:any, newValue:any) => {
+		const clone = JSON.parse(JSON.stringify(project));
+		clone.game[option] = newValue;
+		onPropertiesChanged(clone);
+		await window.api.setProject(clone);
+	};
+
+	const updateProjectSubProperty = async (group:any, option:any, newValue:any) => {
+		const clone = JSON.parse(JSON.stringify(project));
+		clone.game[group][option] = newValue;
+		onPropertiesChanged(clone);
+		await window.api.setProject(clone);
 	};
 
 	return (
 		<div className={`settings-dialog`}>
-			<div className="settings-sidebar">
+			<div className="dialog-sidebar">
 				
 				<div>
 					<h2>Game Properties</h2>
@@ -65,91 +77,97 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 				</div>
 					
 			</div>
-			<div className="settings-main">
+			<div className="dialog-main">
 				
-				<div className="settings-page" style={{display:page==0?'block':'none'}}>
+				<div className="dialog-page" style={{display:page==0?'block':'none'}}>
 					<h2>General</h2>
 					<p>Configure basic info about your game.</p>
 
 					<SettingInput slug='gameName' key={'gameName'} title='Game Name'
 									  description='The name of your game'
-									  value={''}
-									  setValue={(s:string) => { updateSetting('general', 'gameName', s) }} />
+									  value={project.game.title}
+									  setValue={(s:string) => { updateProjectProperty('title', s) }} />
 
 					<SettingInput slug='entryPoint' key={'entryPoint'} title='Entry Point'
 									  description='The main script file for your game'
-									  value={''}
-									  setValue={(s:string) => { updateSetting('general', 'entryPoint', s) }} />
+									  value={project.game.entry_point}
+									  setValue={(s:string) => { updateProjectProperty('entry_point', s) }} />
 
 					<SettingInput slug='icon' key={'icon'} title='Icon File'
 									  description='The icon file for your game'
-									  value={''}
-									  setValue={(s:string) => { updateSetting('general', 'icon', s) }} />
+									  value={project.game.icon}
+									  setValue={(s:string) => { updateProjectProperty('icon', s) }}  />
 
 					<SettingInput slug='version' key={'version'} title='Version'
 									  description='The icon file for your game'
-									  value={''}
-									  setValue={(s:string) => { updateSetting('general', 'version', s) }} />
+									  value={project.game.version}
+									  setValue={(s:string) => { updateProjectProperty('version', s) }} />
 
 				</div>
 
-				<div className="settings-page" style={{display:page==1?'block':'none'}}>
+				<div className="dialog-page" style={{display:page==1?'block':'none'}}>
 					<h2>Graphics</h2>
 					<p>Configure the graphical settings for your game.</p>
 
 					<SettingDualInput slug='viewport' key={'viewport'} title='Viewport (width, height)'
 									  description='The size of your rendered viewport'
-									  value1={''} setValue1={(s:string) => { updateSetting('graphics', 'viewport.x', s) }}
-									  value2={''} setValue2={(s:string) => { updateSetting('general', 'viewport.y', s) }} />
+									  value1={project.game.viewport.width} setValue1={(s:string) => { updateProjectSubProperty('viewport', 'width', s) }}
+									  value2={project.game.viewport.height} setValue2={(s:string) => { updateProjectSubProperty('viewport', 'height', s) }} />
 
 					<SettingDualInput slug='windowSize' key={'windowSize'} title='Window Size (width, height)'
 									  description='The size of your game window when not full screen'
-									  value1={''} setValue1={(s:string) => { updateSetting('graphics', 'windowSize.x', s) }}
-									  value2={''} setValue2={(s:string) => { updateSetting('general', 'windowSize.y', s) }} />
+									  value1={project.game.window.width} setValue1={(s:string) => { updateProjectSubProperty('viewport', 'width', s) }}
+									  value2={project.game.window.height} setValue2={(s:string) => { updateProjectSubProperty('viewport', 'height', s) }} />
 
 					<SettingInput slug='updateFps' key={'updateFps'} title='Update FPS'	
 									  description='The target fps for logic updates.'
-									  value={''} small={true}
-									  setValue={(s:string) => { updateSetting('general', 'updateFps', s) }} />
+									  value={project.game.update_frequency} small={true}
+									  setValue={(s:string) => { updateProjectProperty('update_frequency', s) }} />
 
 					<SettingInput slug='drawFps' key={'drawFps'} title='Draw FPS'	
 									  description='The target fps for rendering frames.'
-									  value={''} small={true}
-									  setValue={(s:string) => { updateSetting('general', 'drawFps', s) }} />
+									  value={project.game.draw_frequency} small={true}
+									  setValue={(s:string) => { updateProjectProperty('draw_frequency', s) }} />
 
 					<SettingBool slug='vSync' key={'vSync'} title='Enable V-Sync'
 									description='Enable vertical sync.'
-									checked={false}
-									setChecked={(v:boolean) => { updateSetting('general', 'vSync', v) }} />
+									checked={project.game.v_sync}
+									setChecked={(v:boolean) => { updateProjectProperty('v_sync', v) }} />
 
 					<SettingBool slug='fullScreen' key={'fullScreen'} title='Start Fullscreen'
 									description='Start the game in full-screen by default.'
-									checked={false}
-									setChecked={(v:boolean) => { updateSetting('general', 'fullScreen', v) }} />
+									checked={project.game.fullscreen}
+									setChecked={(v:boolean) => { updateProjectProperty('fullscreen', v) }} />
+					
+					<SettingBool slug='resizable' key={'resizable'} title='Resizable'
+									description='Enable to make it possible for the game window to be resized (when not in fullscreen).'
+									checked={project.game.resizable}
+									setChecked={(v:boolean) => { updateProjectProperty('resizable', v) }} />
+
 				</div>
 
-				<div className="settings-page" style={{display:page==2?'block':'none'}}>
+				<div className="dialog-page" style={{display:page==2?'block':'none'}}>
 					<h2>Sound</h2>
 					<p>Configure the audio settings for your game.</p>
 					
 					<SettingCombo slug='sampleRate' key={'sampleRate'} title='Sample Rate'
 									  description='Change the color theme of the code editor'
-									  options={sampleRates} value={''}
-									  setValue={(v:string) => { updateSetting('sound', 'sampleRate', v) }} />
+									  options={sampleRates} value={project.game.audio.frequency}
+									  setValue={(v:string) => {  }} />
 
 					<SettingCombo slug='bitDepth' key={'bitDepth'} title='Bit Depth'
 									  description='Change the color theme of the code editor'
-									  options={bitDepths} value={''}
-									  setValue={(v:string) => { updateSetting('sound', 'bitDepth', v) }} />
+									  options={bitDepths} value={project.game.audio.depth}
+									  setValue={(v:string) => {  }} />
 
 					<SettingCombo slug='channels' key={'channels'} title='Channels'
 									  description='Change the color theme of the code editor'
-									  options={channelList} value={''}
-									  setValue={(v:string) => { updateSetting('sound', 'channels', v) }} />
+									  options={channelList} value={project.game.audio.channels}
+									  setValue={(v:string) => {  }} />
 					
 				</div>
 
-				<div className="settings-page" style={{display:page==3?'block':'none'}}>
+				<div className="dialog-page" style={{display:page==3?'block':'none'}}>
 					
 					<h2>Dependencies</h2>
 					<p>Configure which dependencies to use with your game.</p>
