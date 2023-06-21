@@ -32,12 +32,12 @@ export default function MainMenu({ enabled, showSidebar, showStatus, showConsole
 				<hr />
 				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Close Project' click={(() => window.api.menuCloseProject())} />
 				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Save' hotKey='Ctrl+S' click={() => window.api.menuSave()} />
-				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} disabled={true} />
-				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} disabled={true} />
+				<MenuEntry click2={() => setSelected('')} disabled={true} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
+				<MenuEntry click2={() => setSelected('')} disabled={true} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} />
 				<hr />
 				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Game Properties' click={() => window.api.menuGameProperties()} />
-				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Reveal In Explorer' click={() => window.api.menuReveal()} disabled={true} />
-				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Export...' click={() => window.api.menuExport()} disabled={true} />
+				<MenuEntry click2={() => setSelected('')} disabled={true} label='Reveal In Explorer' click={() => window.api.menuReveal()} />
+				<MenuEntry click2={() => setSelected('')} disabled={!enabled} label='Export...' click={() => window.api.menuExport()} />
 				<hr />
 				<MenuEntry click2={() => setSelected('')} label='Exit' hotKey='Alt+F4' click={() => window.api.menuExit()} />
 			</MenuItem>
