@@ -19,8 +19,13 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen }: FileExp
 
 	useEffect(() => {
 		const fetchFiles = async(thePath:string) => {
-			const files = await window.api.listFiles(thePath);
-			setEntries(files);
+			if (thePath == '') {
+				setEntries([]);
+			}
+			else {
+				const files = await window.api.listFiles(thePath);
+				setEntries(files);
+			}
 		};
 		window.api.onProjectPathChanged((newPath:string) => {
 			fetchFiles(newPath).catch(console.error);

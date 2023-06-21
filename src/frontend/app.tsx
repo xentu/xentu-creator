@@ -142,7 +142,7 @@ function App({ loadedSettings }: appProps) {
 	 * 
 	 */
 	handleAction.current = (action:string, data?:string) => {
-		//console.log('handleAction', action);
+		console.log('handleAction', action);
 		// note: if actions ever stop working, make sure tabs has correct length.
 
 		switch (action) {
@@ -177,6 +177,12 @@ function App({ loadedSettings }: appProps) {
 				term.reset();
 				term.v = '';
 				term.write('$ ');
+				break;
+			case 'close-all':
+				setTabs(new Array<OpenTab>());
+				setProject(null);
+				setDialog('');
+				setIsWelcomeVisible(true);
 				break;
 		}	
 
@@ -451,14 +457,14 @@ function App({ loadedSettings }: appProps) {
 	 */
 	const doUpdateWindowTitle = () => {
 		try {
-			const activeTab = findActiveTab();
+			/* const activeTab = findActiveTab();
 			if (activeTab !== null) {
 				const label = activeTab.label ?? 'Untitled';
 				window.api.setTitle(`${label} - Xentu Creator`);
 			}
 			else {
 				window.api.setTitle(`Xentu Creator`);
-			}
+			} */
 		}
 		catch {}
 	};
@@ -537,22 +543,24 @@ function App({ loadedSettings }: appProps) {
 	const c_statusbar = showStatusBar ? '' : 'hide-statusbar';
 	const c_console = showConsole ? '' : 'hide-console';
 	const c_roboto = settings.editor.fontFamily == 'roboto' ? 'font-roboto' : '';
+	const c_welcome = isWelcomeVisible ? 'welcome-visible' : '';
 	const isDark = settings.editor.colorTheme == 'dark';
 
 	return (
-		<div className={[isDark?'theme-is-dark':'theme-is-light', c_roboto].join(' ')}>
+		<div className={[isDark?'theme-is-dark':'theme-is-light', c_roboto, c_welcome].join(' ')}>
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
 
-					<MainMenu enabled={true} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} />
+					<MainMenu enabled={!isWelcomeVisible} showSidebar={showSidebar} showStatus={showStatusBar} 
+								 showConsole={showConsole} showThemeEditor={showThemeEditor} />
 
 					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
 						onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
 						onMouseLeave={e => setIsTrackingMouse('')}>
 
 						<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px', display: showSidebar ? 'flex' : 'none' }}>
-							<div className="column-head">
-								<strong>{project?.game?.title}</strong>
+							<div className="column-head tab-labels">
+								<div className='tab-label'>Files &amp; Folders</div>
 							</div>
 							<div className="column-body">
 								<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />

@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('api', {
 
 
     /* menu ipc */
-    menuCloseFolder:     () => ipcRenderer.send('menu-close'),
+    menuCloseProject:    () => ipcRenderer.send('menu-close'),
     menuSave:            () => ipcRenderer.send('menu-save'),
     menuSaveCopy:        () => ipcRenderer.send('menu-save-copy'),
     menuSaveAll:         () => ipcRenderer.send('menu-save-all'),

@@ -34,6 +34,7 @@ html, body, #app, #app > div {
 .button { background-color: #222; display: inline-block; line-height: 30px; padding: 0 10px; border-radius: 3px; font-weight: 500; color: #ddd; cursor: pointer; }
 .button:hover { opacity: 0.7; }
 .buttons .button + .button { margin-left: 8px; }
+.theme-is-light .button { background-color: var(--mainBackground); color: var(--mainText) }
 
 
 /**
@@ -85,7 +86,13 @@ html, body, #app, #app > div {
 
 
 #sidebar { flex: 0 0 240px; min-width: 1px; }
-#sidebar .column-head {	padding: 0 0 0 10px; font-weight: 600; line-height: 30px; }
+#sidebar .column-head {	padding: 0 0 0 0; font-weight: 600; line-height: 30px; }
+#sidebar .column-head .tab-label { 
+	background: var(--sidebarBackground);
+   color: var(--editorText);
+   padding-left: 10px;
+   padding-right: 10px;
+}
 
 
 /**
@@ -143,7 +150,7 @@ html, body, #app, #app > div {
 
 
 .theme-is-light .welcome-panel { background-color:#fff; }
-.welcome-panel h1, .welcome-panel h3 { color: #333!important; }
+.theme-is-light .welcome-panel h1, .theme-is-light .welcome-panel h3 {color: #333!important;}
 
 
 
@@ -303,14 +310,19 @@ html, body, #app, #app > div {
    --menu-item-hover: #444;
    --menu-item-active: red;
    --menu-sub-bg: #3a3a3a;
+
+   --menu-light-text: #000;
+   --menu-light-item-hover: #fff;
+   --menu-light-item-active: red;
+   --menu-light-sub-bg: #fff;
 }
-#main-menu { display:flex; background-color: var(--main-bg2); padding: 5px; }
+#main-menu { display:flex; background-color: var(--main-bg2); padding: 5px; z-index: 99999999; position: sticky; }
 #main-menu * { user-select: none; }
 #main-menu:focus-visible { outline:0; }
 .menu-label { /* color: var(--menu-text); */ }
 .menu-sub { display: none; }
 #main-menu .menu-item .menu-label { padding: 5px 6px; display:inline-block; }
-#main-menu .menu-item .menu-label:hover { cursor:pointer; background: var(--mainBackgroundSemiDark); }
+#main-menu .menu-item:not(.is-disabled) .menu-label:hover { cursor:pointer; background: var(--mainBackgroundSemiDark); }
 #main-menu .menu-item .menu-hotkey { opacity: 0.7; }
 #main-menu .menu-item.is-active { position: relative; }
 #main-menu .menu-item.is-active > .menu-label { background: var(--mainBackgroundDark); }
@@ -328,6 +340,7 @@ html, body, #app, #app > div {
 #main-menu .menu-item.is-active .menu-sub .menu-entry { padding: 6px 16px 6px 24px; }
 #main-menu .menu-item.is-active .menu-sub .menu-entry:hover { background: var(--accent); cursor:pointer; }
 #main-menu .menu-item.is-active .menu-sub .menu-entry .menu-hotkey { text-align:right; }
+#main-menu .menu-item.is-disabled { opacity: 0.4; }
 #main-menu .menu-item.is-active .menu-sub hr { height: 1px; border: 0; border-top: 1px solid #8f8f8f59; width: 100%; }
 #main-menu .menu-entry-label { display:flex; flex-direction:row; position:relative; }
 #main-menu .menu-entry-label span + span { flex-grow:1; }
@@ -335,6 +348,11 @@ html, body, #app, #app > div {
 #main-menu .menu-entry-label span:first-of-type { position: absolute; left:-20px; }
 #main-menu .menu-entry:not(.is-checked) .menu-entry-label span:first-of-type { display:none; }
 
+.theme-is-light #main-menu .menu-item:not(.is-disabled) .menu-label:hover { cursor:pointer; background: var(--mainBackgroundSemiDark); }
+.theme-is-light #main-menu .menu-item.is-active > .menu-label { background: var(--mainBackgroundDark); }
+.theme-is-light #main-menu .menu-item.is-active > .menu-sub { background: var(--menu-light-sub-bg); color: var(--menu-light-text); box-shadow: 1px 1px 5px #8f8f8f30; }
+.theme-is-light #main-menu .menu-item.is-active .menu-sub .menu-entry:hover { background: var(--accent); color: var(--menu-light-item-hover); }
+.theme-is-light #main-menu .menu-item.is-active .menu-sub hr { border-top: 1px solid #8f8f8f59; }
 
 /**
  * ----------------------------------------------------------------------------

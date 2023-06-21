@@ -60,9 +60,15 @@
 .icon-ok:before { content: '\e801'; } /* '' */
 .icon-right-open:before { content: '\e802'; } /* '' */
 .icon-down-open:before { content: '\e803'; } /* '' */
+.icon-play:before { content: '\e804'; } /* '' */
+.icon-stop:before { content: '\e805'; } /* '' */
+.icon-pause:before { content: '\e806'; } /* '' */
+.icon-cog:before { content: '\e807'; } /* '' */
+.icon-folder:before { content: '\e808'; } /* '' */
 .icon-doc-text:before { content: '\f0f6'; } /* '' */
 .icon-angle-right:before { content: '\f105'; } /* '' */
 .icon-angle-down:before { content: '\f107'; } /* '' */
+.icon-doc-inv:before { content: '\f15b'; } /* '' */
 .icon-file-image:before { content: '\f1c5'; } /* '' */
 .icon-file-audio:before { content: '\f1c7'; } /* '' */
 .icon-file-code:before { content: '\f1c9'; } /* '' */

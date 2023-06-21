@@ -32,6 +32,29 @@ if (require('electron-squirrel-startup')) {
 }
 
 
+const ProjectTemplate = () => {
+	return  {
+		"game": {
+			"title": "Hello World",
+			"entry_point": "/game.js",
+			"version": "0.0.0",
+			"v_sync": true,
+			"fullscreen": false,
+			"update_frequency": 60,
+			"draw_frequency": 60,
+			"window": { "width": 800,	"height": 600 },
+			"viewport": { "width": 500, "height": 500, "mode": 1 },
+			"audio": {
+				"frequency": 44100,
+				"channels": 2,
+				"depth": 16,
+				"codecs": ["wav", "ogg", "flac"]
+			}
+		}
+	};
+};
+
+
 class XentuCreatorApp {
 	mainMenu: XentuCreatorMenu;
 	mainWindow: BrowserWindow;
@@ -65,7 +88,6 @@ class XentuCreatorApp {
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
 		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
-		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
 		ipcMain.handle('refresh-binaries', this.handleRefreshBinaries);
 		ipcMain.handle('list-binaries', this.handleListBinaries);
@@ -73,6 +95,9 @@ class XentuCreatorApp {
 		ipcMain.handle('get-settings', () => { return this.handleGetSettings() });
 		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
 		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
+
+		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
+		ipcMain.on('menu-close', this.handleMenuClose);
 	}
 
 
@@ -95,11 +120,14 @@ class XentuCreatorApp {
 			},
 		});
 
+
+		var dark = this.theSettings?.editor?.colorTheme == 'dark';
+
 		/* mainWindow.once('page-title-updated', () => {
 			const window = BrowserWindow.getAllWindows()[0];
 			window.webContents.send('triggerAction', 'theme-color', systemPreferences.getAccentColor());
 		}); */
-		this.mainWindow.setBackgroundColor('#333333');
+		this.mainWindow.setBackgroundColor(dark ? '#333333' : '#ffffff');
 		
 		// and load the index.html of the app.
 		this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -228,6 +256,7 @@ class XentuCreatorApp {
 		const webContents = event.sender;
 		const win = BrowserWindow.fromWebContents(webContents);
 		win.setTitle(title);
+		console.log('set-title2', title);
 	}
 
 
@@ -262,6 +291,12 @@ class XentuCreatorApp {
 
 	async handleSetProject(event:any, newProject: any) {
 		this.theProject = newProject;
+
+		const window = BrowserWindow.getAllWindows()[0];
+		const gameName = this.theProject?.game?.title ?? 'Untitled';
+		window.setTitle(gameName + " - Xentu Creator");
+		console.log('set-title3', gameName + " - Xentu Creator");
+
 		await this.saveProject();
 	}
 
@@ -301,27 +336,14 @@ class XentuCreatorApp {
 
 			if (projectFileExists) {
 				this.theProject = await fs.readJson(projectFile); // await XentuProject.Load(projectFile);
+				const gameName = this.theProject?.game?.title ?? 'Untitled';
+				window.setTitle(gameName + " - Xentu Creator");
+				console.log('set-title4', gameName + " - Xentu Creator");
 			}
 			else {
-				this.theProject = {
-					"game": {
-						"title": "Hello World",
-						"entry_point": "/game.js",
-						"version": "0.0.0",
-						"v_sync": true,
-						"fullscreen": false,
-						"update_frequency": 60,
-						"draw_frequency": 60,
-						"window": { "width": 800,	"height": 600 },
-						"viewport": { "width": 500, "height": 500, "mode": 1 },
-						"audio": {
-							"frequency": 44100,
-							"channels": 2,
-							"depth": 16,
-							"codecs": ["wav", "ogg", "flac"]
-						}
-					}
-				}
+				this.theProject = ProjectTemplate();
+				window.setTitle('Xentu Creator');
+				console.log('set-title4', "Xentu Creator");
 			}
 
 			this.fileWatcher = chokidar.watch(selectedPath, {
@@ -347,7 +369,25 @@ class XentuCreatorApp {
 		const window = BrowserWindow.getAllWindows()[0];
 		window.webContents.send('triggerAction', 'show-new-game', null );
 	}
+
 	
+	async handleMenuClose(event:any) {
+		console.log('handleMenuClose', 'Xentu Creator');
+		const webContents = event.sender;
+		const win = BrowserWindow.fromWebContents(webContents);
+		win.setTitle('Xentu Creator');
+
+
+		await myCreator.fileWatcher.close(() => console.log('file watcher closed'));
+		myCreator.fileWatcher = null;
+		myCreator.projectPath = '';
+		myCreator.theProject = ProjectTemplate();
+		
+		win.webContents.send('projectPathChanged', '');
+		win.webContents.send('projectChanged', JSON.stringify(this.theProject));
+		win.webContents.send('triggerAction', 'close-all', null);
+	}
+
 
 	async handleSaveFile(event:any, filePath: string, data:string) {
 		try {
