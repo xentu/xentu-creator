@@ -38,6 +38,7 @@ contextBridge.exposeInMainWorld('api', {
     menuSelectAll:       () => ipcRenderer.send('menu-select-all'),
     menuRun:             () => ipcRenderer.send('menu-run'),
     menuRunWithoutDebug: () => ipcRenderer.send('menu-run-wo-debug'),
+    menuStop:            () => ipcRenderer.send('menu-stop'),
     menuSidebar:         () => ipcRenderer.send('menu-sidebar'),
     menuStatusBar:       () => ipcRenderer.send('menu-status-bar'),
     menuConsole:         () => ipcRenderer.send('menu-console'),

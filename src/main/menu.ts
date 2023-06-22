@@ -27,6 +27,7 @@ class XentuCreatorMenu {
     ipcMain.on('menu-delete',         () => this.Owner.mainWindow.webContents.delete());
     ipcMain.on('menu-select-all',     () => this.Owner.triggerAction('select-all'));
     ipcMain.on('menu-run',            () => this.Owner.beginDebugging());
+    ipcMain.on('menu-stop',           () => this.Owner.stopDebugging());
     ipcMain.on('menu-run-wo-debug',   () => this.Owner.triggerAction('start-without-debug'));
     ipcMain.on('menu-sidebar',        () => this.Owner.triggerAction('toggle-sidebar'));
     ipcMain.on('menu-status-bar',     () => this.Owner.triggerAction('toggle-statusbar'));

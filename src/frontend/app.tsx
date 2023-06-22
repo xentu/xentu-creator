@@ -50,6 +50,7 @@ function App({ loadedSettings }: appProps) {
 	const [showConsole, setShowConsole] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
 	const [showThemeEditor, setShowThemeEditor] = useState(false);
+	const [debugging, setDebugging] = useState(false);
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
@@ -208,6 +209,8 @@ function App({ loadedSettings }: appProps) {
 						editor.layout({  });
 					}
 					break;
+				case 'game-started':	setDebugging(true); break;
+				case 'game-stopped':	setDebugging(false); break;
 			}
 		}
 	};
@@ -552,7 +555,7 @@ function App({ loadedSettings }: appProps) {
 				<ProjectContext.Provider value={project}>
 
 					<MainMenu enabled={!isWelcomeVisible} showSidebar={showSidebar} showStatus={showStatusBar} 
-								 showConsole={showConsole} showThemeEditor={showThemeEditor} />
+								 showConsole={showConsole} showThemeEditor={showThemeEditor} debugging={debugging} />
 
 					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
 						onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}

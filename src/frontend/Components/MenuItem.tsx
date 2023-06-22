@@ -13,7 +13,7 @@ type MenuEntryProps = {
 	disabled?: boolean,
 	checked?: boolean,
 	click?: Function,
-	click2?: Function
+	click2?: any
 }
 
 
@@ -35,7 +35,7 @@ export function MenuEntry({label, hotKey, disabled, checked, click, click2 }: Me
 	return (
 		<div className={["menu-entry", c_disabled, c_checked].join(' ')} onClick={(e) => { 
 			if (!disabled && typeof click !== 'undefined') click(e); 
-			if (!disabled && typeof click2 !== 'undefined') click2(); 
+			if (!disabled && typeof click2 !== 'undefined') click2(e); 
 			}}>
 			<a className="menu-entry-label">
 				<span><i className="icon-ok"></i></span>

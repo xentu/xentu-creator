@@ -1,6 +1,5 @@
 import { app, BrowserWindow, Menu, dialog, ipcMain, systemPreferences } from 'electron';
 import { spawn } from "node:child_process";
-import XentuProject from './classes/XentuProject';
 import XentuCreatorMenu from './menu';
 
 const axios = require('axios');
@@ -61,6 +60,7 @@ class XentuCreatorApp {
 	theSettings: any = {};
 	theProject: any = {}; //: XentuProject;
 	projectPath: string = "";
+	childProcess?: any;
 	fileWatcher?: any;
 	t: number = 55;
 
@@ -112,26 +112,20 @@ class XentuCreatorApp {
 	createWindow(): void {
 		// Create the browser window.
 		this.mainWindow = new BrowserWindow({
-			height: 720,
-			width: 1200,
+			height: 660,
+			width: 970,
+			minWidth: 620,
+			minHeight: 430,
 			icon: path.join(__dirname, '/../renderer/images/xentu-icon.ico'),
 			webPreferences: {
 				preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
 			},
 		});
 
-
 		var dark = this.theSettings?.editor?.colorTheme == 'dark';
-
-		/* mainWindow.once('page-title-updated', () => {
-			const window = BrowserWindow.getAllWindows()[0];
-			window.webContents.send('triggerAction', 'theme-color', systemPreferences.getAccentColor());
-		}); */
 		this.mainWindow.setBackgroundColor(dark ? '#333333' : '#ffffff');
-		
-		// and load the index.html of the app.
 		this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
+		
 		//setMenuDisabled(true);
 		//this.mainWindow.webContents.openDevTools();
 	}
@@ -256,7 +250,6 @@ class XentuCreatorApp {
 		const webContents = event.sender;
 		const win = BrowserWindow.fromWebContents(webContents);
 		win.setTitle(title);
-		console.log('set-title2', title);
 	}
 
 
@@ -295,7 +288,6 @@ class XentuCreatorApp {
 		const window = BrowserWindow.getAllWindows()[0];
 		const gameName = this.theProject?.game?.title ?? 'Untitled';
 		window.setTitle(gameName + " - Xentu Creator");
-		console.log('set-title3', gameName + " - Xentu Creator");
 
 		await this.saveProject();
 	}
@@ -338,12 +330,10 @@ class XentuCreatorApp {
 				this.theProject = await fs.readJson(projectFile); // await XentuProject.Load(projectFile);
 				const gameName = this.theProject?.game?.title ?? 'Untitled';
 				window.setTitle(gameName + " - Xentu Creator");
-				console.log('set-title4', gameName + " - Xentu Creator");
 			}
 			else {
 				this.theProject = ProjectTemplate();
 				window.setTitle('Xentu Creator');
-				console.log('set-title4', "Xentu Creator");
 			}
 
 			this.fileWatcher = chokidar.watch(selectedPath, {
@@ -499,6 +489,14 @@ class XentuCreatorApp {
 	}
 
 
+	async stopDebugging() {
+		if (myCreator.childProcess != null) {
+			myCreator.childProcess.kill('SIGINT');
+			myCreator.childProcess = null;
+		}
+	}
+
+
 	async beginDebugging() {
 		let exePath = '';
 		//const exePath = this.theSettings.debugging.mainBinary;
@@ -549,18 +547,20 @@ class XentuCreatorApp {
 		}
 
 		const workingDir = this.projectPath;
-		const test = spawn(exeFile, [], { cwd: workingDir });
+		this.childProcess = spawn(exeFile, [], { cwd: workingDir });
+		window.webContents.send('triggerAction', 'game-started');
 		
-		test.stdout.on('data', (data:any) => {
+		this.childProcess.stdout.on('data', (data:any) => {
 			window.webContents.send('consoleData', data.toString());
 		});
       
-		test.stderr.on('data', (data:any) => {
+		this.childProcess.stderr.on('data', (data:any) => {
 			window.webContents.send('consoleData', data.toString());
 		});
 
-		test.on('exit', (code) => {
+		this.childProcess.on('exit', (code:any) => {
 			window.webContents.send('consoleData', "\r\n$ ");
+			window.webContents.send('triggerAction', 'game-stopped');
 		});
 	}
 }
