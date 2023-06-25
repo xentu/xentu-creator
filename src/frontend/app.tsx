@@ -145,6 +145,18 @@ function App({ loadedSettings }: appProps) {
 		updateRootCssVariables();
 	}, [settings]);
 
+
+	useEffect(() => {
+		document.onkeyup = (e:KeyboardEvent) => {
+			console.log("keyup", e.key);
+			if (e.key == 'Escape') {
+				setContextMenu('');
+				setFocusPath('');
+			}
+		};
+	}, []);
+
+
 	// ########################################################################
 	// Event handlers (from back end).
 	// ########################################################################

@@ -26,7 +26,7 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 	//const settings = useContext(SettingsContext);
 
 	const deselect = (e: Event) => {
-		e.stopPropagation();
+		//e.stopPropagation();
 		if (selected == '') return;
 		console.log('event', e);
 		setSelected('');

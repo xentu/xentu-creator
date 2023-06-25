@@ -25,6 +25,7 @@ export default function ContextMenu({ children, onBlur }: ContextMenuProps) {
 	};
 
 	const handleKeyUp = (e:React.KeyboardEvent) => {
+		console.log('keyup', e);
 		if (e.key == 'Escape') {
 			e.stopPropagation();
 			onBlur();
