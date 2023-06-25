@@ -24,19 +24,10 @@ export default function ContextMenu({ children, onBlur }: ContextMenuProps) {
 		onBlur();
 	};
 
-	const handleKeyUp = (e:React.KeyboardEvent) => {
-		console.log('keyup', e);
-		if (e.key == 'Escape') {
-			e.stopPropagation();
-			onBlur();
-		}
-	};
-
 	return (
 		<div className='context-menu-container' 
 			  onClick={(e) => handleClick(e)}
 			  onBlur={() => onBlur()}
-			  onKeyUp={(e) => handleKeyUp(e)}
 		     style={{ display:menuVisible?'block':'none' }}>
 			{children}
 		</div>

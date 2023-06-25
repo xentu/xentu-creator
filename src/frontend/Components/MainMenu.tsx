@@ -27,7 +27,6 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 
 	useEffect(() => {
 		document.onkeyup = (e:KeyboardEvent) => {
-			console.log("keyup", e.key);
 			if (e.key == 'Escape') {
 				setSelected('');
 			}
@@ -37,7 +36,6 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 	const deselect = (e: Event) => {
 		//e.stopPropagation();
 		if (selected == '') return;
-		console.log('event', e);
 		setSelected('');
 	};
 

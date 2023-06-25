@@ -148,7 +148,6 @@ function App({ loadedSettings }: appProps) {
 
 	useEffect(() => {
 		document.onkeyup = (e:KeyboardEvent) => {
-			console.log("keyup", e.key);
 			if (e.key == 'Escape') {
 				setContextMenu('');
 				setFocusPath('');
@@ -166,7 +165,7 @@ function App({ loadedSettings }: appProps) {
 	 * 
 	 */
 	handleAction.current = (action:string, data?:string) => {
-		console.log('handleAction', action);
+		//console.log('handleAction', action);
 		// note: if actions ever stop working, make sure tabs has correct length.
 
 		switch (action) {
@@ -341,6 +340,7 @@ function App({ loadedSettings }: appProps) {
 		window.xterm.setOption('theme', { 
 			background: settings.theme[dark?'dark':'light'].terminalBackground,
 			foreground: settings.theme[dark?'dark':'light'].terminalText,
+			cursor: settings.theme[dark?'dark':'light'].terminalText
 		});
 
 		/* xtermRef.current.terminal.setOption('theme', {
@@ -500,7 +500,6 @@ function App({ loadedSettings }: appProps) {
 		if (tab && tab.guid) {
 			const editor = window.findEditor(tab.guid);
 			editor.layout();
-			console.log('editor resized');
 		}
 		window.dispatchEvent(new Event("resize"));
 	};
@@ -695,6 +694,8 @@ function App({ loadedSettings }: appProps) {
 										<XTerm ref={xtermRef} options={{ 
 											rows: 8, 
 											allowTransparency: true,
+											fontFamily: 'Consolas, "Courier New", monospace',
+											fontSize: settings?.editor?.fontSize ?? 14
 											/* theme: {
 												background: settings.theme[isDark?'dark':'light'].terminalBackground,
 												foreground: settings.theme[isDark?'dark':'light'].terminalText

@@ -124,6 +124,7 @@ html, body, #app, #app > div {
 .file-explorer-wrapper li.is-open > a > i:before { content: '\e803'; }
 .file-explorer-wrapper li ul { margin-left: 19px; }
 .file-explorer-wrapper .is-context > a { outline: 1px solid #eee; }
+.theme-is-light .file-explorer-wrapper .is-context > a { outline: 1px solid #333; }
 .xterm { padding: 8px; }
 .columns.is-tracking .column, .columns.is-tracking .column * { user-select: none!important; }
 .columns.is-tracking .tab-bodies * { pointer-events:none; }
@@ -242,7 +243,8 @@ html, body, #app, #app > div {
  */
 
  
-#console { flex-grow: 0; flex-shrink: 1; background: #0a0a0a; border-top: 1px solid #1a1a1a; }
+#console { flex-grow: 0; flex-shrink: 1; border-top: 1px solid #1a1a1a; }
+.theme-is-dark #console { background: #0a0a0a; }
 
 
 /**
@@ -326,7 +328,6 @@ html, body, #app, #app > div {
 #main-menu { display:flex; background-color: var(--main-bg2); padding: 5px; z-index: 99999999; position: sticky; }
 #main-menu * { user-select: none; }
 #main-menu:focus-visible { outline:0; }
-.menu-label { /* color: var(--menu-text); */ }
 .menu-sub { display: none; }
 #main-menu .menu-item .menu-label { padding: 5px 6px; display:inline-block; }
 #main-menu .menu-item:not(.is-disabled) .menu-label:hover { cursor:pointer; background: var(--mainBackgroundSemiDark); }
