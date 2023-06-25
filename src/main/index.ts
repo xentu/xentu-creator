@@ -88,7 +88,8 @@ class XentuCreatorApp {
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
 		ipcMain.handle('create-file', this.handleCreateFile);
-		ipcMain.handle('delete-file', this.handleDeleteFile);
+		ipcMain.handle('create-folder', this.handleCreateFolder);
+		ipcMain.handle('delete', this.handleDeleteFileOrFolder);
 		ipcMain.handle('open-image', this.handleOpenImage);
 		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
@@ -323,10 +324,23 @@ class XentuCreatorApp {
 		return `file created (${filePath}).`;
 	}
 
+	
 
-	async handleDeleteFile(event:any, filePath: string) {
-		await fs.remove(filePath);
-		return `file deleted (${filePath}).`;
+	async handleCreateFolder(event:any, folderPath: string) {
+		await fs.ensureDir(folderPath);
+		return `folder created (${folderPath}).`;
+	}
+
+
+	async handleDeleteFileOrFolder(event:any, filePath: string) {
+		if (fs.lstatSync(filePath).isDirectory()) {
+			await fs.rm(filePath, { recursive: true, force: true });
+			return `folder deleted (${filePath}).`;
+		}
+		else {
+			await fs.remove(filePath);
+			return `file deleted (${filePath}).`;
+		}
 	}
 
 	
