@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 type SettingBoolProps = {
 	title: string,
 	slug: string,
@@ -7,6 +8,7 @@ type SettingBoolProps = {
 	checked: boolean,
 	setChecked: React.Dispatch<React.SetStateAction<boolean>>
 }
+
 
 export default function SettingBool({ title, slug, checked, setChecked, description = '' }: SettingBoolProps) {
 	return (

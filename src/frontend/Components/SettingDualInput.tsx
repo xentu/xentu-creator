@@ -1,5 +1,6 @@
 import React, { CSSProperties } from 'react';
 
+
 type SettingDualInputProps = {
 	title: string,
 	slug: string,
@@ -10,6 +11,7 @@ type SettingDualInputProps = {
 	setValue2: React.Dispatch<React.SetStateAction<string>>,
 	type?: string
 }
+
 
 export default function SettingDualInput({ title, slug, value1, setValue1, value2, setValue2, description = '', type = 'text' }: SettingDualInputProps) {
 	const style = {} as CSSProperties;

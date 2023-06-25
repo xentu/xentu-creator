@@ -3,11 +3,13 @@ import FileExplorerEntry from './FileExplorerEntry';
 import MenuItem, { MenuEntry } from './MenuItem';
 import ContextMenu from './ContextMenu';
 
+
 declare global {
 	interface Window {
 	  api?: any;
 	}
 }
+
 
 type FileExplorerProps = {
 	path: string,
@@ -17,6 +19,7 @@ type FileExplorerProps = {
 	focusPath: string,
 	setFocusPath: Function
 }
+
 
 export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContextMenu, focusPath, setFocusPath }: FileExplorerProps) {
 	const [entries, setEntries] = useState([]);

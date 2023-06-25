@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MenuEntry } from './MenuItem';
 
+
 type ContextMenuProps = {
 	children?: string | JSX.Element | JSX.Element[],
 	onBlur: Function

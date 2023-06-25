@@ -30,6 +30,7 @@ type FileExplorerEntryProps = {
 	/* children?: string | JSX.Element | JSX.Element[] */
 }
 
+
 export default function FileExplorerEntry({ label, path, directory, ext, setActive, setFocusPath, activePath, focusPath, onContextMenu }: FileExplorerEntryProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [entries, setEntries] = useState([]);

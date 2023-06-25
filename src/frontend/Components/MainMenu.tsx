@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import MenuItem, { MenuEntry } from './MenuItem';
-import { SettingsContext } from '../Context/SettingsManager';
+//import { SettingsContext } from '../Context/SettingsManager';
+
 
 declare global {
 	interface Window {
@@ -34,7 +35,6 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 	}, []);
 
 	const deselect = (e: Event) => {
-		//e.stopPropagation();
 		if (selected == '') return;
 		setSelected('');
 	};

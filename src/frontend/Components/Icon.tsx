@@ -3,6 +3,7 @@ type IconProps = {
 	size?: number
 }
 
+
 export default function Icon({ type, size = 16 }: IconProps) {
 	let src = '../images/icons/file-gray.png';
 	const imgs = ['jpg', 'png', 'svg'];

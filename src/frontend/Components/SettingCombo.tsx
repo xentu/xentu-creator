@@ -1,6 +1,7 @@
 import React from 'react';
 import Dictionary from '../../main/classes/Dictionary';
 
+
 type SettingComboProps = {
 	title: string,
 	slug: string,
@@ -9,6 +10,7 @@ type SettingComboProps = {
 	setValue: React.Dispatch<React.SetStateAction<string>>,
 	options: Dictionary<string>
 }
+
 
 export default function SettingCombo({ title, slug, value, setValue, options, description = '' }: SettingComboProps) {
 	const renderOptions = () => {

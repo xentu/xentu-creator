@@ -264,11 +264,11 @@ html, body, #app, #app > div {
  	background-position: center center;
 }
 .theme-is-light ::-webkit-scrollbar { width: 14px; height: 14px; }
-.theme-is-light ::-webkit-scrollbar-button { background: #c2c2c2;	width: 10px; height: 13px; }
+.theme-is-light ::-webkit-scrollbar-button { background: #ffffff; width: 10px; height: 13px; }
 .theme-is-light ::-webkit-scrollbar-button:single-button { display:none; }
-.theme-is-light ::-webkit-scrollbar-track-piece { background: #c2c2c2; }
-.theme-is-light ::-webkit-scrollbar-thumb { background: #ffffff; }
-.theme-is-light ::-webkit-scrollbar-corner { background-color: #c2c2c2; }
+.theme-is-light ::-webkit-scrollbar-track-piece { background: #ffffff; }
+.theme-is-light ::-webkit-scrollbar-thumb { background: #c2c2c2; }
+.theme-is-light ::-webkit-scrollbar-corner { background-color: #ffffff; }
 
 
 
@@ -468,3 +468,12 @@ html, body, #app, #app > div {
 	background: var(--menu-light-sub-bg); color: var(--menu-light-text); box-shadow: 1px 1px 5px #8f8f8f;
 }
 .theme-is-light .context-menu hr { border-top: 1px solid #8f8f8f; }
+
+
+
+.image-viewer {
+	height: calc(100vh - 250px);
+	overflow-y: scroll;
+	overflow-x: auto;
+	padding: 15px;
+}

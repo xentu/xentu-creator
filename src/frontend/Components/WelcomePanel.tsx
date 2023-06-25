@@ -1,14 +1,17 @@
 import Logo from "./Logo";
 
+
 type WelcomePanelProps = {
 	visible: boolean
 }
+
 
 declare global {
 	interface Window {
 	  api?: any;
 	}
 }
+
 
 export default function WelcomePanel({ visible }: WelcomePanelProps) {
 	const c_visible = visible ? '' : 'is-hidden';

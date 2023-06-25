@@ -2,11 +2,13 @@ import { MouseEventHandler, useState, useContext, ChangeEventHandler } from 'rea
 import SettingInput from '../Components/SettingInput';
 import { SettingsContext } from '../Context/SettingsManager';
 
+
 type StyleEditorProps = {
 	shown?: boolean,
 	onClose?: Function,
 	onSettingsChanged?: Function
 }
+
 
 const themeOpts = {
 	mainBackground:			'Main Background',
@@ -24,6 +26,7 @@ const themeOpts = {
 	footerBackground:			'Footer Background',
 	footerText:					'Footer Text'
 };
+
 
 export default function ThemeEditor({ shown, onClose, onSettingsChanged }: StyleEditorProps) {
 	const settings = useContext(SettingsContext);

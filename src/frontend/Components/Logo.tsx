@@ -4,6 +4,7 @@ type LogoProps = {
 	alt?: string
 }
 
+
 export default function Logo({ src, size = 32, alt }: LogoProps) {
 	return (
 		<a>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 type SettingTextProps = {
 	title: string,
 	slug: string,
@@ -8,6 +9,7 @@ type SettingTextProps = {
 	setValue: React.Dispatch<React.SetStateAction<string>>,
 	type?: string
 }
+
 
 export default function SettingText({ title, slug, value, setValue, description = '', type = 'text' }: SettingTextProps) {
 	return (

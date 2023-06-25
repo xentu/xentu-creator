@@ -1,23 +1,26 @@
 import { createRoot } from 'react-dom/client';
 import { useState, useEffect, useRef, MouseEvent } from 'react';
-import FileExplorer from "./Components/FileExplorer";
+import ContextMenu from './Components/ContextMenu';
 import DialogContainer from "./Components/DialogContainer";
+import FileExplorer from "./Components/FileExplorer";
+import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
+import MainMenu from './Components/MainMenu';
+import NewGameDialog from './Dialogs/NewGameDialog';
+import OpenTab, { OpenTabType } from "./Classes/OpenTab";
+import SettingsDialog from './Dialogs/SettingsDialog';
 import TabCodeEditor from "./Components/TabCodeEditor";
 import TabImageViewer from "./Components/TabImageViewer";
 import TabItem from "./Components/TabItem";
-import WelcomePanel from './Components/WelcomePanel';
-import OpenTab, { OpenTabType } from "./Classes/OpenTab";
-import SettingsDialog from './Dialogs/SettingsDialog';
-import { SettingsContext } from './Context/SettingsManager';
-import { ProjectContext, ProjectSchema } from './Context/ProjectManager';
-import { XTerm } from 'xterm-for-react';
-import NewGameDialog from './Dialogs/NewGameDialog';
-import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
-import MainMenu from './Components/MainMenu';
 import ThemeEditor from './Components/ThemeEditor';
-import ContextMenu from './Components/ContextMenu';
+import WelcomePanel from './Components/WelcomePanel';
 import { MenuEntry } from './Components/MenuItem';
+import { ProjectContext, ProjectSchema } from './Context/ProjectManager';
+import { SettingsContext } from './Context/SettingsManager';
+import { XTerm } from 'xterm-for-react';
+
+
 require('./windowFuncs');
+require('./allTypes');
 
 
 declare global {
@@ -29,39 +32,29 @@ declare global {
 }
 
 
-type appProps = {
-	loadedSettings: any
-};
-
-type contextMenuInfo = {
-	name: string,
-	x: number,
-	y: number
-};
-
-
 const container = document.getElementById('app');
 const root = createRoot(container!);
 
 
 function App({ loadedSettings }: appProps) {
-	const [sidebarWidth, setSidebarWidth] = useState(240);
 	const [consoleHeight, setConsoleHeight] = useState(150);
+	const [contextMenu, setContextMenu] = useState(null);
+	const [debugging, setDebugging] = useState(false);
+	const [dialog, setDialog] = useState('');
+	const [focusPath, setFocusPath] = useState('');
 	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
 	const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
-	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-	const [tabsChangeContext, setTabChangeContext] = useState(null);
-	const [tabs, setTabs] = useState(new Array<OpenTab>());
 	const [project, setProject] = useState({} as ProjectSchema);
+	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [settings, setSettings] = useState(loadedSettings);
-	const [dialog, setDialog] = useState('');
-	const [contextMenu, setContextMenu] = useState(null);
-	const [showSidebar, setShowSidebar] = useState(true);
 	const [showConsole, setShowConsole] = useState(true);
+	const [showSidebar, setShowSidebar] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
 	const [showThemeEditor, setShowThemeEditor] = useState(false);
-	const [debugging, setDebugging] = useState(false);
-	const [focusPath, setFocusPath] = useState('');
+	const [sidebarWidth, setSidebarWidth] = useState(240);
+	const [tabs, setTabs] = useState(new Array<OpenTab>());
+	const [tabsChangeContext, setTabChangeContext] = useState(null);
+
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
@@ -81,10 +74,6 @@ function App({ loadedSettings }: appProps) {
 		window.api.getAccentColor().then((accentColor:string) => {
 			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
 		});
-		/* window.api.getSettings().then((foundSettings:any) => {
-			setSettings(foundSettings);
-		}); */
-		window.onresize = () => { handleAction.current('resize', ''); }
 
 		xtermRef.current.terminal.writeln("Hello, World!");
 		xtermRef.current.terminal.write("$ ");
@@ -125,6 +114,17 @@ function App({ loadedSettings }: appProps) {
 			}
 		 });
 
+		window.onresize = () => { 
+			handleAction.current('resize', '');
+		}
+
+		document.onkeyup = (e:KeyboardEvent) => {
+			if (e.key == 'Escape') {
+				setContextMenu('');
+				setFocusPath('');
+			}
+		};
+
 	}, []);
 
 
@@ -141,19 +141,10 @@ function App({ loadedSettings }: appProps) {
 		doUpdateWindowTitle();
 	}, [selectedTabIndex]);
 
+
 	useEffect(() => {
 		updateRootCssVariables();
 	}, [settings]);
-
-
-	useEffect(() => {
-		document.onkeyup = (e:KeyboardEvent) => {
-			if (e.key == 'Escape') {
-				setContextMenu('');
-				setFocusPath('');
-			}
-		};
-	}, []);
 
 
 	// ########################################################################
@@ -306,6 +297,7 @@ function App({ loadedSettings }: appProps) {
 	// Functions
 	// ########################################################################
 
+
 	const updateRootCssVariables = () => {
 		const th = settings.theme[settings.editor.colorTheme];
 		const dark = settings.editor.colorTheme == 'dark';
@@ -347,6 +339,7 @@ function App({ loadedSettings }: appProps) {
 			background: th.terminalBackground
 	  	}); */
 	};
+
 
 	/**
 	 * Find an open tab by it's file path, or null if the file isn't open.
@@ -495,6 +488,9 @@ function App({ loadedSettings }: appProps) {
 	};
 
 
+	/**
+	 * 
+	 */
 	const doEditorResize = () => {
 		const tab = findActiveTab();
 		if (tab && tab.guid) {
@@ -550,6 +546,9 @@ function App({ loadedSettings }: appProps) {
 	// ########################################################################
 
 
+	/**
+	 * 
+	 */
 	const renderTabLabels = () => {
 		const result = [];
 		for (var i=0; i<tabs.length; i++) {
@@ -566,6 +565,9 @@ function App({ loadedSettings }: appProps) {
 	};
 
 
+	/**
+	 * 
+	 */
 	const renderTabBodies = () => {
 		const result = [];
 		for (var i=0; i<tabs.length; i++) {
@@ -591,6 +593,9 @@ function App({ loadedSettings }: appProps) {
 	};
 
 
+	/**
+	 * 
+	 */
 	const renderDialog = () => {
 		const result = [];
 		switch (dialog) {
@@ -602,6 +607,9 @@ function App({ loadedSettings }: appProps) {
 	};
 
 
+	/**
+	 * 
+	 */
 	const renderContextMenu = () => {
 		const result = [];
 		if (contextMenu !== null) {
@@ -646,17 +654,15 @@ function App({ loadedSettings }: appProps) {
 	const c_welcome = isWelcomeVisible ? 'welcome-visible' : '';
 	const isDark = settings.editor.colorTheme == 'dark';
 
+
 	return (
 		<div className={[isDark?'theme-is-dark':'theme-is-light', c_roboto, c_welcome].join(' ')}>
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
 
-					<MainMenu enabled={!isWelcomeVisible} showSidebar={showSidebar} showStatus={showStatusBar}
-								 showConsole={showConsole} showThemeEditor={showThemeEditor} debugging={debugging} />
+					<MainMenu enabled={!isWelcomeVisible} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} debugging={debugging} />
 
-					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
-						onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
-						onMouseLeave={e => setIsTrackingMouse('')}>
+					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => setIsTrackingMouse('')}>
 
 						<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px', display: showSidebar ? 'flex' : 'none' }}>
 							<div className="column-head tab-labels">
@@ -670,15 +676,11 @@ function App({ loadedSettings }: appProps) {
 
 							</div>
 							<div className="column-body">
-								<FileExplorer path="d:/temp"
-												  onFileOpen={(filePath: string) => doLoadEditor(filePath)} 
-												  onContextMenu={(name:string, x:number, y:number) => doShowContextMenu(name, x, y)}
-												  focusPath={focusPath} setFocusPath={setFocusPath} />
+								<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} onContextMenu={(name:string, x:number, y:number) => doShowContextMenu(name, x, y)} focusPath={focusPath} setFocusPath={setFocusPath} />
 							</div>
 						</div>
 
-						<div id="splitter" onMouseDown={e => setIsTrackingMouse('splitter')} 
-												onMouseUp={e => setIsTrackingMouse('')} />
+						<div id="splitter" onMouseDown={e => setIsTrackingMouse('splitter')} onMouseUp={e => setIsTrackingMouse('')} />
 					
 						<div id="main" className="column">
 							<div className="column-head tab-labels">
@@ -696,10 +698,6 @@ function App({ loadedSettings }: appProps) {
 											allowTransparency: true,
 											fontFamily: 'Consolas, "Courier New", monospace',
 											fontSize: settings?.editor?.fontSize ?? 14
-											/* theme: {
-												background: settings.theme[isDark?'dark':'light'].terminalBackground,
-												foreground: settings.theme[isDark?'dark':'light'].terminalText
-											} */
 										}} />
 									</div>
 								</div>
@@ -707,25 +705,15 @@ function App({ loadedSettings }: appProps) {
 						</div>
 					</div>
 
-
 					<div id='status-bar'>Idle.</div>
-
-
 					<WelcomePanel visible={isWelcomeVisible} />
-
-					<ThemeEditor shown={showThemeEditor} 
-									onClose={(e:any) => setShowThemeEditor(!showThemeEditor)}
-									onSettingsChanged={(s:any) => setSettings(s)} />
-					
+					<ThemeEditor shown={showThemeEditor} onClose={(e:any) => setShowThemeEditor(!showThemeEditor)} onSettingsChanged={(s:any) => setSettings(s)} />
 					<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
 						{renderDialog()}
 					</DialogContainer>
-
-
 					<ContextMenu onBlur={() => doHideContextMenu()}> 
 						{renderContextMenu()}
 					</ContextMenu>
-
 
 				</ProjectContext.Provider>
 			</SettingsContext.Provider>

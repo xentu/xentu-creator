@@ -1,5 +1,6 @@
 import React, { CSSProperties } from 'react';
 
+
 type SettingInputProps = {
 	title: string,
 	slug: string,
@@ -9,6 +10,7 @@ type SettingInputProps = {
 	type?: string,
 	small?: boolean
 }
+
 
 export default function SettingInput({ title, slug, value, setValue, description = '', type = 'text', small = false }: SettingInputProps) {
 	const style = {} as CSSProperties;

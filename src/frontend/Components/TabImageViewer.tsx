@@ -1,17 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
 
+
 type TabImageViewerProps = {
 	guid: string,
 	filePath:string,
 	active: boolean,
 	labelChanged: Function, 
 	onSetData: Function
-};
-
-type TabCodeEditorState = {
-	data?: string; // like this
-	lang?: string;
 };
 
 

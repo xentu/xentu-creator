@@ -5,15 +5,18 @@ import Dictionary from '../../main/classes/Dictionary';
 import SettingInput from '../Components/SettingInput';
 import { SettingsContext } from '../Context/SettingsManager';
 
+
 type SettingsDialogProps = {
 	onSettingsChanged: Function
 }
+
 
 declare global {
 	interface Window {
 	  api?: any;
 	}
 }
+
 
 const colorThemes = new Dictionary<string>();
 colorThemes.add('dark', 'Dark');

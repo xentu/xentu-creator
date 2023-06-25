@@ -7,9 +7,11 @@ import SettingDualInput from '../Components/SettingDualInput';
 import { SettingsContext } from '../Context/SettingsManager';
 import { ProjectContext, ProjectSchema } from '../Context/ProjectManager';
 
+
 type GamePropertiesDialogProps = {
 	onPropertiesChanged: Function
 }
+
 
 declare global {
 	interface Window {
