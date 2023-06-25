@@ -198,8 +198,8 @@ html, body, #app, #app > div {
 .setting-left div {font-weight: 500; font-size: 15px; margin-bottom: 5px;}
 .setting-left small { opacity: 0.6; }
 .setting-right select { padding: 5px; min-width: 160px; border-radius: 5px; border-color: #444; }
-.setting-right input[type='text'], .setting-right input[type='number'] { min-width: 160px; border-radius: 5px; box-shadow: none; border: 1px solid #444; padding: 6px 8px; }
-.setting-right input[type='text'] { width: 320px; }
+input[type='text'], input[type='number'] { min-width: 160px; border-radius: 5px; box-shadow: none; border: 1px solid #444; padding: 6px 8px; }
+input[type='text'] { width: 320px; }
 .setting-right.is-small input { min-width:0; width: 90px; }
 .setting-dual-input .setting-right input { min-width:0; width: 90px; margin-left: 10px; }
 
@@ -304,7 +304,7 @@ html, body, #app, #app > div {
 
 .theme-is-light .dialog .dialog-page { color: #333; }
 .theme-is-light .dialog select,
-.theme-is-light .dialog input { background: #fff; color:#333; border-color: #00000030; }
+.theme-is-light input { background: #fff; color:#333; border-color: #00000030; }
 .theme-is-light pre { background:#eee; border-color:#aaa; }
 .theme-is-light .setting { border-top: 1px solid #00000020; }
 
@@ -344,6 +344,13 @@ html, body, #app, #app > div {
 	padding: 5px 0;
 	z-index: 999;
 	color: var(--menu-text);
+}
+#menu-back-target {
+	position: absolute;
+	background: transparent;
+	height: 100vh;
+	width: 100%;
+	z-index: 99999998;
 }
 .menu-entry { padding: 6px 16px 6px 24px; }
 .menu-entry:hover { background: var(--accent); cursor:pointer; }
@@ -477,3 +484,22 @@ html, body, #app, #app > div {
 	overflow-x: auto;
 	padding: 15px;
 }
+
+
+.file-creator, .file-creator * {
+	user-select: all!important;
+	pointer-events: initial!important;
+}
+.file-creator input {
+	line-height: 18px;
+	padding: 0px 5px;
+	font-size: 12px;
+	left: -5px;
+	top: 2px;
+	position: relative;
+	min-width: 0;
+}
+
+
+
+

@@ -41,6 +41,7 @@ function App({ loadedSettings }: appProps) {
 	const [contextMenu, setContextMenu] = useState(null);
 	const [debugging, setDebugging] = useState(false);
 	const [dialog, setDialog] = useState('');
+	const [fileCreator, setFileCreator] = useState(null);
 	const [focusPath, setFocusPath] = useState('');
 	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
 	const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
@@ -122,6 +123,7 @@ function App({ loadedSettings }: appProps) {
 			if (e.key == 'Escape') {
 				setContextMenu('');
 				setFocusPath('');
+				setFileCreator(null);
 			}
 		};
 
@@ -441,11 +443,16 @@ function App({ loadedSettings }: appProps) {
 	};
 
 
+	const doCreateFile = async (filePath: string) => {
+		await window.api.createFile(filePath);
+	};
+
+
 	/**
 	 * Sets the arguments for where to show a context menu.
 	 */
-	const doShowContextMenu = (name:string, x:number, y:number) : void => {
-		setContextMenu({ name, x, y });
+	const doShowContextMenu = (name:string, x:number, y:number, path:string) : void => {
+		setContextMenu({ name, x, y, path });
 	};
 
 
@@ -541,6 +548,16 @@ function App({ loadedSettings }: appProps) {
 	};
 
 
+	/**
+	 * Close a tab for a specific path.
+	 * @param path 
+	 */
+	const doCloseTabByPath = (path: string) => {
+		const tab = findTab(path);
+		doCloseTab(tab);
+	};
+
+
 	// ########################################################################
 	// ReactJS Render Methods
 	// ########################################################################
@@ -607,6 +624,27 @@ function App({ loadedSettings }: appProps) {
 	};
 
 
+	const contextMenuAction = async (action:string, directory?:boolean) => {
+		console.log('Context Menu Action', {
+			'action': action,
+			'path': contextMenu?.path ?? ''
+		});
+
+		switch (action) {
+			case 'new-file':
+				setFileCreator(contextMenu.path ?? '');
+				break;
+			case 'delete-file':
+				if (contextMenu.path && confirm("Are you sure you wish to delete this file?")) {
+					const r = await window.api.deleteFile(contextMenu.path);
+					console.log("DeleteFile result", r);
+					doCloseTabByPath(contextMenu.path);
+				}
+				break;
+		}
+	}
+
+
 	/**
 	 * 
 	 */
@@ -618,28 +656,28 @@ function App({ loadedSettings }: appProps) {
 			if (info.name == 'file-explorer') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file" label="New File..." />
-						<MenuEntry key="new-folder" label="New Folder..." />
+						<MenuEntry key="new-file" label="New File..." click={() => contextMenuAction('new-file')} />
+						<MenuEntry key="new-folder" label="New Folder..." disabled={true} click={() => contextMenuAction('new-folder')} />
 						<hr />
-						<MenuEntry key="rename" label="Rename" />
-						<MenuEntry key="delete" label="Delete" />
+						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename-file')} />
+						<MenuEntry key="delete" label="Delete" disabled={true} click={() => contextMenuAction('delete-file')} />
 					</div>);
 			}
 			else if (info.name == 'file-explorer-directory') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file" label="New File..." />
-						<MenuEntry key="new-folder" label="New Folder..." />
+						<MenuEntry key="new-file" label="New File..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-folder" label="New Folder..." disabled={true} click={() => contextMenuAction('new-folder', true)} />
 						<hr />
-						<MenuEntry key="rename" label="Rename" />
-						<MenuEntry key="delete" label="Delete" />
+						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename-folder', true)} />
+						<MenuEntry key="delete" label="Delete" disabled={true} click={() => contextMenuAction('delete-folder', true)} />
 					</div>);
 			}
 			else if (info.name == 'file-explorer-item') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="rename" label="Rename" />
-						<MenuEntry key="delete" label="Delete" />
+						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename-file')} />
+						<MenuEntry key="delete" label="Delete" click={() => contextMenuAction('delete-file')} />
 					</div>);
 			}
 		}
@@ -676,7 +714,14 @@ function App({ loadedSettings }: appProps) {
 
 							</div>
 							<div className="column-body">
-								<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} onContextMenu={(name:string, x:number, y:number) => doShowContextMenu(name, x, y)} focusPath={focusPath} setFocusPath={setFocusPath} />
+								<FileExplorer path="d:/temp" 
+									onFileOpen={(filePath: string) => doLoadEditor(filePath)} 
+									onFileCreate={(filePath: string) => doCreateFile(filePath)}
+									onContextMenu={(name:string, x:number, y:number, path:string) => doShowContextMenu(name, x, y, path)} 
+									focusPath={focusPath} 
+									setFocusPath={setFocusPath} 
+									fileCreator={fileCreator} 
+									setFileCreator={setFileCreator} />
 							</div>
 						</div>
 

@@ -87,6 +87,8 @@ class XentuCreatorApp {
 		ipcMain.on('set-title', this.handleSetTitle);
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
+		ipcMain.handle('create-file', this.handleCreateFile);
+		ipcMain.handle('delete-file', this.handleDeleteFile);
 		ipcMain.handle('open-image', this.handleOpenImage);
 		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
@@ -313,6 +315,18 @@ class XentuCreatorApp {
 			path: filePath,
 			data: theData
 		});
+	}
+
+
+	async handleCreateFile(event:any, filePath: string) {
+		await fs.outputFile(filePath, '', 'utf-8');
+		return `file created (${filePath}).`;
+	}
+
+
+	async handleDeleteFile(event:any, filePath: string) {
+		await fs.remove(filePath);
+		return `file deleted (${filePath}).`;
 	}
 
 	

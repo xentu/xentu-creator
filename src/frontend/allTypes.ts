@@ -5,5 +5,6 @@ type appProps = {
 type contextMenuInfo = {
 	name: string,
 	x: number,
-	y: number
+	y: number,
+	path: string
 };
