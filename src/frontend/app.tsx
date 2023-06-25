@@ -3,9 +3,10 @@ import { useState, useEffect, useRef, MouseEvent } from 'react';
 import FileExplorer from "./Components/FileExplorer";
 import DialogContainer from "./Components/DialogContainer";
 import TabCodeEditor from "./Components/TabCodeEditor";
+import TabImageViewer from "./Components/TabImageViewer";
 import TabItem from "./Components/TabItem";
 import WelcomePanel from './Components/WelcomePanel';
-import OpenTab from "./Classes/OpenTab";
+import OpenTab, { OpenTabType } from "./Classes/OpenTab";
 import SettingsDialog from './Dialogs/SettingsDialog';
 import { SettingsContext } from './Context/SettingsManager';
 import { ProjectContext, ProjectSchema } from './Context/ProjectManager';
@@ -14,6 +15,8 @@ import NewGameDialog from './Dialogs/NewGameDialog';
 import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
 import MainMenu from './Components/MainMenu';
 import ThemeEditor from './Components/ThemeEditor';
+import ContextMenu from './Components/ContextMenu';
+import { MenuEntry } from './Components/MenuItem';
 require('./windowFuncs');
 
 
@@ -28,6 +31,12 @@ declare global {
 
 type appProps = {
 	loadedSettings: any
+};
+
+type contextMenuInfo = {
+	name: string,
+	x: number,
+	y: number
 };
 
 
@@ -46,11 +55,13 @@ function App({ loadedSettings }: appProps) {
 	const [project, setProject] = useState({} as ProjectSchema);
 	const [settings, setSettings] = useState(loadedSettings);
 	const [dialog, setDialog] = useState('');
+	const [contextMenu, setContextMenu] = useState(null);
 	const [showSidebar, setShowSidebar] = useState(true);
 	const [showConsole, setShowConsole] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
 	const [showThemeEditor, setShowThemeEditor] = useState(false);
 	const [debugging, setDebugging] = useState(false);
+	const [focusPath, setFocusPath] = useState('');
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
@@ -204,7 +215,7 @@ function App({ loadedSettings }: appProps) {
 					break;
 				case 'resize':
 					const tab = findActiveTab();
-					if (tab && tab.guid) {
+					if (tab && tab.guid && tab.type == OpenTabType.Editor) {
 						const editor = window.findEditor(tab.guid);
 						editor.layout({  });
 					}
@@ -399,19 +410,47 @@ function App({ loadedSettings }: appProps) {
 	 */
 	const doLoadEditor = (filePath: string) : void => {
 		const ext = filePath.split('.').pop();
-		const allowed = ['lua', 'js', 'json', 'toml', 'txt', 'xml', 'py'];
-		if (allowed.includes(ext)) {
+
+		if (['lua', 'js', 'json', 'toml', 'txt', 'xml', 'py'].includes(ext)) {
 			const existing = findTab(filePath);
 			if (existing !== null) {
 				setSelectedTab(existing);
 				return;
 			}
 			//setSelectedTabIndex(tabs.length);
-			const newTab = new OpenTab('loading...', filePath);
+			const newTab = new OpenTab('loading...', filePath, OpenTabType.Editor);
+			setTabChangeContext(newTab);
+			setTabs([...tabs, newTab]);
+		}
+
+		if (['jpg', 'png'].includes(ext)) {
+			const existing = findTab(filePath);
+			if (existing !== null) {
+				setSelectedTab(existing);
+				return;
+			}
+			const newTab = new OpenTab('loading...', filePath, OpenTabType.ImageViewer);
 			setTabChangeContext(newTab);
 			setTabs([...tabs, newTab]);
 		}
 	};
+
+
+	/**
+	 * Sets the arguments for where to show a context menu.
+	 */
+	const doShowContextMenu = (name:string, x:number, y:number) : void => {
+		setContextMenu({ name, x, y });
+	};
+
+
+	/**
+	 * Hide the active context menu.
+	 */
+	const doHideContextMenu = () => {
+		setContextMenu(null);
+		setFocusPath(null);
+	}
 
 	
 	/**
@@ -521,11 +560,21 @@ function App({ loadedSettings }: appProps) {
 		for (var i=0; i<tabs.length; i++) {
 			const tab = tabs[i];
 			if (tab == null) continue;
-			result.push(<TabCodeEditor key={"tabBody"+i} filePath={tab.path} guid={tab.guid}
+			if (tab.type == OpenTabType.Editor) {
+				result.push(<TabCodeEditor key={"tabBody"+i} filePath={tab.path} guid={tab.guid}
 												active={selectedTabIndex == i}
 												labelChanged={(l: string) => handleLabelChanged(tab, l)}
 												onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} 
 												/>);
+			}
+			else if (tab.type == OpenTabType.ImageViewer) {
+				result.push(<TabImageViewer key={"tabBody"+i} filePath={tab.path} guid={tab.guid}
+												active={selectedTabIndex == i}
+												labelChanged={(l: string) => handleLabelChanged(tab, l)}
+												onSetData={(n: any, c: boolean) => {}} 
+												/>);
+			}
+			
 		}
 		return result;
 	};
@@ -537,6 +586,43 @@ function App({ loadedSettings }: appProps) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
 			case 'new-game': result.push(<NewGameDialog key={'new-game'} createGameCallback={(opts:any) => { console.log("newGame", opts); }} />); break;
 			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => setProject(s)} />); break;
+		}
+		return result;
+	};
+
+
+	const renderContextMenu = () => {
+		const result = [];
+		if (contextMenu !== null) {
+			const info = contextMenu as contextMenuInfo;
+			const style = { left:info.x+'px', top: info.y+'px' };
+			if (info.name == 'file-explorer') {
+				result.push(
+					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
+						<MenuEntry key="new-file" label="New File..." />
+						<MenuEntry key="new-folder" label="New Folder..." />
+						<hr />
+						<MenuEntry key="rename" label="Rename" />
+						<MenuEntry key="delete" label="Delete" />
+					</div>);
+			}
+			else if (info.name == 'file-explorer-directory') {
+				result.push(
+					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
+						<MenuEntry key="new-file" label="New File..." />
+						<MenuEntry key="new-folder" label="New Folder..." />
+						<hr />
+						<MenuEntry key="rename" label="Rename" />
+						<MenuEntry key="delete" label="Delete" />
+					</div>);
+			}
+			else if (info.name == 'file-explorer-item') {
+				result.push(
+					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
+						<MenuEntry key="rename" label="Rename" />
+						<MenuEntry key="delete" label="Delete" />
+					</div>);
+			}
 		}
 		return result;
 	};
@@ -554,7 +640,7 @@ function App({ loadedSettings }: appProps) {
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
 
-					<MainMenu enabled={!isWelcomeVisible} showSidebar={showSidebar} showStatus={showStatusBar} 
+					<MainMenu enabled={!isWelcomeVisible} showSidebar={showSidebar} showStatus={showStatusBar}
 								 showConsole={showConsole} showThemeEditor={showThemeEditor} debugging={debugging} />
 
 					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} 
@@ -564,9 +650,19 @@ function App({ loadedSettings }: appProps) {
 						<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px', display: showSidebar ? 'flex' : 'none' }}>
 							<div className="column-head tab-labels">
 								<div className='tab-label'>Files &amp; Folders</div>
+
+								<div className="buttons" style={{display:'none'}}>
+									<a className={["menu-item"].join(' ')} title="Config Game">
+										<span className="menu-label"><i className='icon-cog'></i></span>
+									</a>
+								</div>
+
 							</div>
 							<div className="column-body">
-								<FileExplorer path="d:/temp" onFileOpen={(filePath: string) => doLoadEditor(filePath)} />
+								<FileExplorer path="d:/temp"
+												  onFileOpen={(filePath: string) => doLoadEditor(filePath)} 
+												  onContextMenu={(name:string, x:number, y:number) => doShowContextMenu(name, x, y)}
+												  focusPath={focusPath} setFocusPath={setFocusPath} />
 							</div>
 						</div>
 
@@ -611,6 +707,12 @@ function App({ loadedSettings }: appProps) {
 					<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
 						{renderDialog()}
 					</DialogContainer>
+
+
+					<ContextMenu onBlur={() => doHideContextMenu()}> 
+						{renderContextMenu()}
+					</ContextMenu>
+
 
 				</ProjectContext.Provider>
 			</SettingsContext.Provider>

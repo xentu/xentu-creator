@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import FileExplorerEntry from './FileExplorerEntry';
+import MenuItem, { MenuEntry } from './MenuItem';
+import ContextMenu from './ContextMenu';
 
 declare global {
 	interface Window {
@@ -11,9 +13,12 @@ type FileExplorerProps = {
 	path: string,
 	maxDepth?: number,
 	onFileOpen?: Function
+	onContextMenu?: Function,
+	focusPath: string,
+	setFocusPath: Function
 }
 
-export default function FileExplorer({ path, maxDepth = 5, onFileOpen }: FileExplorerProps) {
+export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContextMenu, focusPath, setFocusPath }: FileExplorerProps) {
 	const [entries, setEntries] = useState([]);
 	const [activePath, setActivePath] = useState('');
 
@@ -44,19 +49,51 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen }: FileExp
 		const result = new Array<any>();
 		entries.map((file: any) => {
 			if (file.ext == 'folder') {
-				result.push(<FileExplorerEntry key={file.path} label={file.name} path={file.path} directory={file.directory} ext={file.ext} setActive={setActive} activePath={activePath} />);
+				result.push(<FileExplorerEntry key={file.path} label={file.name}
+														 path={file.path} directory={file.directory}
+														 ext={file.ext} setActive={setActive}
+														 setFocusPath={setFocusPath}
+														 onContextMenu={(e: React.MouseEvent, directory:boolean) => showContextMenu(e, directory)}
+														 activePath={activePath}
+														 focusPath={focusPath} />);
 			}
 		});
 		entries.map((file: any) => {
 			if (file.ext != 'folder') {
-				result.push(<FileExplorerEntry key={file.path} label={file.name} path={file.path} directory={file.directory} ext={file.ext} setActive={setActive} activePath={activePath} />);
+				result.push(<FileExplorerEntry key={file.path} label={file.name} 
+													    path={file.path} directory={file.directory}
+														 ext={file.ext} setActive={setActive}
+														 setFocusPath={setFocusPath}
+														 onContextMenu={(e: React.MouseEvent, directory:boolean) => showContextMenu(e, directory)}
+														 activePath={activePath}
+														 focusPath={focusPath} />);
 			}
 		});
 		return result;
 	};
 
+	
+	const showContextMenu = (e: React.MouseEvent, directory:boolean) => {
+		if (directory) {
+			onContextMenu('file-explorer-directory', e.clientX, e.clientY);
+		}
+		else {
+			onContextMenu('file-explorer-item', e.clientX, e.clientY);
+		}
+	};
+
+
+	const showContextMenuOutside = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setFocusPath(null);
+		onContextMenu('file-explorer', e.clientX, e.clientY);
+	};
+
+
 	return (
-		<div className="file-explorer-wrapper">
+		<div className="file-explorer-wrapper" 
+			  onContextMenu={(e:any) => showContextMenuOutside(e)}
+			  >
 			<ul className="file-explorer">
 				{listEntries()}
 			</ul>

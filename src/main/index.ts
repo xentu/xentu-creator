@@ -87,6 +87,7 @@ class XentuCreatorApp {
 		ipcMain.on('set-title', this.handleSetTitle);
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
+		ipcMain.handle('open-image', this.handleOpenImage);
 		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
 		ipcMain.handle('save-file', this.handleSaveFile);
 		ipcMain.handle('refresh-binaries', this.handleRefreshBinaries);
@@ -127,7 +128,7 @@ class XentuCreatorApp {
 		this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 		
 		//setMenuDisabled(true);
-		//this.mainWindow.webContents.openDevTools();
+		this.mainWindow.webContents.openDevTools();
 	}
 
 
@@ -311,6 +312,17 @@ class XentuCreatorApp {
 			lang: lang,
 			path: filePath,
 			data: theData
+		});
+	}
+
+	
+	async handleOpenImage(event:any, filePath:string) {
+		const theData = await fs.readFile(filePath, "base64");
+		const ext = filePath.split('.').pop();
+		return JSON.stringify({
+			label: path.basename(filePath),
+			path: filePath,
+			data: `data:image/${ext};base64,${theData}`
 		});
 	}
 

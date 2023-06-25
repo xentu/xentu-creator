@@ -37,7 +37,11 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 	};
 
 	return (
-		<div id="main-menu" tabIndex={0} onBlur={() => setSelected('')} onClick={(e:any) => deselect(e)} onKeyUp={(e:any) => kbDeselect(e)}>
+		<div id="main-menu" tabIndex={0} 
+					onBlur={() => setSelected('')} 
+					onClick={(e:any) => deselect(e)}
+					onKeyUp={(e:any) => kbDeselect(e)}>
+
 			<MenuItem label='File' click={() => setSelected('file')} active={selected=='file'}>
 				<MenuEntry click2={(e:any) => deselect(e)} label='New Game' hotKey='Ctrl+N' click={() => window.api.newGame()} />
 				<MenuEntry click2={(e:any) => deselect(e)} label='Open Project...' hotKey='Ctrl+O' click={() => window.api.openFolder()} />
@@ -91,11 +95,14 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 
 			<div className="buttons" style={{ flexGrow: 1, textAlign: 'right', display: enabled?'block':'none' }}>
 				<div style={{display: 'inline-block'}}>
+					<a className={["menu-item"].join(' ')} title="Config Game" onClick={() => window.api.menuGameProperties()}>
+						<span className="menu-label"><i className='icon-cog'></i> Config</span>
+					</a>
 					<a className={["menu-item", debugging?'':'is-disabled'].join(' ')} title="Stop Game" onClick={() => debugging && window.api.menuStop()}>
-						<span className="menu-label"><i className='icon-stop'></i></span>
+						<span className="menu-label"><i className='icon-stop'></i> Stop</span>
 					</a>
 					<a className={["menu-item", debugging?'is-disabled':''].join(' ')} title="Start Game" onClick={() => !debugging && window.api.menuRun()}>
-						<span className="menu-label"><i className='icon-play'></i></span>
+						<span className="menu-label"><i className='icon-play'></i> Play</span>
 					</a>
 				</div>
 			</div>

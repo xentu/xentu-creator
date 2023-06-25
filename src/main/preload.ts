@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('api', {
     setTitle: (title: string) => ipcRenderer.send('set-title', title),
     listFiles: (scanPath: string) => ipcRenderer.invoke('list-files', scanPath),
     openFile: (filePath: string) => ipcRenderer.invoke('open-file', filePath),
+    openImage: (filePath: string) => ipcRenderer.invoke('open-image', filePath),
     newGame: () => ipcRenderer.invoke('new-game'),
     openFolder: () => ipcRenderer.invoke('open-folder'),
     saveFile: (filePath: string, data: string) => ipcRenderer.invoke('save-file', filePath, data),
