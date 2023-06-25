@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import MenuItem, { MenuEntry } from './MenuItem';
 import { SettingsContext } from '../Context/SettingsManager';
 
@@ -24,6 +24,15 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 	const [selected, setSelected] = useState('');
 	const c_active = enabled ? '' : ' is-disabled';
 	//const settings = useContext(SettingsContext);
+
+	useEffect(() => {
+		document.onkeyup = (e:KeyboardEvent) => {
+			console.log("keyup", e.key);
+			if (e.key == 'Escape') {
+				setSelected('');
+			}
+		};
+	}, []);
 
 	const deselect = (e: Event) => {
 		//e.stopPropagation();
