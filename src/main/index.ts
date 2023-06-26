@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, dialog, ipcMain, systemPreferences } from 'electron';
+import { app, shell, BrowserWindow, Menu, dialog, ipcMain, systemPreferences } from 'electron';
 import { spawn } from "node:child_process";
 import XentuCreatorMenu from './menu';
 
@@ -85,6 +85,8 @@ class XentuCreatorApp {
 
 		// setup the api.
 		ipcMain.on('set-title', this.handleSetTitle);
+		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
+		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
 		ipcMain.handle('create-file', this.handleCreateFile);
@@ -97,11 +99,7 @@ class XentuCreatorApp {
 		ipcMain.handle('list-binaries', this.handleListBinaries);
 		ipcMain.handle('get-accent-color', this.handleGetAccentColor);
 		ipcMain.handle('get-settings', () => { return this.handleGetSettings() });
-		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
-		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
-
 		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
-		ipcMain.on('menu-close', this.handleMenuClose);
 	}
 
 
@@ -165,7 +163,7 @@ class XentuCreatorApp {
 					editorText: "#ffffff",
 					footerBackground: "#171717",
 					footerText: "#ffffff",
-					sidebarHoverBackground: "#383838",
+					sidebarHoverBackground: "#1672D4",
 					sidebarHoverText: "#ffffff",
 					sidebarActiveBackground: "#7a3a98",
 					terminalBackground: "#000000",
@@ -319,6 +317,18 @@ class XentuCreatorApp {
 	}
 
 
+	async handlePromptSaveCopy(event:any, originalPath: string) {
+		const window = BrowserWindow.getAllWindows()[0];
+		const dlgResult = await dialog.showSaveDialog(window, { properties: [] });
+		if (dlgResult.canceled == false) {
+			// read the selected path.
+			const selectedPath = dlgResult.filePath;
+			console.log('SaveAs', selectedPath);
+			// this.triggerAction('save-as')
+		}
+	}
+
+
 	async handleCreateFile(event:any, filePath: string) {
 		await fs.outputFile(filePath, '', 'utf-8');
 		return `file created (${filePath}).`;
@@ -402,11 +412,9 @@ class XentuCreatorApp {
 
 	
 	async handleMenuClose(event:any) {
-		console.log('handleMenuClose', 'Xentu Creator');
 		const webContents = event.sender;
 		const win = BrowserWindow.fromWebContents(webContents);
 		win.setTitle('Xentu Creator');
-
 
 		await myCreator.fileWatcher.close(() => console.log('file watcher closed'));
 		myCreator.fileWatcher = null;
@@ -529,7 +537,7 @@ class XentuCreatorApp {
 	}
 
 
-	async stopDebugging() {
+	async stopGame() {
 		if (myCreator.childProcess != null) {
 			myCreator.childProcess.kill('SIGINT');
 			myCreator.childProcess = null;
@@ -537,7 +545,7 @@ class XentuCreatorApp {
 	}
 
 
-	async beginDebugging() {
+	async beginGame(debugging: boolean) {
 		let exePath = '';
 		//const exePath = this.theSettings.debugging.mainBinary;
 		const window = BrowserWindow.getAllWindows()[0];
@@ -576,18 +584,31 @@ class XentuCreatorApp {
 			return;
 		}
 		
-		let exeFile = path.join(exePath, 'xentu_debug.exe');
-		if (myCreator.theProject.game.entry_point.includes('.py')) {
-			exeFile = path.join(exePath, 'xentu_py_debug.exe');
+		// work out which binary to use.
+		let binFile = path.join(exePath, 'xentu');
+		if (debugging) {
+			binFile = path.join(exePath, 'xentu_debug')
+			if (myCreator.theProject.game.entry_point.includes('.py')) {
+				binFile = path.join(exePath, 'xentu_py_debug');
+			}
+		}
+		else {
+			if (myCreator.theProject.game.entry_point.includes('.py')) {
+				binFile = path.join(exePath, 'xentu_py');
+			}
 		}
 
-		if (!await fs.pathExists(exeFile)) {
-			window.webContents.send('consoleData', 'error! ' + exeFile + ' does not exist.');
+		// if on win32, add .exe
+		if (process.platform == 'win32') binFile += '.exe';
+
+		// check if the 
+		if (!await fs.pathExists(binFile)) {
+			window.webContents.send('consoleData', 'error! ' + binFile + ' does not exist.');
 			return;
 		}
 
 		const workingDir = this.projectPath;
-		this.childProcess = spawn(exeFile, [], { cwd: workingDir });
+		this.childProcess = spawn(binFile, [], { cwd: workingDir });
 		window.webContents.send('triggerAction', 'game-started');
 		
 		this.childProcess.stdout.on('data', (data:any) => {
@@ -602,6 +623,12 @@ class XentuCreatorApp {
 			window.webContents.send('consoleData', "\r\n$ ");
 			window.webContents.send('triggerAction', 'game-stopped');
 		});
+	}
+
+
+	async handleRevealInExplorer() {
+		const workingDir = myCreator.projectPath;
+		shell.showItemInFolder(workingDir);
 	}
 }
 

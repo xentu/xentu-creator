@@ -124,6 +124,7 @@ function App({ loadedSettings }: appProps) {
 			if (e.key == 'Escape') {
 				setContextMenu('');
 				setFocusPath('');
+				setDialog('');
 				setFileCreator(null);
 			}
 		};
@@ -201,6 +202,8 @@ function App({ loadedSettings }: appProps) {
 				setDialog('');
 				setIsWelcomeVisible(true);
 				break;
+			case 'game-started':	setDebugging(true); break;
+			case 'game-stopped':	setDebugging(false); break;
 		}	
 
 		if (tabs.length > 0) {
@@ -225,8 +228,6 @@ function App({ loadedSettings }: appProps) {
 						editor.layout({  });
 					}
 					break;
-				case 'game-started':	setDebugging(true); break;
-				case 'game-stopped':	setDebugging(false); break;
 			}
 		}
 	};

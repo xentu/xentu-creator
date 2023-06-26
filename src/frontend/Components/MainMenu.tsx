@@ -57,11 +57,11 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Close Project' click={(() => window.api.menuCloseProject())} />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Save' hotKey='Ctrl+S' click={() => window.api.menuSave()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={true} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={true} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} />
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Game Properties' click={() => window.api.menuGameProperties()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={true} label='Reveal In Explorer' click={() => window.api.menuReveal()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Reveal In Explorer' click={() => window.api.menuReveal()} />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Export...' click={() => window.api.menuExport()} />
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} label='Exit' hotKey='Alt+F4' click={() => window.api.menuExit()} />
