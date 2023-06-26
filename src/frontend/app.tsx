@@ -46,6 +46,8 @@ function App({ loadedSettings }: appProps) {
 	const [focusPath, setFocusPath] = useState('');
 	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
 	const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
+	const [canSave, setCanSave] = useState(false);
+	const [projectPath, setProjectPath] = useState('');
 	const [project, setProject] = useState({} as ProjectSchema);
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [settings, setSettings] = useState(loadedSettings);
@@ -75,6 +77,9 @@ function App({ loadedSettings }: appProps) {
 		});
 		window.api.getAccentColor().then((accentColor:string) => {
 			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
+		});
+		window.api.onProjectPathChanged((newPath:string) => {
+			setProjectPath(newPath);
 		});
 
 		xtermRef.current.terminal.writeln("Hello, World!");
@@ -133,7 +138,21 @@ function App({ loadedSettings }: appProps) {
 
 
 	useEffect(() => {
-		if (tabsChangeContext === null) return;
+		setCanSave(tabs.length > 0);
+	}, [tabs]);
+
+
+	useEffect(() => {
+		if (project !== null && typeof project.game !== 'undefined') {
+			recordProjectOpen();
+		}
+	}, [project]);
+
+
+	useEffect(() => {
+		if (tabsChangeContext === null) {
+			return;
+		}
 		if (tabsChangeContext instanceof OpenTab) {
 			setTabChangeContext(null);
 			setSelectedTab(tabsChangeContext);
@@ -210,6 +229,12 @@ function App({ loadedSettings }: appProps) {
 			switch (action) {
 				case 'save':
 					doSaveTab( findActiveTab() );
+					break;
+				case 'save-copy':
+					doSaveTabCopy( findActiveTab() );
+					break;
+				case 'save-all':
+					doSaveAllTabs();
 					break;
 				case 'select-all':
 					doSelectAll();
@@ -381,6 +406,26 @@ function App({ loadedSettings }: appProps) {
 	}
 
 
+	/**
+	 * 
+	 */
+	const recordProjectOpen = async () => {
+		const clone = JSON.parse(JSON.stringify(settings));
+		// make sure recentProjects is an array.
+		if (typeof clone.recentProjects === 'undefined') {
+			clone.recentProjects = new Array<string>();
+		}
+		const newEntry = `${project.game.title}|${projectPath}`;
+		// remove duplicates.
+		clone.recentProjects = clone.recentProjects.filter((e:string) => !e.endsWith(projectPath));
+		// add to beginning of 
+		clone.recentProjects.unshift(newEntry);
+		// save changes.
+		setSettings(clone);
+		await window.api.setSettings(clone);
+	}
+
+
 	// ########################################################################
 	// Methods
 	// ########################################################################
@@ -486,6 +531,38 @@ function App({ loadedSettings }: appProps) {
 		// update state.
 		tabs[index].changed = false;
 		setTabs([...tabs]);
+	};
+
+
+	const doSaveAllTabs = () => {
+		const saveTabData = async(path:string, data:string) => {
+			const theJSON = await window.api.saveFile(path, data);
+			const theResponse = JSON.parse(theJSON);
+		};
+		const saveEachTab = async (tabs:Array<OpenTab>) => {
+			for (const tab of tabs) {
+				tab.changed = false;
+			  	await saveTabData(tab.path, tab.data ?? '');
+			}
+		}
+		saveEachTab(tabs).then(() => {
+			setTabs([...tabs]);
+		});
+	};
+
+
+	/**
+	 * Ask the main thread to save data from a tab as a copy.
+	 * @param tab 
+	 */
+	const doSaveTabCopy = (tab: OpenTab) => {
+		const index = tabs.indexOf(tab);
+		// call save in async.
+		const saveTabDataCopy = async(path:string, data:string) => {
+			const theJSON = await window.api.saveCopy(path, data);
+			const theResponse = JSON.parse(theJSON);
+		};
+		saveTabDataCopy(tab.path, tab.data ?? '');
 	};
 
 
@@ -669,7 +746,15 @@ function App({ loadedSettings }: appProps) {
 			if (info.name == 'file-explorer') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file" label="New File..." click={() => contextMenuAction('new-file')} />
+						<MenuEntry key="new-file-code" disabled={false} label="New Code File..." click={() => contextMenuAction('new-file', true)} />
+						<hr />
+						<MenuEntry key="new-file-conversation" disabled={false} label="New Conversation..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-database" disabled={false} label="New Database..." click={() => contextMenuAction('new-file', true)} />
+						<hr />
+						<MenuEntry key="new-file-graphic" disabled={false} label="New Graphic..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-sprite-sheet" disabled={false} label="New Sprite Sheet..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-sprite-font" disabled={false} label="New Sprite Font..." click={() => contextMenuAction('new-file', true)} />
+						<hr />
 						<MenuEntry key="new-folder" label="New Folder..." click={() => contextMenuAction('new-folder')} />
 						<hr />
 						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename')} />
@@ -679,7 +764,15 @@ function App({ loadedSettings }: appProps) {
 			else if (info.name == 'file-explorer-directory') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file" label="New File..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-code" disabled={false} label="New Code File..." click={() => contextMenuAction('new-file', true)} />
+						<hr />
+						<MenuEntry key="new-file-conversation" disabled={false} label="New Conversation..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-database" disabled={false} label="New Database..." click={() => contextMenuAction('new-file', true)} />
+						<hr />
+						<MenuEntry key="new-file-graphic" disabled={false} label="New Graphic..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-sprite-sheet" disabled={false} label="New Sprite Sheet..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-sprite-font" disabled={false} label="New Sprite Font..." click={() => contextMenuAction('new-file', true)} />
+						<hr />
 						<MenuEntry key="new-folder" label="New Folder..." click={() => contextMenuAction('new-folder', true)} />
 						<hr />
 						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename', true)} />
@@ -711,7 +804,7 @@ function App({ loadedSettings }: appProps) {
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
 
-					<MainMenu enabled={!isWelcomeVisible} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} debugging={debugging} />
+					<MainMenu enabled={!isWelcomeVisible} canSave={canSave} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} debugging={debugging} />
 
 					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => setIsTrackingMouse('')}>
 

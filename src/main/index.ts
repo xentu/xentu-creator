@@ -93,8 +93,10 @@ class XentuCreatorApp {
 		ipcMain.handle('create-folder', this.handleCreateFolder);
 		ipcMain.handle('delete', this.handleDeleteFileOrFolder);
 		ipcMain.handle('open-image', this.handleOpenImage);
-		ipcMain.handle('open-folder', (e:any) => { this.handleOpenFolder(e) });
+		ipcMain.handle('open-folder', this.handleOpenFolder);
+		ipcMain.handle('open-folder-at', this.handleOpenFolderAt);
 		ipcMain.handle('save-file', this.handleSaveFile);
+		ipcMain.handle('save-copy', this.handlePromptSaveCopy);
 		ipcMain.handle('refresh-binaries', this.handleRefreshBinaries);
 		ipcMain.handle('list-binaries', this.handleListBinaries);
 		ipcMain.handle('get-accent-color', this.handleGetAccentColor);
@@ -197,11 +199,16 @@ class XentuCreatorApp {
 					{ platform: 'Linux/FreeBSD', arch: 'x64', version: '0.0.4' },
 					{ platform: 'Mac OS', arch: 'x64', version: '0.0.4' }
 				]
-			}
+			},
+			recentProjects: new Array<string>()
 		};
 
 		if (exists) {
 			settings = await fs.readJson(settingsFile);
+		}
+
+		if (typeof settings.recentProjects === 'undefined') {
+			settings.recentProjects = new Array<string>();
 		}
 
 		this.theSettings = settings;
@@ -317,15 +324,26 @@ class XentuCreatorApp {
 	}
 
 
-	async handlePromptSaveCopy(event:any, originalPath: string) {
+	async handlePromptSaveCopy(event:any, originalPath: string, data:string) {
 		const window = BrowserWindow.getAllWindows()[0];
 		const dlgResult = await dialog.showSaveDialog(window, { properties: [] });
 		if (dlgResult.canceled == false) {
 			// read the selected path.
 			const selectedPath = dlgResult.filePath;
-			console.log('SaveAs', selectedPath);
+			console.log('SaveAs [from] ', originalPath);
+			console.log('SaveAs [to] ', selectedPath);
 			// this.triggerAction('save-as')
+
+			try {
+				await fs.outputFile(selectedPath, data);
+				return JSON.stringify({	success: true,	message: 'Saved!'	});
+			}
+			catch (err) {
+				return JSON.stringify({ success: false, message: err });
+			}
 		}
+
+		return JSON.stringify({ success: false, message: 'Canceled' });
 	}
 
 
@@ -367,41 +385,49 @@ class XentuCreatorApp {
 
 	async handleOpenFolder(event:any) {
 		const window = BrowserWindow.getAllWindows()[0];
-
+		const self = myCreator;
 		const dlgResult = await dialog.showOpenDialog(window, { properties: ['openDirectory'] });
 		if (dlgResult.canceled == false) {
 			// read the selected path.
 			const selectedPath = dlgResult.filePaths[0];
-			// read the project file if one exists.
-			const projectFile = path.join(selectedPath, 'game.json');
-			const projectFileExists = await fs.pathExists(projectFile);
-
-			if (projectFileExists) {
-				this.theProject = await fs.readJson(projectFile); // await XentuProject.Load(projectFile);
-				const gameName = this.theProject?.game?.title ?? 'Untitled';
-				window.setTitle(gameName + " - Xentu Creator");
-			}
-			else {
-				this.theProject = ProjectTemplate();
-				window.setTitle('Xentu Creator');
-			}
-
-			this.fileWatcher = chokidar.watch(selectedPath, {
-				ignored: /(^|[\/\\])\../, // ignore dot files
-				persistent: true
-			});
-			this.fileWatcher
-			.on('add',			(path:string) => this.triggerFileAction('file-created', path))
-			.on('change',		(path:string) => this.triggerFileAction('file-changed', path))
-			.on('unlink',		(path:string) => this.triggerFileAction('file-removed', path))
-			.on('addDir',		(path:string) => this.triggerFileAction('dir-created', path))
-  			.on('unlinkDir',	(path:string) => this.triggerFileAction('dir-removed', path));
-
-			this.projectPath = selectedPath;
-			window.webContents.send('projectPathChanged', selectedPath);
-			window.webContents.send('projectChanged', JSON.stringify(this.theProject));
-			window.webContents.send('triggerAction', 'hide-welcome', null );
+			await self.handleOpenFolderAt(event, selectedPath);
 		}
+	}
+
+
+	async handleOpenFolderAt(event:any, thePath:string) {
+		console.log("OpenFolderAt", thePath);
+		const window = BrowserWindow.getAllWindows()[0];
+		// read the project file if one exists.
+		const projectFile = path.join(thePath, 'game.json');
+		const projectFileExists = await fs.pathExists(projectFile);
+		const self = myCreator;
+
+		if (projectFileExists) {
+			self.theProject = await fs.readJson(projectFile); // await XentuProject.Load(projectFile);
+			const gameName = self.theProject?.game?.title ?? 'Untitled';
+			window.setTitle(gameName + " - Xentu Creator");
+		}
+		else {
+			self.theProject = ProjectTemplate();
+			window.setTitle('Xentu Creator');
+		}
+
+		self.fileWatcher = chokidar.watch(thePath, {
+			ignored: /(^|[\/\\])\../, // ignore dot files
+			persistent: true
+		});
+		self.fileWatcher
+		.on('add',			(path:string) => self.triggerFileAction('file-created', path))
+		.on('change',		(path:string) => self.triggerFileAction('file-changed', path))
+		.on('unlink',		(path:string) => self.triggerFileAction('file-removed', path))
+		.on('addDir',		(path:string) => self.triggerFileAction('dir-created', path))
+		 .on('unlinkDir',	(path:string) => self.triggerFileAction('dir-removed', path));
+
+		 self.projectPath = thePath;
+		window.webContents.send('projectPathChanged', thePath);
+		window.webContents.send('projectChanged', JSON.stringify(self.theProject));
+		window.webContents.send('triggerAction', 'hide-welcome', null );
 	}
 
 

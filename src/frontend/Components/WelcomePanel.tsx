@@ -1,3 +1,5 @@
+import { useContext, useEffect, useState } from 'react';
+import { SettingsContext } from '../Context/SettingsManager';
 import Logo from "./Logo";
 
 
@@ -14,7 +16,29 @@ declare global {
 
 
 export default function WelcomePanel({ visible }: WelcomePanelProps) {
+	const settings = useContext(SettingsContext);
+
+	const openRecent = (path:string) => {
+		window.api.openFolderAt(path);
+	};
+
+	const listRecentProjects = () => {
+		const result = [];
+
+		for (var i=0; i<settings.recentProjects.length; i++) {
+			const entry = settings.recentProjects[i];
+			const parts = entry.split('|');
+			result.push(
+				<li key={'recent'+i}>
+					<a href="#" title={parts[1]} onClick={() => openRecent(parts[1])}>{parts[0]}</a>
+				</li>);
+		}
+		
+		return result;
+	};
+
 	const c_visible = visible ? '' : 'is-hidden';
+
 	return (
 		<div className={`welcome-panel columns ${c_visible}`}>
 
@@ -45,7 +69,7 @@ export default function WelcomePanel({ visible }: WelcomePanelProps) {
 					<div>
 						<h3>Recent Projects</h3>
 						<ul>
-							<li><a href="#">Hello World</a></li>
+							{listRecentProjects()}
 						</ul>
 					</div>
 				</div>

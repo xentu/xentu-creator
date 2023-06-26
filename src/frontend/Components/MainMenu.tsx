@@ -13,6 +13,7 @@ declare global {
 
 type MainMenuProps = {
 	enabled: boolean,
+	canSave: boolean,
 	debugging: boolean,
 	showSidebar: boolean,
 	showStatus: boolean,
@@ -21,7 +22,7 @@ type MainMenuProps = {
 }
 
 
-export default function MainMenu({ enabled, debugging, showSidebar, showStatus, showConsole, showThemeEditor }: MainMenuProps) {
+export default function MainMenu({ enabled, canSave, debugging, showSidebar, showStatus, showConsole, showThemeEditor }: MainMenuProps) {
 	const [selected, setSelected] = useState('');
 	const c_active = enabled ? '' : ' is-disabled';
 	//const settings = useContext(SettingsContext);
@@ -53,12 +54,12 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 
 				<MenuItem label='File' click={() => setSelected('file')} active={selected=='file'}>
 					<MenuEntry click2={(e:any) => deselect(e)} label='New Game' hotKey='Ctrl+N' click={() => window.api.newGame()} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Open Project...' hotKey='Ctrl+O' click={() => window.api.openFolder()} />
+					<MenuEntry click2={(e:any) => deselect(e)} label='Open Game...' hotKey='Ctrl+O' click={() => window.api.openFolder()} />
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Close Project' click={(() => window.api.menuCloseProject())} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Save' hotKey='Ctrl+S' click={() => window.api.menuSave()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={true} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled || !canSave} label='Save' hotKey='Ctrl+S' click={() => window.api.menuSave()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled || !canSave} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled || !canSave} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} />
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Game Properties' click={() => window.api.menuGameProperties()} />
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={!enabled} label='Reveal In Explorer' click={() => window.api.menuReveal()} />
@@ -75,6 +76,16 @@ export default function MainMenu({ enabled, debugging, showSidebar, showStatus, 
 					<hr />
 					<MenuEntry click2={() => setSelected('')} label='Delete' hotKey='Del' click={() => window.api.menuDelete()} />
 					<MenuEntry click2={() => setSelected('')} label='Select All' hotKey='Ctrl+A' click={() => window.api.menuSelectAll()} />
+				</MenuItem>
+				<MenuItem label='Assets' click={() => setSelected('assets')} disabled={!enabled} active={selected=='assets'}>
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Code File..." />
+					<hr />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Conversation..." />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Database..." />
+					<hr />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Graphic..." />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Sheet..." />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Font..." />
 				</MenuItem>
 				<MenuItem label='Run' disabled={!enabled} click={() => setSelected('run')} active={selected=='run'}>
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={debugging} label='Start Game' hotKey='F5' click={() => !debugging && window.api.menuRun()} />

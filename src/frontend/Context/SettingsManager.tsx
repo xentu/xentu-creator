@@ -14,7 +14,8 @@ export type SettingsSchema = {
 	debugging: {
 		mainBinary?: string,
 		binaryOptions?: []
-	}
+	},
+	recentProjects: []
 }
 
 
@@ -25,5 +26,6 @@ export const SettingsContext : React.Context<any> = createContext({
 	},
 	debugging: {
 		mainBinary: ""
-	}
+	},
+	recentProjects: []
 });

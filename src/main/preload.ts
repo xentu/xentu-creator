@@ -15,7 +15,9 @@ contextBridge.exposeInMainWorld('api', {
     openImage: (filePath: string) => ipcRenderer.invoke('open-image', filePath),
     newGame: () => ipcRenderer.invoke('new-game'),
     openFolder: () => ipcRenderer.invoke('open-folder'),
+    openFolderAt: (path:string) => ipcRenderer.invoke('open-folder-at', path),
     saveFile: (filePath: string, data: string) => ipcRenderer.invoke('save-file', filePath, data),
+    saveCopy: (originalPath: string, data: string) => ipcRenderer.invoke('save-copy', originalPath, data),
     getAccentColor: () => ipcRenderer.invoke('get-accent-color'),
     getSettings: () => ipcRenderer.invoke('get-settings'),
     setSettings: (settings: any) => ipcRenderer.send('set-settings', settings),
@@ -25,6 +27,11 @@ contextBridge.exposeInMainWorld('api', {
 
 
     /* menu ipc */
+    /* these are dip methods. A dip method sends a signal through the IPC
+     * meant to be bounced back top the app.tsx. For example menu-save-copy
+     * makes the ipc trigger an action called save-copy. This allows various
+     * parts of the react app to communicate via the IPC. It's crude but works.
+     */
     menuCloseProject:    () => ipcRenderer.send('menu-close'),
     menuSave:            () => ipcRenderer.send('menu-save'),
     menuSaveCopy:        () => ipcRenderer.send('menu-save-copy'),
