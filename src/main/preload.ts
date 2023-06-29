@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('api', {
     setProject: (project: any) => ipcRenderer.send('set-project', project),
     refreshBinaries: (overwrite:boolean) => ipcRenderer.invoke('refresh-binaries', overwrite),
     listBinaries: () => ipcRenderer.invoke('list-binaries'),
+    showAlert: (message:string) => ipcRenderer.send('show-alert', message),
 
 
     /* menu ipc */

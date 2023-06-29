@@ -4,15 +4,17 @@ import React from 'react';
 type SettingBoolProps = {
 	title: string,
 	slug: string,
+	half?: boolean,
 	description?: string,
 	checked: boolean,
 	setChecked: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
-export default function SettingBool({ title, slug, checked, setChecked, description = '' }: SettingBoolProps) {
+export default function SettingBool({ title, slug, half, checked, setChecked, description = '' }: SettingBoolProps) {
+	const c_half = half ? 'half-size' : '';
 	return (
-		<div className="setting setting-boolean" key={slug}>
+		<div className={['setting setting-boolean', c_half].join(' ')} key={slug}>
 			<div className="setting-left">
 				<div>{title}</div>
 				<small>{description}</small>

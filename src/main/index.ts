@@ -85,6 +85,7 @@ class XentuCreatorApp {
 
 		// setup the api.
 		ipcMain.on('set-title', this.handleSetTitle);
+		ipcMain.on('show-alert', this.handleShowAlert);
 		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
 		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
 		ipcMain.handle('list-files', this.handleListFiles);
@@ -259,6 +260,15 @@ class XentuCreatorApp {
 		const webContents = event.sender;
 		const win = BrowserWindow.fromWebContents(webContents);
 		win.setTitle(title);
+	}
+
+
+	handleShowAlert(event: any, message:string): void {
+		const webContents = event.sender;
+		const win = BrowserWindow.fromWebContents(webContents);
+		dialog.showMessageBox(win, {
+			message: message
+		});
 	}
 
 

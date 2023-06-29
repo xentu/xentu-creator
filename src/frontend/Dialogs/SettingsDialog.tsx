@@ -108,7 +108,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 	}
 
 	return (
-		<div className={`settings-dialog`}>
+		<div className={`settings-dialog`} style={{width:'900px', minHeight:'600px'}}>
 			<div className="dialog-sidebar">
 				
 				<div>

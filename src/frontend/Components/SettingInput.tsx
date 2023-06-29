@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useRef, useEffect } from 'react';
 
 
 type SettingInputProps = {
@@ -7,12 +7,24 @@ type SettingInputProps = {
 	description?: string,
 	value: any,
 	setValue: React.Dispatch<React.SetStateAction<string>>,
+	minimum?: number,
 	type?: string,
-	small?: boolean
+	small?: boolean,
+	autoFocus?: boolean
 }
 
 
-export default function SettingInput({ title, slug, value, setValue, description = '', type = 'text', small = false }: SettingInputProps) {
+export default function SettingInput({ title, slug, value, setValue, minimum, description = '', type = 'text', small = false, autoFocus }: SettingInputProps) {
+	const inputElement = useRef(null);
+	useEffect(() => {
+		if (autoFocus == true && inputElement.current) {
+			console.log('focus', inputElement.current);
+			setInterval(() => {
+				inputElement.current.focus();
+			}, 100);
+		}
+	}, []);
+
 	const style = {} as CSSProperties;
 	if (type == 'color') {
 		style.width = '27px';
@@ -26,7 +38,7 @@ export default function SettingInput({ title, slug, value, setValue, description
 				<small>{description}</small>
 			</div>
 			<div className={["setting-right", small?'is-small':''].join(' ')}>
-				<input type={type} value={value} onChange={(e:any) => { setValue(e.target.value) }} style={style} />
+				<input ref={inputElement} type={type} value={value} min={minimum} onChange={(e:any) => { setValue(e.target.value) }} style={style} />
 			</div>
 		</div>
 	);

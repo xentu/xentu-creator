@@ -7,13 +7,15 @@ type SettingDualInputProps = {
 	description?: string,
 	value1: any,
 	setValue1: React.Dispatch<React.SetStateAction<string>>,
+	minimum1?: number,
 	value2: any,
 	setValue2: React.Dispatch<React.SetStateAction<string>>,
+	minimum2?: number,
 	type?: string
 }
 
 
-export default function SettingDualInput({ title, slug, value1, setValue1, value2, setValue2, description = '', type = 'text' }: SettingDualInputProps) {
+export default function SettingDualInput({ title, slug, value1, setValue1, minimum1, value2, setValue2, minimum2, description = '', type = 'text' }: SettingDualInputProps) {
 	const style = {} as CSSProperties;
 	if (type == 'color') {
 		style.width = '27px';
@@ -27,8 +29,8 @@ export default function SettingDualInput({ title, slug, value1, setValue1, value
 				<small>{description}</small>
 			</div>
 			<div className="setting-right">
-				<input type={type} value={value1} onChange={(e:any) => { setValue1(e.target.value) }} style={style} />
-				<input type={type} value={value2} onChange={(e:any) => { setValue2(e.target.value) }} style={style} />
+				<input type={type} value={value1} min={minimum1} onChange={(e:any) => { setValue1(e.target.value) }} style={style} />
+				<input type={type} value={value2} min={minimum2} onChange={(e:any) => { setValue2(e.target.value) }} style={style} />
 			</div>
 		</div>
 	);

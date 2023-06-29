@@ -702,7 +702,7 @@ function App({ loadedSettings }: appProps) {
 		const result = [];
 		switch (dialog) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
-			case 'new-game': result.push(<NewGameDialog key={'new-game'} createGameCallback={(opts:any) => { console.log("newGame", opts); }} />); break;
+			case 'new-game': result.push(<NewGameDialog key={'new-game'} onCancel={() => setDialog('')} createGameCallback={(opts:any) => { console.log("newGame", opts); }} />); break;
 			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => setProject(s)} />); break;
 		}
 		return result;
