@@ -26,6 +26,9 @@ contextBridge.exposeInMainWorld('api', {
     refreshBinaries: (overwrite:boolean) => ipcRenderer.invoke('refresh-binaries', overwrite),
     listBinaries: () => ipcRenderer.invoke('list-binaries'),
     showAlert: (message:string) => ipcRenderer.send('show-alert', message),
+    showConfirm: (message:string) => ipcRenderer.invoke('show-confirm', message),
+    getDefaultThemeDark: () => ipcRenderer.invoke('get-default-theme-dark'),
+    getDefaultThemeLight: () => ipcRenderer.invoke('get-default-theme-light'),
 
 
     /* menu ipc */

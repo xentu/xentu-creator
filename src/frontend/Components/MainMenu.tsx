@@ -119,10 +119,10 @@ export default function MainMenu({ enabled, canSave, debugging, showSidebar, sho
 							<span className="menu-label"><i className='icon-cog'></i> Config</span>
 						</a>
 						<a className={["menu-item", debugging?'':'is-disabled'].join(' ')} title="Stop Game" onClick={() => debugging && window.api.menuStop()}>
-							<span className="menu-label"><i className='icon-stop'></i> Stop</span>
+							<span className="menu-label is-red"><i className='icon-stop'></i> Stop</span>
 						</a>
 						<a className={["menu-item", debugging?'is-disabled':''].join(' ')} title="Start Game" onClick={() => !debugging && window.api.menuRun()}>
-							<span className="menu-label"><i className='icon-play'></i> Play</span>
+							<span className="menu-label is-green"><i className='icon-play'></i> Play</span>
 						</a>
 					</div>
 				</div>

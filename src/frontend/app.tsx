@@ -343,10 +343,10 @@ function App({ loadedSettings }: appProps) {
 				--sidebarText: ${th.sidebarText};
 				--sidebarItemBackground: ${th.sidebarItemBackground};
 				--sidebarItemText: ${th.sidebarItemText};
-				--sidebarHoverBackground: ${th.sidebarHoverBackground};
-				--sidebarHoverText: ${th.sidebarHoverText};
-				--sidebarActiveBackground: ${th.sidebarActiveBackground};
-				--sidebarActiveText: ${th.sidebarActiveText};
+				--hoverBackground: ${th.hoverBackground};
+				--hoverText: ${th.hoverText};
+				--activeBackground: ${th.activeBackground};
+				--activeText: ${th.activeText};
 				--editorBackground: ${th.editorBackground};
 				--editorText: ${th.editorText};
 				--footerBackground: ${th.footerBackground};
@@ -843,7 +843,7 @@ function App({ loadedSettings }: appProps) {
 										{renderTabBodies()}
 									</div>
 									<div id="splitter2" />
-									<div id="console" style={{ flexBasis: consoleHeight + 'px', display: showConsole ? 'block' : 'none' }}>
+									<div id="console" style={{ /* flexBasis: consoleHeight + 'px', */ display: showConsole ? 'block' : 'none' }}>
 										<XTerm ref={xtermRef} options={{ 
 											rows: 8, 
 											allowTransparency: true,

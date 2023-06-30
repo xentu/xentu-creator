@@ -1,6 +1,7 @@
 import { app, shell, BrowserWindow, Menu, dialog, ipcMain, systemPreferences } from 'electron';
 import { spawn } from "node:child_process";
 import XentuCreatorMenu from './menu';
+import XentuDefaults from './defaults';
 
 const axios = require('axios');
 const path = require('path');
@@ -86,6 +87,7 @@ class XentuCreatorApp {
 		// setup the api.
 		ipcMain.on('set-title', this.handleSetTitle);
 		ipcMain.on('show-alert', this.handleShowAlert);
+		ipcMain.handle('show-confirm', this.handleShowConfirm);
 		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
 		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
 		ipcMain.handle('list-files', this.handleListFiles);
@@ -103,6 +105,8 @@ class XentuCreatorApp {
 		ipcMain.handle('list-binaries', this.handleListBinaries);
 		ipcMain.handle('get-accent-color', this.handleGetAccentColor);
 		ipcMain.handle('get-settings', () => { return this.handleGetSettings() });
+		ipcMain.handle('get-default-theme-dark', () => { return XentuDefaults.DarkThemeJson() } );
+		ipcMain.handle('get-default-theme-light', () => { return XentuDefaults.LightThemeJson() } );
 		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
 	}
 
@@ -156,41 +160,8 @@ class XentuCreatorApp {
 				enableLineNumbers: true
 			},
 			theme: {
-				dark: {
-					mainBackground: "#3d3d3d",
-					mainText: "#ffffff",
-					sidebarBackground: "#2b2b2b",
-					sidebarText: "#ffffff",
-					sidebarItemBackground: "#000000",
-					sidebarItemText: "#ffffff",
-					editorBackground: "#212121",
-					editorText: "#ffffff",
-					footerBackground: "#171717",
-					footerText: "#ffffff",
-					sidebarHoverBackground: "#1672D4",
-					sidebarHoverText: "#ffffff",
-					sidebarActiveBackground: "#7a3a98",
-					terminalBackground: "#000000",
-					terminalText: "#ffffff"
-				},
-				light: {
-					mainBackground: "#4d88fe",
-					mainText: "#ffffff",
-					sidebarBackground: "#d2e1fe",
-					sidebarText: "#000000",
-					sidebarItemBackground: "#8297bf",
-					sidebarItemText: "#ffffff",
-					editorBackground: "#ffffff",
-					editorText: "#000000",
-					footerBackground: "#d2e1fe",
-					footerText: "#000000",
-					sidebarHoverBackground: "#9ebeff",
-					sidebarHoverText: "#3744a9",
-					sidebarActiveBackground: "#4d88fe",
-					sidebarActiveText: "#ffffff",
-					terminalBackground: "#ffffff",
-					terminalText: "#000000"
-				}
+				dark: XentuDefaults.DarkTheme(),
+				light: XentuDefaults.LightTheme()
 			},
 			debugging: {
 				enableDebugging: true,
@@ -218,10 +189,12 @@ class XentuCreatorApp {
 		await fs.writeJson(settingsFile, this.theSettings, { spaces: '\t' });
 	}
 
+
 	async saveProject() {
 		const projectFile = path.join(this.projectPath, 'game.json');
 		await fs.writeJson(projectFile, this.theProject, { spaces: '\t' });
 	}
+
 
 	async downloadFile(theUrl:string, theDest:string):Promise<void> {
 		return new Promise((resolve, reject):void => {
@@ -240,7 +213,7 @@ class XentuCreatorApp {
 					reject(err.message);
 				});
 		});
-	};
+	}
 
 
 	async extractZip(theFile:string, thePath:string):Promise<void> {
@@ -265,6 +238,17 @@ class XentuCreatorApp {
 		dialog.showMessageBox(win, {
 			message: message
 		});
+	}
+
+
+	async handleShowConfirm(event: any, message:string) {
+		const webContents = event.sender;
+		const win = BrowserWindow.fromWebContents(webContents);
+		const res = await dialog.showMessageBox(win, {
+			message: message,
+			buttons: ['OK', 'Cancel']
+		});
+		return res.response == 0;
 	}
 
 

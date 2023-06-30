@@ -4,6 +4,7 @@ import SettingCombo from '../Components/SettingCombo';
 import Dictionary from '../../main/classes/Dictionary';
 import SettingInput from '../Components/SettingInput';
 import { SettingsContext } from '../Context/SettingsManager';
+import SettingBlank from '../Components/SettingBlank';
 
 
 type SettingsDialogProps = {
@@ -70,10 +71,10 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 		mainText:					'Main Text',
 		sidebarBackground:		'Sidebar Background',
 		sidebarText:				'Sidebar Text',
-		sidebarHoverBackground:	'Sidebar Hover Background',
-		sidebarHoverText:			'Sidebar Hover Text',
-		sidebarActiveBackground:'Sidebar Hover Background',
-		sidebarActiveText:		'Sidebar Hover Text',
+		hoverBackground:			'Hover Background',
+		hoverText:					'Hover Text',
+		activeBackground:			'Active Background',
+		activeText:					'Active Text',
 		editorBackground:			'Editor Background',
 		editorText:					'Editor Text',
 		terminalBackground:     'Terminal Background',
@@ -82,6 +83,24 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 		footerText:					'Footer Text'
 	};
 	
+
+	const resetTheme = async () => {
+		if (await window.api.showConfirm('Are you sure?')) {
+			const clone = JSON.parse(JSON.stringify(settings));
+			if (settings.editor.colorTheme == 'dark') {
+				const templateJson = await window.api.getDefaultThemeDark();
+				clone.theme.dark = JSON.parse(templateJson);
+			}
+			else {
+				const templateJson = await window.api.getDefaultThemeLight();
+				clone.theme.light = JSON.parse(templateJson);
+			}
+			onSettingsChanged(clone);
+			await window.api.setSettings(clone);
+		}
+	};
+
+
 	const renderSettings = () => {
 		const darkOrLight = settings.editor.colorTheme;
 		const res = new Array<any>();
@@ -98,6 +117,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 		return res;
 	};
 
+
 	const doUpdateBinaries = async (overwrite:boolean) => {
 		const result = await window.api.refreshBinaries(overwrite);
 		alert(result.message);
@@ -107,6 +127,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 		}
 	}
 
+	
 	return (
 		<div className={`settings-dialog`} style={{width:'900px', minHeight:'600px'}}>
 			<div className="dialog-sidebar">
@@ -128,11 +149,6 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 
 					<h2>Editor</h2>
 					<p>Settings for the code editor.</p>
-
-					<SettingCombo slug='colorTheme' key={'colorTheme'} title='Color Theme'
-									  description='Change the color theme of the code editor'
-									  options={colorThemes} value={settings.editor.colorTheme}
-									  setValue={(v:string) => { updateSetting('editor', 'colorTheme', v) }} />
 
 					<SettingCombo slug='fontFamily' key={'fontFamily'} title='UI Font Family'
 									  description='Change the font family for the UI'
@@ -165,6 +181,20 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 				<div className="dialog-page" style={{display:page==1?'block':'none'}}>
 					<h2>Theme</h2>
 					<p>Customize the visual theme for Xentu Creator.</p>
+
+					<SettingCombo slug='colorTheme' key={'colorTheme'} title='Color Theme'
+									  description='Change the color theme of the app'
+									  options={colorThemes} value={settings.editor.colorTheme}
+									  setValue={(v:string) => { updateSetting('editor', 'colorTheme', v) }} />
+
+					<SettingBlank wrapClass='settings-buttons'>
+						<div className="buttons">
+							<a className="button">Import</a>
+							<a className="button">Export</a>
+							<a className="button" onClick={() => resetTheme()}>Restore Defaults</a>
+						</div>
+					</SettingBlank>
+
 					{renderSettings()}
 				</div>
 				

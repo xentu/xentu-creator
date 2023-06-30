@@ -1,5 +1,4 @@
-import { MouseEventHandler, useState, useContext, ChangeEventHandler } from 'react';
-import SettingInput from '../Components/SettingInput';
+import { useState, useContext } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
 
 
@@ -15,10 +14,10 @@ const themeOpts = {
 	mainText:					'Main Text',
 	sidebarBackground:		'Sidebar Background',
 	sidebarText:				'Sidebar Text',
-	sidebarHoverBackground:	'Sidebar Hover Background',
-	sidebarHoverText:			'Sidebar Hover Text',
-	sidebarActiveBackground:'Sidebar Hover Background',
-	sidebarActiveText:		'Sidebar Hover Text',
+	hoverBackground:			'Hover Background',
+	hoverText:					'Hover Text',
+	activeBackground:			'Active Background',
+	activeText:					'Active Text',
 	editorBackground:			'Editor Background',
 	editorText:					'Editor Text',
 	terminalBackground:     'Terminal Background',
@@ -64,14 +63,6 @@ export default function ThemeEditor({ shown, onClose, onSettingsChanged }: Style
 				<span className="icon-cancel" onClick={e => onClose()}></span>
 				<h4 onClick={e => isSlide(!slide)}>Style Editor</h4>
 				<div>
-					{/* <label>
-						<span>Header Background</span>
-						<input type="color" />
-					</label>
-					<label>
-						<span>Header Text</span>
-						<input type="color" />
-					</label> */}
 					{renderSettings()}
 				</div>
 			</div>
