@@ -65,7 +65,7 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 	};
 
 	return (
-		<div className={`settings-dialog`} style={{width:'900px'}}>
+		<div className={`settings-dialog`} style={{width:'900px',height:'500px'}}>
 			<div className="dialog-sidebar">
 				
 				<div>
@@ -85,8 +85,8 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 					<h2>General</h2>
 					<p>Configure basic info about your game.</p>
 
-					<SettingInput slug='gameName' key={'gameName'} title='Game Name'
-									  description='The name of your game'
+					<SettingInput slug='gameTitle' key={'gameTitle'} title='Game Title'
+									  description='The title of your game'
 									  value={project.game.title}
 									  setValue={(s:string) => { updateProjectProperty('title', s) }} />
 

@@ -9,7 +9,6 @@ import SettingButtons from '../Components/SettingButtons';
 
 
 type NewGameDialogProps = {
-	createGameCallback: Function
 	onCancel: Function
 }
 
@@ -27,7 +26,7 @@ gameTemplates.add('platformer', 'Visual Novel');
 
 
 class ConfPreset {
-	name: string = "";
+	title: string = "Untitled";
 	language: string = "js";
 	template: string = '';
 	vp_width: number = 800;
@@ -38,7 +37,7 @@ class ConfPreset {
 
 	constructor(clone?:ConfPreset) {
 		if (clone) {
-			this.name = clone.name;
+			this.title = clone.title;
 			this.language = clone.language;
 			this.template = clone.template;
 			this.vp_width = clone.vp_width;
@@ -51,13 +50,13 @@ class ConfPreset {
 };
 
 
-export default function NewGameDialog({ createGameCallback, onCancel }: NewGameDialogProps) {
+export default function NewGameDialog({ onCancel }: NewGameDialogProps) {
 	const [conf, setConf] = useState(new ConfPreset());
 
 	const updateSetting = async (option:any, newValue:any) => {
 		const clone = new ConfPreset(conf);
 		switch (option) {
-			case 'name': clone.name = newValue; break;
+			case 'title': clone.title = newValue; break;
 			case 'language': clone.language = newValue; break;
 			case 'template': clone.template = newValue; break;
 			case 'vp_width': clone.vp_width = newValue; break;
@@ -69,9 +68,9 @@ export default function NewGameDialog({ createGameCallback, onCancel }: NewGameD
 		setConf(clone);
 	};
 
-	const onSubmit = () => {
-		if (!conf.name || conf.name.length <= 3) {
-			window.api.showAlert('Please choose a name longer than 3 characters');
+	const onSubmit = async () => {
+		if (!conf.title || conf.title.length <= 3) {
+			window.api.showAlert('Please choose a title longer than 3 characters');
 			return;
 		}
 
@@ -85,7 +84,13 @@ export default function NewGameDialog({ createGameCallback, onCancel }: NewGameD
 			return;
 		}
 		
-		onCancel();
+		const r = await window.api.createGame(JSON.stringify(conf));
+		const response = JSON.parse(r);
+		if (response.success == true) {
+			onCancel();
+			window.api.openFolderAt(response.path);
+		}
+		console.log('CreateGame', response);
 	};
 
 	
@@ -97,10 +102,10 @@ export default function NewGameDialog({ createGameCallback, onCancel }: NewGameD
 					<h2>New Game</h2>
 					{ /* <p>Configure basic info about your game.</p> */ }
 
-					<SettingInput slug='gameName' key={'gameName'} title='Game Name'
-									  description='The name of your game'
-									  value={conf.name} autoFocus={true}
-									  setValue={(s:string) => {updateSetting('name', s)}} />
+					<SettingInput slug='gameTitle' key={'gameTitle'} title='Game Title'
+									  description='The title of your game'
+									  value={conf.title} autoFocus={true}
+									  setValue={(s:string) => {updateSetting('title', s)}} />
 
 					<SettingCombo slug='codeLanguage' key={'codeLanguage'} title='Coding Language'
 									  description='Change the code language you would like to use.'

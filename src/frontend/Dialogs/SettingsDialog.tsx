@@ -176,6 +176,11 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 						play or deploy your games.
 					</p>
 
+					<SettingInput slug='alternateBinaryPath' key={'alternateBinaryPath'} title='Alternate Binary Path'
+									  description='Custom location for debugging binaries (empty to disable).'
+									  value={settings.debugging.alternateBinaryPath??""}
+									  setValue={(s:string) => { updateSetting('debugging', 'alternateBinaryPath', s) }} />
+
 					<div>
 						<div className="buttons">
 							<a className="button" onClick={(e:any) => doUpdateBinaries(false)}>Refresh Binaries</a>

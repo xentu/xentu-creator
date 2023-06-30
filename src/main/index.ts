@@ -90,6 +90,7 @@ class XentuCreatorApp {
 		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('open-file', this.handleOpenFile);
+		ipcMain.handle('create-game', this.handleCreateGame);
 		ipcMain.handle('create-file', this.handleCreateFile);
 		ipcMain.handle('create-folder', this.handleCreateFolder);
 		ipcMain.handle('delete', this.handleDeleteFileOrFolder);
@@ -193,13 +194,8 @@ class XentuCreatorApp {
 			},
 			debugging: {
 				enableDebugging: true,
-				mainBinary: '${userData}/binaries/win_x64/xentu_debug.exe',
+				alternateBinaryPath: '',
 				extraArguments: '',
-				binaryOptions: [
-					{ platform: 'Windows', arch: 'x64', version: '0.0.4' },
-					{ platform: 'Linux/FreeBSD', arch: 'x64', version: '0.0.4' },
-					{ platform: 'Mac OS', arch: 'x64', version: '0.0.4' }
-				]
 			},
 			recentProjects: new Array<string>()
 		};
@@ -288,18 +284,22 @@ class XentuCreatorApp {
 		});
 	}
 
+
 	handleGetAccentColor() {
 		return systemPreferences.getAccentColor();
 	}
+
 
 	handleGetSettings() {
 		return this.theSettings;
 	}
 
+
 	async handleSetSettings(event:any, newSettings: any) {
 		this.theSettings = newSettings;
 		await this.saveSettings();
 	}
+
 
 	async handleSetProject(event:any, newProject: any) {
 		this.theProject = newProject;
@@ -310,6 +310,7 @@ class XentuCreatorApp {
 
 		await this.saveProject();
 	}
+
 
 	async handleOpenFile(event:any, filePath: string) {
 		const theData = await fs.readFile(filePath, 'utf-8');
@@ -354,6 +355,53 @@ class XentuCreatorApp {
 		}
 
 		return JSON.stringify({ success: false, message: 'Canceled' });
+	}
+
+
+	async handleCreateGame(event:any, jsonConfig:string) {
+		const window = BrowserWindow.getAllWindows()[0];
+		const dlgResult = await dialog.showSaveDialog(window, { 
+			title: 'Choose where to save the config for your new game...',
+			defaultPath: 'game.json',
+			filters: [
+				{ name: 'JSON File(s)', extensions: ['*.json'] }
+			]
+		});
+		if (dlgResult.canceled == true) {
+			return JSON.stringify({ 'success': false, 'message': 'Cancelled' });
+		}
+
+		const cfgDir = path.dirname(dlgResult.filePath);
+		const cfgFile = path.join(cfgDir, 'game.json');
+		const cfgFileExists = await fs.pathExists(cfgFile);
+		const cfgSrc = JSON.parse(jsonConfig);
+		const cfgData = ProjectTemplate();
+
+		if (cfgFileExists) {
+			return JSON.stringify({ 'success': false, 'message': 'Project already exists at this location, please choose another.' });
+		}
+
+		// apply out config data ready for writing.
+		cfgData.game.title = cfgSrc.title;
+		cfgData.game.entry_point = "/game." + cfgSrc.language;
+		cfgData.game.window.width = cfgSrc.vp_width;
+		cfgData.game.window.height = cfgSrc.vp_height;
+		cfgData.game.viewport.width = cfgSrc.vp_width;
+		cfgData.game.viewport.height = cfgSrc.vp_height;
+		cfgData.game.draw_frequency = cfgSrc.target_fps;
+		cfgData.game.v_sync = cfgSrc.v_sync;
+		cfgData.game.fullscreen = cfgSrc.fullscreen;
+
+		// make sure directory exists.
+		await fs.ensureDir(cfgDir);
+		await fs.ensureDir(path.join(cfgDir, 'assets'));
+		await fs.writeJson(cfgFile, cfgData, { spaces: '\t' });
+
+		// generate the initial code.
+		myCreator.generateTemplateFiles(cfgDir, cfgSrc.language, cfgSrc.template);
+
+		// return the success result.
+		return JSON.stringify({ 'success': true, 'path': cfgDir });
 	}
 
 
@@ -408,10 +456,16 @@ class XentuCreatorApp {
 	async handleOpenFolderAt(event:any, thePath:string) {
 		console.log("OpenFolderAt", thePath);
 		const window = BrowserWindow.getAllWindows()[0];
+
 		// read the project file if one exists.
 		const projectFile = path.join(thePath, 'game.json');
 		const projectFileExists = await fs.pathExists(projectFile);
 		const self = myCreator;
+
+		// close old folder if needed.
+		if (self.projectPath && self.projectPath.length > 0) {
+			await self.handleMenuClose(event);
+		}
 
 		if (projectFileExists) {
 			self.theProject = await fs.readJson(projectFile); // await XentuProject.Load(projectFile);
@@ -419,8 +473,12 @@ class XentuCreatorApp {
 			window.setTitle(gameName + " - Xentu Creator");
 		}
 		else {
-			self.theProject = ProjectTemplate();
-			window.setTitle('Xentu Creator');
+			dialog.showMessageBox(window, {
+				message: "The project at the chosen location no longer exists."
+			});
+			return;
+			//self.theProject = ProjectTemplate();
+			//window.setTitle('Xentu Creator');
 		}
 
 		self.fileWatcher = chokidar.watch(thePath, {
@@ -586,44 +644,55 @@ class XentuCreatorApp {
 		//const exePath = this.theSettings.debugging.mainBinary;
 		const window = BrowserWindow.getAllWindows()[0];
 		const release:any = await myCreator.handleListBinaries();
+		const altBinPath = myCreator.theSettings.debugging.alternateBinaryPath ?? '';
+		let binFile = '';
 
-		// find the appropriate binary path.
-		if (release.binaries) {
-			for (var i=0; i<release.binaries.length; i++) {
-				var binary = release.binaries[i];
-				switch (process.platform) {
-					case 'win32':
-						if (binary.platform.includes('windows')) {
-							exePath = binary.local_path;
+		if (altBinPath == '')
+		{
+			// find the appropriate binary path.
+			if (release.binaries) {
+				for (var i=0; i<release.binaries.length; i++) {
+					var binary = release.binaries[i];
+					switch (process.platform) {
+						case 'win32':
+							if (binary.platform.includes('windows')) {
+								exePath = binary.local_path;
+								break;
+							}
 							break;
-						}
-						break;
-					case 'darwin':
-						if (binary.platform.includes('macos')) {
-							exePath = binary.local_path;
+						case 'darwin':
+							if (binary.platform.includes('macos')) {
+								exePath = binary.local_path;
+								break;
+							}
 							break;
-						}
-						break;
-					case 'linux':
-						if (binary.platform.includes('linux')) {
-							exePath = binary.local_path;
+						case 'linux':
+							if (binary.platform.includes('linux')) {
+								exePath = binary.local_path;
+								break;
+							}
 							break;
-						}
-						break;
+					}
 				}
 			}
+	
+			// 
+			if (exePath == '') {
+				window.webContents.send('consoleData', 'error! failed to find an appropriate platform binary folder');
+				return;
+			}
 		}
-
-		
-		if (exePath == '') {
-			window.webContents.send('consoleData', 'error! failed to find an appropriate platform binary folder');
-			return;
+		else {
+			exePath = altBinPath;
 		}
 		
 		// work out which binary to use.
-		let binFile = path.join(exePath, 'xentu');
+		binFile = path.join(exePath, 'xentu');
+
+
 		if (debugging) {
 			binFile = path.join(exePath, 'xentu_debug')
+			console.log("debug entry: " + myCreator.theProject.game.entry_point);
 			if (myCreator.theProject.game.entry_point.includes('.py')) {
 				binFile = path.join(exePath, 'xentu_py_debug');
 			}
@@ -642,6 +711,8 @@ class XentuCreatorApp {
 			window.webContents.send('consoleData', 'error! ' + binFile + ' does not exist.');
 			return;
 		}
+
+		console.log("Binary: " + binFile);
 
 		const workingDir = this.projectPath;
 		this.childProcess = spawn(binFile, [], { cwd: workingDir });
@@ -662,9 +733,32 @@ class XentuCreatorApp {
 	}
 
 
-	async handleRevealInExplorer() {
+	async revealInExplorer() {
 		const workingDir = myCreator.projectPath;
 		shell.showItemInFolder(workingDir);
+	}
+
+
+	async generateTemplateFiles(dir:string, language:string, template:string) {
+		// read the main code file for the selected template.
+		const _template = template == '' ? 'blank' : template;
+		const codeDir = path.join(__dirname, '../renderer', 'templates', _template);
+		const codeSrcFile = path.join(codeDir, 'game.' + language);
+		const codeSrcFileContents = await fs.readFile(codeSrcFile, 'utf8');
+
+		// write the code to the destination path.
+		const codeDstFile = path.join(dir, 'game.' + language);
+		await fs.writeFile(codeDstFile, codeSrcFileContents);
+
+		// copy other files.
+		await myCreator.copyTemplateFile(codeDir, dir, 'assets/xentu-logo.png');
+	}
+
+
+	async copyTemplateFile(srcDir:string, dstDir:string, file:string) {
+		const src = path.join(srcDir, file);
+		const dst = path.join(dstDir, file);
+		await fs.copyFile(src, dst);
 	}
 }
 

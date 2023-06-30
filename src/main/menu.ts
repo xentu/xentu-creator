@@ -12,7 +12,7 @@ class XentuCreatorMenu {
     ipcMain.on('menu-save-copy',      (e) => this.Owner.triggerAction('save-copy'));
     ipcMain.on('menu-save-all',       (e) => this.Owner.triggerAction('save-all'));
     ipcMain.on('menu-game-props',     (e) => this.Owner.triggerAction('show-game-properties'));
-    ipcMain.on('menu-reveal',         (e) => this.Owner.handleRevealInExplorer());
+    ipcMain.on('menu-reveal',         (e) => this.Owner.revealInExplorer());
     ipcMain.on('menu-export',         (e) => this.Owner.triggerAction('export-game'));
     ipcMain.on('menu-exit',           (e) => this.Owner.mainWindow.close());
     ipcMain.on('menu-undo',           (e) => this.Owner.mainWindow.webContents.undo());

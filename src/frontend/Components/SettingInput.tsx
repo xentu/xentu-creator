@@ -18,9 +18,9 @@ export default function SettingInput({ title, slug, value, setValue, minimum, de
 	const inputElement = useRef(null);
 	useEffect(() => {
 		if (autoFocus == true && inputElement.current) {
-			console.log('focus', inputElement.current);
-			setInterval(() => {
+			setTimeout(() => {
 				inputElement.current.focus();
+				inputElement.current.select();
 			}, 100);
 		}
 	}, []);

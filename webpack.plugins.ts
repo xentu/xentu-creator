@@ -22,6 +22,10 @@ export const plugins = [
 			{
 				from: path.resolve(__dirname, 'src/frontend/resources', 'css'),
 				to: path.resolve(__dirname, '.webpack/renderer', 'css')
+			},
+			{
+				from: path.resolve(__dirname, 'src/frontend/resources', 'templates'),
+				to: path.resolve(__dirname, '.webpack/renderer', 'templates')
 			}
 		]
 	}),
