@@ -127,6 +127,36 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 		}
 	}
 
+
+	const doExportTheme = async () => {
+		const resultJson = await window.api.exportTheme();
+		const result = JSON.parse(resultJson);
+		if (result.success) {
+			await window.api.showAlert('Export Successful');
+		}
+	};
+
+
+	const doImportTheme = async () => {
+		const resultJson = await window.api.importTheme();
+		const result = JSON.parse(resultJson);
+		if (result.success) {
+			const clone = JSON.parse(JSON.stringify(settings));
+			clone.theme = result.theme;
+			onSettingsChanged(clone);
+			await window.api.setSettings(clone);
+			await window.api.showAlert('Import Successful');
+		}		
+	};
+
+	const doClearRecents = async () => {
+		const clone = JSON.parse(JSON.stringify(settings));
+		clone.recentProjects = [];
+		onSettingsChanged(clone);
+		await window.api.setSettings(clone);
+		await window.api.showAlert("Recent's Cleared");
+	};
+
 	
 	return (
 		<div className={`settings-dialog`} style={{width:'900px', minHeight:'600px'}}>
@@ -137,7 +167,8 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 					<ul>
 						<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>Editor</li>
 						<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>Theme</li>
-						<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>Binaries</li>
+						<li data-index="2" onClick={() => setPage(2)} className={page==1?'is-active':''}>Tools</li>
+						<li data-index="3" onClick={() => setPage(3)} className={page==2?'is-active':''}>Binaries</li>
 					</ul>
 				</div>
 					
@@ -189,8 +220,8 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 
 					<SettingBlank wrapClass='settings-buttons'>
 						<div className="buttons">
-							<a className="button">Import</a>
-							<a className="button">Export</a>
+							<a className="button" onClick={() => doImportTheme()}>Import</a>
+							<a className="button" onClick={() => doExportTheme()}>Export</a>
 							<a className="button" onClick={() => resetTheme()}>Restore Defaults</a>
 						</div>
 					</SettingBlank>
@@ -198,8 +229,21 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 					{renderSettings()}
 				</div>
 				
-
 				<div className="dialog-page" style={{display:page==2?'block':'none'}}>
+					<h2>Tools</h2>
+					<p>
+						Various tools for managing things in app.
+					</p>
+
+					<SettingBlank wrapClass='settings-buttons' title="Clear Recent Projects" description="Clear the list of projects on the welcome screen.">
+						<div className="buttons">
+							<a className="button" onClick={() => doClearRecents()}>Clear</a>
+						</div>
+					</SettingBlank>
+
+				</div>
+
+				<div className="dialog-page" style={{display:page==3?'block':'none'}}>
 					<h2>Binaries</h2>
 					<p>
 						Use this page to download the engine binaries you need to test, 

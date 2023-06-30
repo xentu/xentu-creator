@@ -107,6 +107,8 @@ class XentuCreatorApp {
 		ipcMain.handle('get-settings', () => { return this.handleGetSettings() });
 		ipcMain.handle('get-default-theme-dark', () => { return XentuDefaults.DarkThemeJson() } );
 		ipcMain.handle('get-default-theme-light', () => { return XentuDefaults.LightThemeJson() } );
+		ipcMain.handle('export-theme', this.handleExportTheme);
+		ipcMain.handle('import-theme', this.handleImportTheme);
 		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
 	}
 
@@ -279,6 +281,46 @@ class XentuCreatorApp {
 	}
 
 
+	async handleExportTheme() {
+		const window = BrowserWindow.getAllWindows()[0];
+		const dlgResult = await dialog.showSaveDialog(window, { 
+			title: 'Choose where to save your exported theme...',
+			defaultPath: 'my-theme.json',
+			filters: [
+				{ name: 'JSON File(s)', extensions: ['json'] }
+			]
+		});
+
+		if (dlgResult.canceled == true) {
+			return JSON.stringify({ 'success': false, 'message': 'Cancelled' });
+		}
+
+		await fs.writeJson(dlgResult.filePath, myCreator.theSettings.theme, { spaces: '\t' });
+		return JSON.stringify({ 'success': true });
+	}
+
+
+	async handleImportTheme() {
+		const window = BrowserWindow.getAllWindows()[0];
+		const dlgResult = await dialog.showOpenDialog(window, { 
+			title: 'Choose the json file to import...',
+			properties: ['openFile'],
+			filters: [
+				{ name: 'JSON File(s)', extensions: ['json'] }
+			]
+		});
+
+		if (dlgResult.canceled == true) {
+			return JSON.stringify({ 'success': false, 'message': 'Cancelled' });
+		}
+
+		// TODO: validate the JSON.
+		const theme = await fs.readJson(dlgResult.filePaths[0]);
+
+		return JSON.stringify({ 'success': true, 'theme': theme });
+	}
+
+
 	async handleSetSettings(event:any, newSettings: any) {
 		this.theSettings = newSettings;
 		await this.saveSettings();
@@ -348,7 +390,7 @@ class XentuCreatorApp {
 			title: 'Choose where to save the config for your new game...',
 			defaultPath: 'game.json',
 			filters: [
-				{ name: 'JSON File(s)', extensions: ['*.json'] }
+				{ name: 'JSON File(s)', extensions: ['json'] }
 			]
 		});
 		if (dlgResult.canceled == true) {

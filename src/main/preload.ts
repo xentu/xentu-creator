@@ -30,6 +30,9 @@ contextBridge.exposeInMainWorld('api', {
     getDefaultThemeDark: () => ipcRenderer.invoke('get-default-theme-dark'),
     getDefaultThemeLight: () => ipcRenderer.invoke('get-default-theme-light'),
 
+    exportTheme: () => ipcRenderer.invoke('export-theme'),
+    importTheme: () => ipcRenderer.invoke('import-theme'),
+
 
     /* menu ipc */
     /* these are dip methods. A dip method sends a signal through the IPC
