@@ -8,6 +8,11 @@ rules.push({
 	use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
 });
 
+rules.push({
+	test: /\.scss$/,
+	use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+})
+
 export const rendererConfig: Configuration = {
 	devtool: "nosources-source-map",
 	module: {
@@ -15,6 +20,6 @@ export const rendererConfig: Configuration = {
 	},
 	plugins,
 	resolve: {
-		extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.jpg', '.ico', '.eot', '.svg', '.ttf', '.woff', '.woff2'],
+		extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss', '.jpg', '.ico', '.eot', '.svg', '.ttf', '.woff', '.woff2'],
 	},
 };

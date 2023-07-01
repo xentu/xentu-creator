@@ -13,6 +13,7 @@ declare global {
 //import '../../node_modules/bulma/css/bulma.min.css';
 //import './Resources/css/app.css';
 import './app';
+//import './Resources/styles/app.scss';
 
 
 const shortcutEquals = (a:Array<any>, b:Array<any>) => 
