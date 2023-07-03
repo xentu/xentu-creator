@@ -46,7 +46,7 @@ export default class XentuDefaults {
 			footerText: "#000000",
 			hoverBackground: "#9ebeff",
 			hoverText: "#3744a9",
-			activeBackground: "#4d88fe",
+			activeBackground: "#246dff",
 			activeText: "#ffffff",
 			terminalBackground: "#ffffff",
 			terminalText: "#000000"

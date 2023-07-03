@@ -262,7 +262,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 						</div>
 					</div>
 
-					<div>
+					<div className="setting" style={{borderTop: 0, paddingTop: 0}}>
 						<pre className="binary-report">{binaryReport}</pre>
 					</div>
 

@@ -23,14 +23,14 @@ export default function SettingDualInput({ title, slug, value1, setValue1, minim
 	}
 
 	return (
-		<div className="setting setting-dual-input">
+		<div className="setting dual-input">
 			<div className="setting-left">
 				<div>{title}</div>
 				<small>{description}</small>
 			</div>
 			<div className="setting-right">
-				<input type={type} value={value1} min={minimum1} onChange={(e:any) => { setValue1(e.target.value) }} style={style} />
-				<input type={type} value={value2} min={minimum2} onChange={(e:any) => { setValue2(e.target.value) }} style={style} />
+				<input className="input" type={type} value={value1} min={minimum1} onChange={(e:any) => { setValue1(e.target.value) }} style={style} />
+				<input className="input" type={type} value={value2} min={minimum2} onChange={(e:any) => { setValue2(e.target.value) }} style={style} />
 			</div>
 		</div>
 	);

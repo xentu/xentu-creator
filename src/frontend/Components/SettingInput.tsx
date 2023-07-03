@@ -38,7 +38,7 @@ export default function SettingInput({ title, slug, value, setValue, minimum, de
 				<small>{description}</small>
 			</div>
 			<div className={["setting-right", small?'is-small':''].join(' ')}>
-				<input ref={inputElement} type={type} value={value} min={minimum} onChange={(e:any) => { setValue(e.target.value) }} style={style} />
+				<input className="input" ref={inputElement} type={type} value={value} min={minimum} onChange={(e:any) => { setValue(e.target.value) }} style={style} />
 			</div>
 		</div>
 	);
