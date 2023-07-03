@@ -29,8 +29,8 @@ export default function SettingDualInput(props: SettingDualInputProps) {
 				<small>{props.description}</small>
 			</div>
 			<div className="setting-right">
-				<input className="input" type={props.type} value={props.value1} min={props.minimum1} onChange={(e:any) => { props.setValue1(e.target.value) }} style={style} />
-				<input className="input" type={props.type} value={props.value2} min={props.minimum2} onChange={(e:any) => { props.setValue2(e.target.value) }} style={style} />
+				<input className="input" type={props.type??"text"} value={props.value1} min={props.minimum1} onChange={(e:any) => { props.setValue1(e.target.value) }} style={style} />
+				<input className="input" type={props.type??"text"} value={props.value2} min={props.minimum2} onChange={(e:any) => { props.setValue2(e.target.value) }} style={style} />
 			</div>
 		</div>
 	);

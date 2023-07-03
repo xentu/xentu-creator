@@ -10,9 +10,10 @@
 - [feature] Save All. (done)
 - [feature] Create 'Files' menu to aid in adding files. (done)
 - [feature] Make the recent projects list work. (done)
+- [feature] New Game Dialog. (done)
 - [feature] Change 'Add File...' to multiple, like 'Add Code File...', 'Add Layout...' and 'New Conversation...' etc... (almost done)
 
-- [feature] New Game Dialog.
+
 - [feature] Add ability to change the UI language, with detection from OS.
 - [feature] Add ability to read xentu docs offline.
 

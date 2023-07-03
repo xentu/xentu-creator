@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
+import TabToolbar from './TabToolbar';
 
 
 type TabImageViewerProps = {
@@ -27,9 +28,18 @@ export default function TabCodeEditor(props: TabImageViewerProps) {
 	}, []);
 
 	return (
-		<div style={{display: props.active == true ? 'initial' : 'none' }}>
-			<div className='image-viewer'>
-				<img src={data} />
+		<div className={[props.active?'tab-active':'tab-inactive'].join(' ')}>
+			<div className='toolbar-container'>
+				<TabToolbar>
+					<div className="toolbar-group">
+						<a className="toolbar-button is-disabled"><i className='icon-arrows-cw'></i></a>
+						<a className="toolbar-button is-disabled"><i className='icon-zoom-out'></i></a>
+						<a className="toolbar-button is-disabled"><i className='icon-zoom-in'></i></a>
+					</div>
+				</TabToolbar>
+				<div className='image-viewer'>
+					<img src={data} />
+				</div>
 			</div>
 		</div>
 	);

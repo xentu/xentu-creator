@@ -142,6 +142,15 @@ html, body, #app, #app > div { color: var(--mainText); }
 .context-menu { background-color: var(--mainBackground); color: var(--menu-text); /* border-color: #999; */ }
 input[type='text'].input:focus, input[type='number'].input:focus, select:focus { outline:1px solid var(--activeBackground); }
 
+.toolbar { background: var(--footerBackground); }
+.toolbar .toolbar-button {
+	color: var(--mainText);
+	&:not(.is-disabled) {
+		&:hover { background: var(--hoverBackground); color: var(--hoverText); }
+		&.active { background: var(--activeBackground); color: var(--activeText); }
+	}
+}
+
 
 
 /**

@@ -480,7 +480,6 @@ class XentuCreatorApp {
 
 
 	async handleOpenFolderAt(event:any, thePath:string) {
-		console.log("OpenFolderAt", thePath);
 		const window = BrowserWindow.getAllWindows()[0];
 
 		// read the project file if one exists.

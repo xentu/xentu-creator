@@ -353,6 +353,7 @@ function App(props: appProps) {
 				--footerBackgroundHs: ` + window.hexToHs(th.footerBackground) + `;
 				--footerBackgroundL: ` + window.hexToHsl(th.footerBackground)[2] + `%;
 				--footerBackgroundDark: hsl(var(--footerBackgroundHs), calc(var(--footerBackgroundL) - 5%));
+				--footerBackgroundLight: hsl(var(--footerBackgroundHs), calc(var(--footerBackgroundL) + 5%));
 				--footerText: ${th.footerText};
 			}
 		`;

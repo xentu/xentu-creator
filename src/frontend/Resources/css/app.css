@@ -164,6 +164,10 @@ html, body, #app, #app > div {
 #main-menu .menu-entry:not(.is-checked) .menu-entry-label span:first-of-type {
   display: none;
 }
+#main-menu i[class^=icon-] {
+  font-size: 14px;
+  vertical-align: text-bottom;
+}
 
 #menu-back-target {
   position: absolute;
@@ -217,6 +221,12 @@ html, body, #app, #app > div {
 }
 .columns .column .column-body {
   flex: 1 1 50%;
+}
+.columns .column .tab-bodies .tab-active {
+  display: block;
+}
+.columns .column .tab-bodies .tab-inactive {
+  display: none;
 }
 
 #sidebar {
@@ -360,6 +370,49 @@ html, body, #app, #app > div {
   flex-grow: 0;
   flex-shrink: 1;
   border-top: 1px solid;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * Tool Bar
+ * ----------------------------------------------------------------------------
+ */
+.toolbar-container {
+  position: relative;
+  height: -webkit-fill-available;
+  padding-top: 1px;
+}
+
+.toolbar {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: -3px;
+  border-radius: 4px;
+}
+.toolbar + div {
+  margin-top: 31px;
+}
+.toolbar + section {
+  margin-top: 31px;
+  height: calc(100vh - 276px) !important;
+}
+.toolbar, .toolbar * {
+  user-select: none;
+}
+.toolbar .toolbar-button {
+  padding: 0 5px;
+  line-height: 2.1em;
+  display: inline-block;
+  margin: 2px 0 2px 2px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+.toolbar .toolbar-button:not(.is-disabled) {
+  cursor: pointer;
+}
+.toolbar .toolbar-button.is-disabled {
+  opacity: 0.6;
 }
 
 /**
@@ -1028,6 +1081,22 @@ html, body, #app, #app > div {
 
 input[type=text].input:focus, input[type=number].input:focus, select:focus {
   outline: 1px solid var(--activeBackground);
+}
+
+.toolbar {
+  background: var(--footerBackground);
+}
+
+.toolbar .toolbar-button {
+  color: var(--mainText);
+}
+.toolbar .toolbar-button:not(.is-disabled):hover {
+  background: var(--hoverBackground);
+  color: var(--hoverText);
+}
+.toolbar .toolbar-button:not(.is-disabled).active {
+  background: var(--activeBackground);
+  color: var(--activeText);
 }
 
 /**

@@ -64,6 +64,8 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 		&.is-disabled .menu-entry-label { opacity: 0.5; }
 		&:not(.is-checked) .menu-entry-label span:first-of-type { display:none; }
 	}
+
+	i[class^="icon-"] { font-size: 14px; vertical-align: text-bottom; }
 }
 #menu-back-target { position: absolute; height: 100vh; width: 100%; z-index: 99999998; }
 
@@ -96,8 +98,11 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 			}
 		}
 		.column-body { flex: 1 1 50%; }
+		.tab-bodies .tab-active { display: block; }
+		.tab-bodies .tab-inactive { display: none; }
 	}
 }
+
 
 // ---- Sidebar ----
 
@@ -168,6 +173,40 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	.xterm { padding: 8px; }
 	#console { flex-grow: 0; flex-shrink: 1; border-top: 1px solid; }
 }
+
+
+/**
+ * ----------------------------------------------------------------------------
+ * Tool Bar
+ * ----------------------------------------------------------------------------
+ */
+
+
+.toolbar-container {
+	position: relative;
+	height: -webkit-fill-available;
+	padding-top: 1px;
+}
+.toolbar {
+	position: absolute;
+   left: 2px;
+   right: 2px;
+   top: -3px;
+   border-radius: 4px;
+	& + div { margin-top: 31px; }
+	& + section { margin-top: 31px; height: calc(100vh - 276px)!important; }
+	&, & * { user-select: none; }
+	.toolbar-button {
+		padding: 0 5px;
+		line-height: 2.1em;
+		display: inline-block;
+		margin: 2px 0 2px 2px;
+		border-radius: 3px;
+		font-size: 14px;
+		&:not(.is-disabled) { cursor: pointer; }
+		&.is-disabled { opacity: 0.6; }
+	}
+ }
 
 
 /**

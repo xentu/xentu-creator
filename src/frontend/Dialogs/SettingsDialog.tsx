@@ -55,14 +55,14 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 	const updateSetting = async (group:any, option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(settings));
 		clone[group][option] = newValue;
-		onSettingsChanged(clone);
+		props.onSettingsChanged(clone);
 		await window.api.setSettings(clone);
 	};
 
 	const updateSetting2 = async (group:any, subgroup:any, option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(settings));
 		clone[group][subgroup][option] = newValue;
-		onSettingsChanged(clone);
+		props.onSettingsChanged(clone);
 		await window.api.setSettings(clone);
 	};
 
