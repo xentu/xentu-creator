@@ -263,11 +263,11 @@ html, body, #app, #app > div {
 #sidebar .file-explorer-wrapper {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 30px);
-  margin-right: 5px;
+  height: calc(100vh - 88px);
+  margin-right: 0;
 }
 #sidebar .file-explorer-wrapper li {
-  padding: 2px;
+  padding: 2px 0 0 2px;
 }
 #sidebar .file-explorer-wrapper li:hover:not(:has(li:hover)) > a {
   cursor: pointer;
@@ -388,7 +388,7 @@ html, body, #app, #app > div {
   left: 2px;
   right: 2px;
   top: -3px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
 }
 .toolbar + div {
   margin-top: 31px;
@@ -412,7 +412,7 @@ html, body, #app, #app > div {
   cursor: pointer;
 }
 .toolbar .toolbar-button.is-disabled {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 /**
@@ -1084,11 +1084,11 @@ input[type=text].input:focus, input[type=number].input:focus, select:focus {
 }
 
 .toolbar {
-  background: var(--footerBackground);
+  border-bottom: 1px solid var(--footerBackground);
 }
 
 .toolbar .toolbar-button {
-  color: var(--mainText);
+  color: var(--footerText);
 }
 .toolbar .toolbar-button:not(.is-disabled):hover {
   background: var(--hoverBackground);

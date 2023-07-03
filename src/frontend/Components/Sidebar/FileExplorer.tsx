@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import FileExplorerEntry from './FileExplorerEntry';
-import MenuItem, { MenuEntry } from './MenuItem';
-import ContextMenu from './ContextMenu';
+import MenuItem, { MenuEntry } from '../MenuItem';
+import ContextMenu from '../ContextMenu';
 import FileCreator from './FileCreator';
 
 

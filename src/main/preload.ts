@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld('api', {
     listFiles: (scanPath: string) => ipcRenderer.invoke('list-files', scanPath),
     openFile: (filePath: string) => ipcRenderer.invoke('open-file', filePath),
     createGame: (jsonConfig: string) => ipcRenderer.invoke('create-game', jsonConfig),
-    createFile: (filePath: string) => ipcRenderer.invoke('create-file', filePath),
+    createFile: (filePath: string, extension?:string) => ipcRenderer.invoke('create-file', filePath, extension),
     createFolder: (folderPath: string) => ipcRenderer.invoke('create-folder', folderPath),
     deleteFileOrFolder: (filePath: string) => ipcRenderer.invoke('delete', filePath),
     openImage: (filePath: string) => ipcRenderer.invoke('open-image', filePath),

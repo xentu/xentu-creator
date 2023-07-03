@@ -2,14 +2,20 @@ import { createRoot } from 'react-dom/client';
 import { useState, useEffect, useRef, MouseEvent } from 'react';
 import ContextMenu from './Components/ContextMenu';
 import DialogContainer from "./Components/DialogContainer";
-import FileExplorer from "./Components/FileExplorer";
+import FileExplorer from "./Components/Sidebar/FileExplorer";
 import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
 import MainMenu from './Components/MainMenu';
 import NewGameDialog from './Dialogs/NewGameDialog';
 import OpenTab, { OpenTabType } from "./Classes/OpenTab";
 import SettingsDialog from './Dialogs/SettingsDialog';
-import TabCodeEditor from "./Components/TabCodeEditor";
-import TabImageViewer from "./Components/TabImageViewer";
+import TabCodeEditor from "./Tabs/TabCodeEditor";
+import TabConversationEditor from './Tabs/TabConversationEditor';
+import TabDatabaseClient from './Tabs/TabDatabaseClient';
+import TabGraphicEditor from './Tabs/TabGraphicEditor';
+import TabImageViewer from "./Tabs/TabImageViewer";
+import TabLayoutEditor from './Tabs/TabLayoutEditor';
+import TabSpriteFontEditor from './Tabs/TabSpriteFontEditor';
+import TabSpriteMapEditor from './Tabs/TabSpriteMapEditor';
 import TabItem from "./Components/TabItem";
 import ThemeEditor from './Components/ThemeEditor';
 import WelcomePanel from './Components/WelcomePanel';
@@ -43,6 +49,7 @@ function App(props: appProps) {
 	const [dialog, setDialog] = useState('');
 	const [fileCreator, setFileCreator] = useState(null);
 	const [fileCreatorOpt, setFileCreatorOpt] = useState(false); /* when true, file creator created directories instead */
+	const [fileCreatorExt, setFileCreatorExt] = useState(null); /* when true, file creator created directories instead */
 	const [focusPath, setFocusPath] = useState('');
 	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
 	const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
@@ -179,9 +186,7 @@ function App(props: appProps) {
 	 * 
 	 */
 	handleAction.current = (action:string, data?:string) => {
-		//console.log('handleAction', action);
 		// note: if actions ever stop working, make sure tabs has correct length.
-
 		switch (action) {
 			case 'toggle-sidebar':
 				setShowSidebar(!showSidebar);
@@ -248,7 +253,7 @@ function App(props: appProps) {
 					break;
 				case 'resize':
 					const tab = findActiveTab();
-					if (tab && tab.guid && tab.type == OpenTabType.Editor) {
+					if (tab && tab.guid && tab.type == OpenTabType.CodeEditor) {
 						const editor = window.findEditor(tab.guid);
 						editor.layout({  });
 					}
@@ -364,10 +369,6 @@ function App(props: appProps) {
 			foreground: settings.theme[dark?'dark':'light'].terminalText,
 			cursor: settings.theme[dark?'dark':'light'].terminalText
 		});
-
-		/* xtermRef.current.terminal.setOption('theme', {
-			background: th.terminalBackground
-	  	}); */
 	};
 
 
@@ -465,26 +466,28 @@ function App(props: appProps) {
 	 */
 	const doLoadEditor = (filePath: string) : void => {
 		const ext = filePath.split('.').pop();
+		
+		// goto tab if its already open.
+		const existing = findTab(filePath);
+		if (existing !== null) { setSelectedTab(existing); return; }
+		let newTab = null;
 
+		// load the desired tab.
 		if (['lua', 'js', 'json', 'toml', 'txt', 'xml', 'py'].includes(ext)) {
-			const existing = findTab(filePath);
-			if (existing !== null) {
-				setSelectedTab(existing);
-				return;
-			}
-			//setSelectedTabIndex(tabs.length);
-			const newTab = new OpenTab('loading...', filePath, OpenTabType.Editor);
-			setTabChangeContext(newTab);
-			setTabs([...tabs, newTab]);
+			newTab = new OpenTab('loading...', filePath, OpenTabType.CodeEditor);
 		}
-
-		if (['jpg', 'png'].includes(ext)) {
-			const existing = findTab(filePath);
-			if (existing !== null) {
-				setSelectedTab(existing);
-				return;
-			}
-			const newTab = new OpenTab('loading...', filePath, OpenTabType.ImageViewer);
+		else if (['jpg', 'png'].includes(ext)) {
+			newTab = new OpenTab('loading...', filePath, OpenTabType.ImageViewer);
+		}
+		else if (['xcf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.ConversationEditor);
+		else if (['xdf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.DatabaseClient);
+		else if (['xgf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.GraphicEditor);		
+		else if (['xlf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.LayoutEditor);
+		else if (['xff'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.SpriteFontEditor);
+		else if (['xsf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.SpriteMapEditor);
+		
+		// set tab state if tab was loaded.
+		if (newTab != null) {
 			setTabChangeContext(newTab);
 			setTabs([...tabs, newTab]);
 		}
@@ -496,7 +499,7 @@ function App(props: appProps) {
 			await window.api.createFolder(filePath);	
 		}
 		else {
-			await window.api.createFile(filePath);
+			await window.api.createFile(filePath, fileCreatorExt);
 		}
 	};
 
@@ -676,21 +679,35 @@ function App(props: appProps) {
 		for (var i=0; i<tabs.length; i++) {
 			const tab = tabs[i];
 			if (tab == null) continue;
-			if (tab.type == OpenTabType.Editor) {
-				result.push(<TabCodeEditor key={"tabBody"+i} filePath={tab.path} guid={tab.guid}
-												active={selectedTabIndex == i}
-												labelChanged={(l: string) => handleLabelChanged(tab, l)}
-												onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} 
-												/>);
-			}
-			else if (tab.type == OpenTabType.ImageViewer) {
-				result.push(<TabImageViewer key={"tabBody"+i} filePath={tab.path} guid={tab.guid}
-												active={selectedTabIndex == i}
-												labelChanged={(l: string) => handleLabelChanged(tab, l)}
-												onSetData={(n: any, c: boolean) => {}} 
-												/>);
-			}
-			
+			const active = selectedTabIndex == i;
+			const key = "tabBody"+i;
+
+			switch (tab.type) {
+				case OpenTabType.CodeEditor:
+					result.push(<TabCodeEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					break;
+				case OpenTabType.ConversationEditor:
+					result.push(<TabConversationEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					break;
+				case OpenTabType.DatabaseClient:
+					result.push(<TabDatabaseClient key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					break;
+				case OpenTabType.GraphicEditor:
+					result.push(<TabGraphicEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					break;
+				case OpenTabType.ImageViewer:
+					result.push(<TabImageViewer key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => {}} />);
+					break;
+				case OpenTabType.LayoutEditor:
+					result.push(<TabLayoutEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					break;
+				case OpenTabType.SpriteFontEditor:
+					result.push(<TabSpriteFontEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					break;
+				case OpenTabType.SpriteMapEditor:
+					result.push(<TabSpriteMapEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					break;
+			}			
 		}
 		return result;
 	};
@@ -710,7 +727,7 @@ function App(props: appProps) {
 	};
 
 
-	const contextMenuAction = async (action:string, directory?:boolean) => {
+	const contextMenuAction = async (action:string, directory?:boolean, extension?:string) => {
 		console.log('Context Menu Action', {
 			'action': action,
 			'path': contextMenu?.path ?? ''
@@ -719,6 +736,7 @@ function App(props: appProps) {
 		switch (action) {
 			case 'new-file':
 				setFileCreatorOpt(false);
+				setFileCreatorExt(extension);
 				setFileCreator(contextMenu.path ?? '');
 				break;
 			case 'new-folder':
@@ -749,12 +767,13 @@ function App(props: appProps) {
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
 						<MenuEntry key="new-file-code" disabled={false} label="New Code File..." click={() => contextMenuAction('new-file', true)} />
 						<hr />
-						<MenuEntry key="new-file-conversation" disabled={false} label="New Conversation..." click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-file-database" disabled={false} label="New Database..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-conversation" disabled={false} label="New Conversation..." click={() => contextMenuAction('new-file', true, '.xcf')} />
+						<MenuEntry key="new-file-database" disabled={false} label="New Database..." click={() => contextMenuAction('new-file', true, '.xdf')} />
 						<hr />
-						<MenuEntry key="new-file-graphic" disabled={false} label="New Graphic..." click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-file-sprite-sheet" disabled={false} label="New Sprite Sheet..." click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-file-sprite-font" disabled={false} label="New Sprite Font..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-graphic" disabled={false} label="New Graphic..." click={() => contextMenuAction('new-file', true, '.xgf')} />
+						<MenuEntry key="new-file-layout" disabled={false} label="New Layout..." click={() => contextMenuAction('new-file', true, '.xlf')} />
+						<MenuEntry key="new-file-sprite-sheet" disabled={false} label="New Sprite Sheet..." click={() => contextMenuAction('new-file', true, '.xsf')} />
+						<MenuEntry key="new-file-sprite-font" disabled={false} label="New Sprite Font..." click={() => contextMenuAction('new-file', true, '.xff')} />
 						<hr />
 						<MenuEntry key="new-folder" label="New Folder..." click={() => contextMenuAction('new-folder')} />
 						<hr />
@@ -805,7 +824,12 @@ function App(props: appProps) {
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
 
-					<MainMenu enabled={!isWelcomeVisible} canSave={canSave} showSidebar={showSidebar} showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor} debugging={debugging} />
+					<MainMenu enabled={!isWelcomeVisible} canSave={canSave} showSidebar={showSidebar} 
+								 showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor}
+								 debugging={debugging}
+								 setFileCreator={setFileCreator}
+								 setFileCreatorOpt={setFileCreatorOpt}
+								 setFileCreatorExt={setFileCreatorExt} />
 
 					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => setIsTrackingMouse('')}>
 

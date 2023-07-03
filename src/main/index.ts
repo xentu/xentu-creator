@@ -431,9 +431,21 @@ class XentuCreatorApp {
 	}
 
 
-	async handleCreateFile(event:any, filePath: string) {
-		await fs.outputFile(filePath, '', 'utf-8');
-		return `file created (${filePath}).`;
+	async handleCreateFile(event:any, filePath: string, extension?: string) {
+		const _entry = (myCreator.theProject.game.entry_point ?? '').toLowerCase();
+		let _filePath = filePath;
+
+		if (extension == null) {
+			if (_entry.includes('.js')) _filePath += '.js';
+			if (_entry.includes('.py')) _filePath += '.py';
+			if (_entry.includes('.lua')) _filePath += '.lua';
+		}
+		else {
+			_filePath += extension;
+		}
+	
+		await fs.outputFile(_filePath, '', 'utf-8');
+		return `file created (${_filePath}).`;
 	}
 
 	

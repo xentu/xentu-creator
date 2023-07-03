@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import SettingBool from '../Components/SettingBoolean';
-import SettingCombo from '../Components/SettingCombo';
 import Dictionary from '../../main/classes/Dictionary';
-import SettingInput from '../Components/SettingInput';
+import SettingBlank from '../Components/Settings/SettingBlank';
+import SettingBool from '../Components/Settings/SettingBoolean';
+import SettingCombo from '../Components/Settings/SettingCombo';
+import SettingInput from '../Components/Settings/SettingInput';
 import { SettingsContext } from '../Context/SettingsManager';
-import SettingBlank from '../Components/SettingBlank';
 
 
 type SettingsDialogProps = {

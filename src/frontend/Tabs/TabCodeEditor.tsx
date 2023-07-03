@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Editor } from '@monaco-editor/react';
 import { SettingsContext } from '../Context/SettingsManager';
-import TabToolbar from './TabToolbar';
+import TabToolbar from '../Components/TabToolbar';
 
 
 type TabCodeEditorProps = {

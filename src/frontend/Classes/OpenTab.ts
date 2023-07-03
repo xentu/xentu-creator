@@ -16,8 +16,14 @@ class OpenTab {
 };
 
 export enum OpenTabType {
-	Editor,
-	ImageViewer
+	CodeEditor,
+	ConversationEditor,
+	DatabaseClient,
+	GraphicEditor,
+	ImageViewer,
+	LayoutEditor,
+	SpriteFontEditor,
+	SpriteMapEditor,
 }
 
 export default OpenTab;

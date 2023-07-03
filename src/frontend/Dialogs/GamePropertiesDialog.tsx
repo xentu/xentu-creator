@@ -1,9 +1,9 @@
 import { useContext, useState } from 'react';
-import SettingBool from '../Components/SettingBoolean';
-import SettingCombo from '../Components/SettingCombo';
 import Dictionary from '../../main/classes/Dictionary';
-import SettingInput from '../Components/SettingInput';
-import SettingDualInput from '../Components/SettingDualInput';
+import SettingBool from '../Components/Settings/SettingBoolean';
+import SettingCombo from '../Components/Settings/SettingCombo';
+import SettingDualInput from '../Components/Settings/SettingDualInput';
+import SettingInput from '../Components/Settings/SettingInput';
 import { SettingsContext } from '../Context/SettingsManager';
 import { ProjectContext, ProjectSchema } from '../Context/ProjectManager';
 

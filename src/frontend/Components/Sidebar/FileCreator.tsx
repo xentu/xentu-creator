@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import Icon from './Icon';
 
 
 type FileCreatorProps = {

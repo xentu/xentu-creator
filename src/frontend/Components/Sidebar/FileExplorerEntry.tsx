@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Icon from './Icon';
+import Icon from '../Icon';
 import { Editor, loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import FileCreator from './FileCreator';

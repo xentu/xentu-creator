@@ -19,6 +19,9 @@ type MainMenuProps = {
 	showStatus: boolean,
 	showConsole: boolean,
 	showThemeEditor: boolean
+	setFileCreator: Function
+	setFileCreatorOpt: Function,
+	setFileCreatorExt: Function
 }
 
 
@@ -43,6 +46,13 @@ export default function MainMenu(props: MainMenuProps) {
 	const kbDeselect = (e: KeyboardEvent) => {
 		if (e.key == 'Escape') deselect(e);
 	};
+
+	const showCreator = (folder:boolean, extension?:string) => {
+		console.log('show file creator ');
+		props.setFileCreatorOpt(folder);
+		props.setFileCreatorExt(extension);
+		props.setFileCreator('');
+	}
 
 	return (
 		<>
@@ -78,14 +88,15 @@ export default function MainMenu(props: MainMenuProps) {
 					<MenuEntry click2={() => setSelected('')} label='Select All' hotKey='Ctrl+A' click={() => window.api.menuSelectAll()} />
 				</MenuItem>
 				<MenuItem label='Assets' click={() => setSelected('assets')} disabled={!props.enabled} active={selected=='assets'}>
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Code File..." />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Code File..." click={() => showCreator(false)} />
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Conversation..." />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Database..." />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Conversation..." click={() => showCreator(false, '.xcf')} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Database..." click={() => showCreator(false, '.xdf')} />
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Graphic..." />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Sheet..." />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Font..." />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Layout..." click={() => showCreator(false, '.xlf')} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Graphic..." click={() => showCreator(false, '.xgf')} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Sheet..." click={() => showCreator(false, '.xsf')} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Font..." click={() => showCreator(false, '.xff')} />
 				</MenuItem>
 				<MenuItem label='Run' disabled={!props.enabled} click={() => setSelected('run')} active={selected=='run'}>
 					<MenuEntry click2={(e:any) => deselect(e)} disabled={props.debugging} label='Start Game' hotKey='F5' click={() => !props.debugging && window.api.menuRun()} />

@@ -1,11 +1,10 @@
 import { useState } from 'react';
-
-import SettingInput from '../Components/SettingInput';
-import SettingDualInput from '../Components/SettingDualInput';
-import SettingBool from '../Components/SettingBoolean';
 import Dictionary from '../../main/classes/Dictionary';
-import SettingCombo from '../Components/SettingCombo';
-import SettingButtons from '../Components/SettingButtons';
+import SettingBool from '../Components/Settings/SettingBoolean';
+import SettingButtons from '../Components/Settings/SettingButtons';
+import SettingCombo from '../Components/Settings/SettingCombo';
+import SettingDualInput from '../Components/Settings/SettingDualInput';
+import SettingInput from '../Components/Settings/SettingInput';
 
 
 type NewGameDialogProps = {
