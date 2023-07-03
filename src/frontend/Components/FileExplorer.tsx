@@ -14,7 +14,6 @@ declare global {
 
 type FileExplorerProps = {
 	path: string,
-	maxDepth?: number,
 	onFileOpen?: Function
 	onContextMenu?: Function,
 	focusPath: string,
@@ -25,7 +24,7 @@ type FileExplorerProps = {
 }
 
 
-export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContextMenu, focusPath, setFocusPath, fileCreator, setFileCreator, onFileCreate }: FileExplorerProps) {
+export default function FileExplorer(props: FileExplorerProps) {
 	const [entries, setEntries] = useState([]);
 	const [activePath, setActivePath] = useState('');
 	const [rootPath, setRootPath] = useState('');
@@ -52,7 +51,7 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContext
 	const setActive = (newPath: string, isDirectory: boolean) => {
 		setActivePath(newPath);
 		if (isDirectory == false) {
-			onFileOpen(newPath);
+			props.onFileOpen(newPath);
 		}
 	};
 
@@ -64,13 +63,13 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContext
 				result.push(<FileExplorerEntry key={file.path} label={file.name}
 														 path={file.path} directory={file.directory}
 														 ext={file.ext} setActive={setActive}
-														 setFocusPath={setFocusPath}
+														 setFocusPath={props.setFocusPath}
 														 onContextMenu={(e: React.MouseEvent, directory:boolean) => showContextMenu(e, file.path, directory)}
 														 activePath={activePath}
-														 focusPath={focusPath}
-														 setFileCreator={setFileCreator}
-														 fileCreator={fileCreator}
-														 onFileCreate={onFileCreate} />);
+														 focusPath={props.focusPath}
+														 setFileCreator={props.setFileCreator}
+														 fileCreator={props.fileCreator}
+														 onFileCreate={props.onFileCreate} />);
 			}
 		});
 		entries.map((file: any) => {
@@ -78,13 +77,13 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContext
 				result.push(<FileExplorerEntry key={file.path} label={file.name} 
 													    path={file.path} directory={file.directory}
 														 ext={file.ext} setActive={setActive}
-														 setFocusPath={setFocusPath}
+														 setFocusPath={props.setFocusPath}
 														 onContextMenu={(e: React.MouseEvent, directory:boolean) => showContextMenu(e, file.path, directory)}
 														 activePath={activePath}
-														 focusPath={focusPath}
-														 setFileCreator={setFileCreator}
-														 fileCreator={fileCreator}
-														 onFileCreate={onFileCreate} />);
+														 focusPath={props.focusPath}
+														 setFileCreator={props.setFileCreator}
+														 fileCreator={props.fileCreator}
+														 onFileCreate={props.onFileCreate} />);
 			}
 		});
 		return result;
@@ -93,18 +92,18 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContext
 	
 	const showContextMenu = (e: React.MouseEvent, path:string, directory:boolean) => {
 		if (directory) {
-			onContextMenu('file-explorer-directory', e.clientX, e.clientY, path);
+			props.onContextMenu('file-explorer-directory', e.clientX, e.clientY, path);
 		}
 		else {
-			onContextMenu('file-explorer-item', e.clientX, e.clientY, path);
+			props.onContextMenu('file-explorer-item', e.clientX, e.clientY, path);
 		}
 	};
 
 
 	const showContextMenuOutside = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		setFocusPath(null);
-		onContextMenu('file-explorer', e.clientX, e.clientY);
+		props.setFocusPath(null);
+		props.onContextMenu('file-explorer', e.clientX, e.clientY);
 	};
 
 
@@ -114,9 +113,9 @@ export default function FileExplorer({ path, maxDepth = 5, onFileOpen, onContext
 			  >
 			<ul className="file-explorer">
 				{listEntries()}
-				<FileCreator label='Untitled' visible={fileCreator==''} 
+				<FileCreator label='Untitled' visible={props.fileCreator==''} 
 								 path={rootPath}
-								 doHide={() => setFileCreator(null)} onSubmit={onFileCreate} />
+								 doHide={() => props.setFileCreator(null)} onSubmit={props.onFileCreate} />
 			</ul>
 		</div>
 	);

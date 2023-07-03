@@ -8,7 +8,7 @@ type SettingButtonsProps = {
 }
 
 
-export default function SettingButtons({ onSubmit, onCancel }: SettingButtonsProps) {
+export default function SettingButtons(props: SettingButtonsProps) {
 	return (
 		<div className="setting setting-buttons">
 			<div className="setting-left">
@@ -17,8 +17,8 @@ export default function SettingButtons({ onSubmit, onCancel }: SettingButtonsPro
 			</div>
 			<div className="setting-right">
 				<div className="buttons">
-					<a className="button primary" onClick={() => onSubmit()}>OK</a>
-					<a className="button" onClick={() => onCancel()}>Cancel</a>
+					<a className="button primary" onClick={() => props.onSubmit()}>OK</a>
+					<a className="button" onClick={() => props.onCancel()}>Cancel</a>
 				</div>
 			</div>
 		</div>

@@ -6,15 +6,15 @@ type SettingBlankProps = {
 }
 
 
-export default function SettingBlank({ title, description, children, wrapClass }: SettingBlankProps) {
+export default function SettingBlank(props: SettingBlankProps) {
 	return (
-		<div className={["setting", wrapClass].join(' ')}>
+		<div className={["setting", props.wrapClass].join(' ')}>
 			<div className="setting-left">
-				<div>{title}&nbsp;</div>
-				<small>{description}&nbsp;</small>
+				<div>{props.title}&nbsp;</div>
+				<small>{props.description}&nbsp;</small>
 			</div>
 			<div className="setting-right">
-				{children}
+				{props.children}
 			</div>
 		</div>
 	);

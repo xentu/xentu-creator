@@ -11,15 +11,15 @@ type SettingTextProps = {
 }
 
 
-export default function SettingText({ title, slug, value, setValue, description = '', type = 'text' }: SettingTextProps) {
+export default function SettingText(props: SettingTextProps) {
 	return (
 		<div className="setting setting-boolean">
 			<div className="setting-left">
-				<div>{title}</div>
-				<small>{description}</small>
+				<div>{props.title}</div>
+				<small>{props.description}</small>
 			</div>
 			<div className="setting-right">
-				<input type={type} value={value} onChange={(e:any) => { setValue(e.target.value) }} />
+				<input type={props.type} value={props.value} onChange={(e:any) => { props.setValue(e.target.value) }} />
 			</div>
 		</div>
 	);

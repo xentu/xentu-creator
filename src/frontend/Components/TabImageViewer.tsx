@@ -11,7 +11,7 @@ type TabImageViewerProps = {
 };
 
 
-export default function TabCodeEditor({ guid, filePath, active, labelChanged, onSetData }: TabImageViewerProps) {
+export default function TabCodeEditor(props: TabImageViewerProps) {
 	const [data, setData] = useState('');
 	const settings = useContext(SettingsContext);
 
@@ -20,14 +20,14 @@ export default function TabCodeEditor({ guid, filePath, active, labelChanged, on
 			const theJSON = await window.api.openImage(thePath);
 			const theResponse = JSON.parse(theJSON);
 			setData(theResponse.data);
-			labelChanged(theResponse.label);
+			props.labelChanged(theResponse.label);
 			//onSetData(theResponse.data, false);
 		};
-		fetchData(filePath);
+		fetchData(props.filePath);
 	}, []);
 
 	return (
-		<div style={{display: active == true ? 'initial' : 'none' }}>
+		<div style={{display: props.active == true ? 'initial' : 'none' }}>
 			<div className='image-viewer'>
 				<img src={data} />
 			</div>

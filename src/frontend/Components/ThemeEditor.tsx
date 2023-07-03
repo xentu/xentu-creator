@@ -27,7 +27,7 @@ const themeOpts = {
 };
 
 
-export default function ThemeEditor({ shown, onClose, onSettingsChanged }: StyleEditorProps) {
+export default function ThemeEditor(props: StyleEditorProps) {
 	const settings = useContext(SettingsContext);
 	const [slide, isSlide] = useState(false);
 
@@ -35,7 +35,7 @@ export default function ThemeEditor({ shown, onClose, onSettingsChanged }: Style
 	const updateSetting2 = async (group:any, subgroup:any, option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(settings));
 		clone[group][subgroup][option] = newValue;
-		onSettingsChanged(clone);
+		props.onSettingsChanged(clone);
 		await window.api.setSettings(clone);
 	};
 
@@ -58,9 +58,9 @@ export default function ThemeEditor({ shown, onClose, onSettingsChanged }: Style
 	};
 
 	return (
-		<div className={['style-editor', slide?'is-shown':'', shown?'':'is-closed'].join(' ')} style={{display:shown?'block':''}}>
+		<div className={['style-editor', slide?'is-shown':'', props.shown?'':'is-closed'].join(' ')} style={{display:props.shown?'block':''}}>
 			<div>
-				<span className="icon-cancel" onClick={e => onClose()}></span>
+				<span className="icon-cancel" onClick={e => props.onClose()}></span>
 				<h4 onClick={e => isSlide(!slide)}>Style Editor</h4>
 				<div>
 					{renderSettings()}

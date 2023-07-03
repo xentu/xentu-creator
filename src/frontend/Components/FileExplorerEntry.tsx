@@ -35,21 +35,21 @@ type FileExplorerEntryProps = {
 }
 
 
-export default function FileExplorerEntry({ label, path, directory, ext, setActive, setFocusPath, activePath, focusPath, onContextMenu, fileCreator, setFileCreator, onFileCreate }: FileExplorerEntryProps) {
+export default function FileExplorerEntry(props: FileExplorerEntryProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [entries, setEntries] = useState([]);
 	//const [fileCreatorValue, setFileCreatorValue] = useState(fileCreator);
 
 	const c_open = isOpen ? 'is-open' : '';
-	const c_label = directory ? 'has-children' : '';
-	const c_active = path == activePath ? 'is-active' : '';
-	const c_focus = path == focusPath ? 'is-context' : '';
+	const c_label = props.directory ? 'has-children' : '';
+	const c_active = props.path == props.activePath ? 'is-active' : '';
+	const c_focus = props.path == props.focusPath ? 'is-context' : '';
 
 
 	useEffect(() => {
 		if (isOpen == true) {
 			const fetchFiles = async() => {
-				const files = await window.api.listFiles(path);
+				const files = await window.api.listFiles(props.path);
 				setEntries(files);
 			};
 			fetchFiles().catch(console.error);
@@ -58,10 +58,10 @@ export default function FileExplorerEntry({ label, path, directory, ext, setActi
 
 
 	useEffect(() => {
-		if (!isOpen && fileCreator == path) {
+		if (!isOpen && props.fileCreator == props.path) {
 			setIsOpen(true);
 		}
-	}, [fileCreator])
+	}, [props.fileCreator])
 
 
 	/* if (fileCreator != fileCreatorValue) {
@@ -74,12 +74,12 @@ export default function FileExplorerEntry({ label, path, directory, ext, setActi
 		const result = new Array<any>();
 		entries.map((file: any) => {
 			if (file.ext == 'folder') {
-				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={setActive} setFocusPath={setFocusPath} activePath={activePath} focusPath={focusPath} onContextMenu={onContextMenu} fileCreator={fileCreator} setFileCreator={setFileCreator} onFileCreate={onFileCreate} />);
+				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={props.setActive} setFocusPath={props.setFocusPath} activePath={props.activePath} focusPath={props.focusPath} onContextMenu={props.onContextMenu} fileCreator={props.fileCreator} setFileCreator={props.setFileCreator} onFileCreate={props.onFileCreate} />);
 			}
 		});
 		entries.map((file: any) => {
 			if (file.ext != 'folder') {
-				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={setActive} setFocusPath={setFocusPath} activePath={activePath} focusPath={focusPath} onContextMenu={onContextMenu} fileCreator={fileCreator} setFileCreator={setFileCreator} onFileCreate={onFileCreate} />);
+				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={props.setActive} setFocusPath={props.setFocusPath} activePath={props.activePath} focusPath={props.focusPath} onContextMenu={props.onContextMenu} fileCreator={props.fileCreator} setFileCreator={props.setFileCreator} onFileCreate={props.onFileCreate} />);
 			}
 		});
 		return result;
@@ -87,20 +87,20 @@ export default function FileExplorerEntry({ label, path, directory, ext, setActi
 
 
 	const labelClicked = () => {
-		if (directory) {
+		if (props.directory) {
 			setIsOpen(!isOpen);
-			setActive(path, true);
+			props.setActive(props.path, true);
 		}
 		else {
-			setActive(path, false);
+			props.setActive(props.path, false);
 		}
 	};
 
 
 	const triggerContextMenu = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		setFocusPath(path);
-		onContextMenu(e, directory);
+		props.setFocusPath(props.path);
+		props.onContextMenu(e, props.directory);
 	};
 
 
@@ -108,16 +108,16 @@ export default function FileExplorerEntry({ label, path, directory, ext, setActi
 		<li className={['file-entry', c_label, c_open, c_active, c_focus].join(' ')}>
 			<a onClick={() => labelClicked()} onContextMenu={(e:React.MouseEvent) => triggerContextMenu(e)}>
 				<i className="icon-right-open"></i>
-				{directory == true && <Icon type={ext} />}
-				{directory == false && <i className="file-icon icon-file-code"></i>}
+				{props.directory == true && <Icon type={props.ext} />}
+				{props.directory == false && <i className="file-icon icon-file-code"></i>}
 				{/*<Icon type={ext} /> */}
-				<span>{label}</span>
+				<span>{props.label}</span>
 			</a>
-			{directory == true && <ul className="file-folder">
+			{props.directory == true && <ul className="file-folder">
 				{listEntries()}
-				<FileCreator label='Untitled' visible={fileCreator == path} path={path}
-								 doHide={() => setFileCreator(null)}
-								 onSubmit={onFileCreate} />
+				<FileCreator label='Untitled' visible={props.fileCreator == props.path} path={props.path}
+								 doHide={() => props.setFileCreator(null)}
+								 onSubmit={props.onFileCreate} />
 			</ul>}
 		</li>
 	);

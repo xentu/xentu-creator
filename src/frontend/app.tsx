@@ -36,7 +36,7 @@ const container = document.getElementById('app');
 const root = createRoot(container!);
 
 
-function App({ loadedSettings }: appProps) {
+function App(props: appProps) {
 	const [consoleHeight, setConsoleHeight] = useState(150);
 	const [contextMenu, setContextMenu] = useState(null);
 	const [debugging, setDebugging] = useState(false);
@@ -50,7 +50,7 @@ function App({ loadedSettings }: appProps) {
 	const [projectPath, setProjectPath] = useState('');
 	const [project, setProject] = useState({} as ProjectSchema);
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-	const [settings, setSettings] = useState(loadedSettings);
+	const [settings, setSettings] = useState(props.loadedSettings);
 	const [showConsole, setShowConsole] = useState(true);
 	const [showSidebar, setShowSidebar] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);

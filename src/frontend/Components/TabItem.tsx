@@ -9,12 +9,12 @@ type TabItemProps = {
 }
 
 
-export default function TabItem({ label, active, onClick, onClose }: TabItemProps) {
-	const c_active = active ? ' is-active' : '';
+export default function TabItem(props: TabItemProps) {
+	const c_active = props.active ? ' is-active' : '';
 	return (
 		<a className={['tab-label', c_active].join(' ')}
-			onClick={e => onClick(e)}>
-				<span>{label}</span> <span className="icon-cancel" onClick={e => onClose(e)}></span>
+			onClick={e => props.onClick(e)}>
+				<span>{props.label}</span> <span className="icon-cancel" onClick={e => props.onClose(e)}></span>
 		</a>
 	);
 }

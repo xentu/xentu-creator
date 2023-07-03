@@ -12,7 +12,7 @@ type TabCodeEditorProps = {
 };
 
 
-export default function TabCodeEditor({ guid, filePath, active, labelChanged, onSetData }: TabCodeEditorProps) {
+export default function TabCodeEditor(props: TabCodeEditorProps) {
 	const [data, setData] = useState('');
 	const [lang, setLang] = useState('text');
 	const settings = useContext(SettingsContext);
@@ -23,22 +23,22 @@ export default function TabCodeEditor({ guid, filePath, active, labelChanged, on
 			const theResponse = JSON.parse(theJSON);
 			setLang(theResponse.lang);
 			setData(theResponse.data);
-			labelChanged(theResponse.label);
-			onSetData(theResponse.data, false);
+			props.labelChanged(theResponse.label);
+			props.onSetData(theResponse.data, false);
 		};
-		fetchData(filePath);
+		fetchData(props.filePath);
 	}, []);
 
 	return (
-		<div style={{display: active == true ? 'initial' : 'none' }}>
-			<Editor className={`monaco-${guid}`} language={lang} theme='my-theme'
+		<div style={{display: props.active == true ? 'initial' : 'none' }}>
+			<Editor className={`monaco-${props.guid}`} language={lang} theme='my-theme'
 					  options={{ 
 							lineNumbers: settings.editor.enableLineNumbers == true ? 'on' : 'off',
 							codeLens: settings.editor.enableCodeLens == true,
 							fontSize: settings.editor.fontSize ?? 14,
 							minimap: { enabled: settings.editor.enableMinimap == true }
 					  }}
-					  value={data} onChange={(newValue, e) => onSetData(newValue, true)} />
+					  value={data} onChange={(newValue, e) => props.onSetData(newValue, true)} />
 		</div>
 	);
 }

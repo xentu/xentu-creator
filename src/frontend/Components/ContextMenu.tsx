@@ -16,21 +16,21 @@ const readChildCount = (children: string | JSX.Element | JSX.Element[]) => {
 };
 
 
-export default function ContextMenu({ children, onBlur }: ContextMenuProps) {
-	const childrenCount = readChildCount(children);
+export default function ContextMenu(props: ContextMenuProps) {
+	const childrenCount = readChildCount(props.children);
 	const menuVisible = childrenCount > 0;
 
 	const handleClick = (e:React.MouseEvent) => {
 		e.stopPropagation();
-		onBlur();
+		props.onBlur();
 	};
 
 	return (
 		<div className='context-menu-container' 
 			  onClick={(e) => handleClick(e)}
-			  onBlur={() => onBlur()}
+			  onBlur={() => props.onBlur()}
 		     style={{ display:menuVisible?'block':'none' }}>
-			{children}
+			{props.children}
 		</div>
 	);
 }

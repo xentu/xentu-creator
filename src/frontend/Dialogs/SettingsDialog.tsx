@@ -37,7 +37,7 @@ platformList.add('x64', 'x64');
 platformList.add('Arm64', 'Arm64');
 
 
-export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProps) {
+export default function SettingsDialog(props: SettingsDialogProps) {
 	const settings = useContext(SettingsContext);
 	const [page, setPage] = useState(0);
 	const [binaryReport, setBinaryReport] = useState('');
@@ -95,7 +95,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 				const templateJson = await window.api.getDefaultThemeLight();
 				clone.theme.light = JSON.parse(templateJson);
 			}
-			onSettingsChanged(clone);
+			props.onSettingsChanged(clone);
 			await window.api.setSettings(clone);
 		}
 	};
@@ -143,7 +143,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 		if (result.success) {
 			const clone = JSON.parse(JSON.stringify(settings));
 			clone.theme = result.theme;
-			onSettingsChanged(clone);
+			props.onSettingsChanged(clone);
 			await window.api.setSettings(clone);
 			await window.api.showAlert('Import Successful');
 		}		
@@ -152,7 +152,7 @@ export default function SettingsDialog({ onSettingsChanged }: SettingsDialogProp
 	const doClearRecents = async () => {
 		const clone = JSON.parse(JSON.stringify(settings));
 		clone.recentProjects = [];
-		onSettingsChanged(clone);
+		props.onSettingsChanged(clone);
 		await window.api.setSettings(clone);
 		await window.api.showAlert("Recent's Cleared");
 	};

@@ -15,9 +15,9 @@ type SettingDualInputProps = {
 }
 
 
-export default function SettingDualInput({ title, slug, value1, setValue1, minimum1, value2, setValue2, minimum2, description = '', type = 'text' }: SettingDualInputProps) {
+export default function SettingDualInput(props: SettingDualInputProps) {
 	const style = {} as CSSProperties;
-	if (type == 'color') {
+	if (props.type == 'color') {
 		style.width = '27px';
 		style.borderRadius = '20px';
 	}
@@ -25,12 +25,12 @@ export default function SettingDualInput({ title, slug, value1, setValue1, minim
 	return (
 		<div className="setting dual-input">
 			<div className="setting-left">
-				<div>{title}</div>
-				<small>{description}</small>
+				<div>{props.title}</div>
+				<small>{props.description}</small>
 			</div>
 			<div className="setting-right">
-				<input className="input" type={type} value={value1} min={minimum1} onChange={(e:any) => { setValue1(e.target.value) }} style={style} />
-				<input className="input" type={type} value={value2} min={minimum2} onChange={(e:any) => { setValue2(e.target.value) }} style={style} />
+				<input className="input" type={props.type} value={props.value1} min={props.minimum1} onChange={(e:any) => { props.setValue1(e.target.value) }} style={style} />
+				<input className="input" type={props.type} value={props.value2} min={props.minimum2} onChange={(e:any) => { props.setValue2(e.target.value) }} style={style} />
 			</div>
 		</div>
 	);

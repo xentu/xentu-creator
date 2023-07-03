@@ -11,16 +11,16 @@ type SettingBoolProps = {
 }
 
 
-export default function SettingBool({ title, slug, half, checked, setChecked, description = '' }: SettingBoolProps) {
-	const c_half = half ? 'half-size' : '';
+export default function SettingBool(props: SettingBoolProps) {
+	const c_half = props.half ? 'half-size' : '';
 	return (
-		<div className={['setting setting-boolean', c_half].join(' ')} key={slug}>
+		<div className={['setting setting-boolean', c_half].join(' ')} key={props.slug}>
 			<div className="setting-left">
-				<div>{title}</div>
-				<small>{description}</small>
+				<div>{props.title}</div>
+				<small>{props.description}</small>
 			</div>
 			<div className="setting-right">
-				<span className={`toggle-button ${checked?'is-toggled':''}`} onClick={() => setChecked(!checked)}></span>
+				<span className={`toggle-button ${props.checked?'is-toggled':''}`} onClick={() => props.setChecked(!props.checked)}></span>
 			</div>
 		</div>
 	);

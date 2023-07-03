@@ -5,13 +5,13 @@ type LogoProps = {
 }
 
 
-export default function Logo({ src, size = 32, alt }: LogoProps) {
+export default function Logo(props: LogoProps) {
 	return (
 		<a>
-			<img src={src}
-				width={size}
-				height={size}
-				alt={alt} />
+			<img src={props.src}
+				width={props.size ?? 32}
+				height={props.size ?? 32}
+				alt={props.alt} />
 		</a>
 	);
 }

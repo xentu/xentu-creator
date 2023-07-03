@@ -50,7 +50,7 @@ class ConfPreset {
 };
 
 
-export default function NewGameDialog({ onCancel }: NewGameDialogProps) {
+export default function NewGameDialog(props: NewGameDialogProps) {
 	const [conf, setConf] = useState(new ConfPreset());
 
 	const updateSetting = async (option:any, newValue:any) => {
@@ -87,7 +87,7 @@ export default function NewGameDialog({ onCancel }: NewGameDialogProps) {
 		const r = await window.api.createGame(JSON.stringify(conf));
 		const response = JSON.parse(r);
 		if (response.success == true) {
-			onCancel();
+			props.onCancel();
 			window.api.openFolderAt(response.path);
 		}
 		console.log('CreateGame', response);
@@ -137,7 +137,7 @@ export default function NewGameDialog({ onCancel }: NewGameDialogProps) {
 									checked={conf.fullscreen}
 									setChecked={(v:boolean) => {updateSetting('fullscreen', v)}} />
 
-					<SettingButtons onSubmit={onSubmit} onCancel={onCancel} />
+					<SettingButtons onSubmit={onSubmit} onCancel={props.onCancel} />
 
 				</div>
 

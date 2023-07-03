@@ -15,7 +15,7 @@ declare global {
 }
 
 
-export default function WelcomePanel({ visible }: WelcomePanelProps) {
+export default function WelcomePanel(props: WelcomePanelProps) {
 	const settings = useContext(SettingsContext);
 
 	const openRecent = (path:string) => {
@@ -37,7 +37,7 @@ export default function WelcomePanel({ visible }: WelcomePanelProps) {
 		return result;
 	};
 
-	const c_visible = visible ? '' : 'is-hidden';
+	const c_visible = props.visible ? '' : 'is-hidden';
 
 	return (
 		<div className={`welcome-panel columns ${c_visible}`}>

@@ -17,30 +17,30 @@ type MenuEntryProps = {
 }
 
 
-export default function MenuItem({ label, disabled, active, click, children }: MenuItemProps) {
-	const c_active = active && !disabled ? 'is-active' : '';
-	const c_disabled = disabled ? 'is-disabled' : '';
+export default function MenuItem(props: MenuItemProps) {
+	const c_active = props.active && !props.disabled ? 'is-active' : '';
+	const c_disabled = props.disabled ? 'is-disabled' : '';
 	return (
 		<div className={["menu-item", c_active, c_disabled].join(' ')}>
-			<a className="menu-label" onClick={(e) => click(e)}>{label}</a>
-			<div className="menu-sub">{children}</div>
+			<a className="menu-label" onClick={(e) => props.click(e)}>{props.label}</a>
+			<div className="menu-sub">{props.children}</div>
 		</div>
 	);
 }
 
 
-export function MenuEntry({label, hotKey, disabled, checked, click, click2 }: MenuEntryProps) {
-	const c_disabled = disabled ? 'is-disabled' : '';
-	const c_checked = checked ? 'is-checked' : '';
+export function MenuEntry(props: MenuEntryProps) {
+	const c_disabled = props.disabled ? 'is-disabled' : '';
+	const c_checked = props.checked ? 'is-checked' : '';
 	return (
 		<div className={["menu-entry", c_disabled, c_checked].join(' ')} onClick={(e) => { 
-			if (!disabled && typeof click !== 'undefined') click(e); 
-			if (!disabled && typeof click2 !== 'undefined') click2(e); 
+			if (!props.disabled && typeof props.click !== 'undefined') props.click(e); 
+			if (!props.disabled && typeof props.click2 !== 'undefined') props.click2(e); 
 			}}>
 			<a className="menu-entry-label">
 				<span><i className="icon-ok"></i></span>
-				<span>{label}</span>
-				<span className="menu-hotkey">{hotKey}</span>
+				<span>{props.label}</span>
+				<span className="menu-hotkey">{props.hotKey}</span>
 			</a>
 		</div>
 	);

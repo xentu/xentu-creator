@@ -37,7 +37,7 @@ channelList.add('2', 'Stereo');
 channelList.add('3', 'Quad Channel');
 
 
-export default function GamePropertiesDialog({ onPropertiesChanged }: GamePropertiesDialogProps) {
+export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 	const settings = useContext(SettingsContext);
 	const project = useContext(ProjectContext);
 	const [page, setPage] = useState(0);
@@ -53,14 +53,14 @@ export default function GamePropertiesDialog({ onPropertiesChanged }: GameProper
 	const updateProjectProperty = async (option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(project));
 		clone.game[option] = newValue;
-		onPropertiesChanged(clone);
+		props.onPropertiesChanged(clone);
 		await window.api.setProject(clone);
 	};
 
 	const updateProjectSubProperty = async (group:any, option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(project));
 		clone.game[group][option] = newValue;
-		onPropertiesChanged(clone);
+		props.onPropertiesChanged(clone);
 		await window.api.setProject(clone);
 	};
 
