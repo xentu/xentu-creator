@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { useState, useEffect, useRef, MouseEvent } from 'react';
+import { useState, useEffect, useRef, MouseEvent, useReducer } from 'react';
 import ContextMenu from './Components/ContextMenu';
 import DialogContainer from "./Components/DialogContainer";
 import FileExplorer from "./Components/Sidebar/FileExplorer";
@@ -23,19 +23,12 @@ import { MenuEntry } from './Components/MenuItem';
 import { ProjectContext, ProjectSchema } from './Context/ProjectManager';
 import { SettingsContext } from './Context/SettingsManager';
 import { XTerm } from 'xterm-for-react';
+import { appStateReducer, appStateDefault } from './state'
+import { classList } from './helpers';
 
 
-require('./windowFuncs');
-require('./allTypes');
-
-
-declare global {
-	interface Window {
-	  api?: any;
-	  findEditor: Function,
-	  xterm: any
-	}
-}
+require('./window');
+require('./types');
 
 
 const container = document.getElementById('app');
@@ -43,29 +36,16 @@ const root = createRoot(container!);
 
 
 function App(props: appProps) {
-	const [consoleHeight, setConsoleHeight] = useState(150);
+	const [appState, dispatchAppState] = useReducer(appStateReducer, appStateDefault);
 	const [contextMenu, setContextMenu] = useState(null);
-	const [debugging, setDebugging] = useState(false);
-	const [dialog, setDialog] = useState('');
 	const [fileCreator, setFileCreator] = useState(null);
 	const [fileCreatorOpt, setFileCreatorOpt] = useState(false); /* when true, file creator created directories instead */
 	const [fileCreatorExt, setFileCreatorExt] = useState(null); /* when true, file creator created directories instead */
-	const [focusPath, setFocusPath] = useState('');
-	const [isTrackingMouse, setIsTrackingMouse] = useState(''); /* stored as string, empty means false */
-	const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
-	const [canSave, setCanSave] = useState(false);
-	const [projectPath, setProjectPath] = useState('');
 	const [project, setProject] = useState({} as ProjectSchema);
-	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [settings, setSettings] = useState(props.loadedSettings);
-	const [showConsole, setShowConsole] = useState(true);
-	const [showSidebar, setShowSidebar] = useState(true);
-	const [showStatusBar, setShowStatusBar] = useState(true);
-	const [showThemeEditor, setShowThemeEditor] = useState(false);
-	const [sidebarWidth, setSidebarWidth] = useState(240);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
+	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 	const [tabsChangeContext, setTabChangeContext] = useState(null);
-
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
@@ -86,7 +66,7 @@ function App(props: appProps) {
 			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
 		});
 		window.api.onProjectPathChanged((newPath:string) => {
-			setProjectPath(newPath);
+			dispatchAppState({ type: 'project-path', value: newPath });
 		});
 
 		xtermRef.current.terminal.writeln("Hello, World!");
@@ -135,8 +115,7 @@ function App(props: appProps) {
 		document.onkeyup = (e:KeyboardEvent) => {
 			if (e.key == 'Escape') {
 				setContextMenu('');
-				setFocusPath('');
-				setDialog('');
+				dispatchAppState([ { type:'focus-path', value:'' }, { type:'dialog', value:'' } ]);
 				setFileCreator(null);
 			}
 		};
@@ -145,7 +124,8 @@ function App(props: appProps) {
 
 
 	useEffect(() => {
-		setCanSave(tabs.length > 0);
+		dispatchAppState({ type: 'can-save', value: tabs.length > 0 });
+		//setCanSave(tabs.length > 0);
 	}, [tabs]);
 
 
@@ -168,11 +148,6 @@ function App(props: appProps) {
 
 
 	useEffect(() => {
-		doUpdateWindowTitle();
-	}, [selectedTabIndex]);
-
-
-	useEffect(() => {
 		updateRootCssVariables();
 	}, [settings]);
 
@@ -189,30 +164,34 @@ function App(props: appProps) {
 		// note: if actions ever stop working, make sure tabs has correct length.
 		switch (action) {
 			case 'toggle-sidebar':
-				setShowSidebar(!showSidebar);
+				//setShowSidebar(!showSidebar);
+				dispatchAppState({ type: 'toggle-sidebar' });
 				break;
 			case 'toggle-console':
-				const show = !showConsole;
-				setShowConsole(show);
+				//setShowConsole(!showConsole);
+				dispatchAppState({ type: 'toggle-console' });
 				doEditorResize();
 				break;
 			case 'toggle-statusbar':
-				setShowStatusBar(!showStatusBar);
+				//setShowStatusBar(!showStatusBar);
+				dispatchAppState({ type: 'toggle-statusbar' });
 				break;
 			case 'toggle-theme-editor':
-				setShowThemeEditor(!showThemeEditor);
+				//setShowThemeEditor(!showThemeEditor);
+				dispatchAppState({ type: 'toggle-theme-editor' });
 				break;
 			case 'show-new-game':
-				setDialog('new-game')
+				dispatchAppState({ type: 'dialog', value: 'new-game' });
 				break;
 			case 'show-settings':
-				setDialog('settings');
+				dispatchAppState({ type: 'dialog', value: 'settings' });
 				break;
 			case 'show-game-properties':
-				setDialog('game-properties');
+				dispatchAppState({ type: 'dialog', value: 'game-properties' });
 				break;
 			case 'hide-welcome':
-				setIsWelcomeVisible(false);
+				//setIsWelcomeVisible(false);
+				dispatchAppState({ type: 'is-welcome-visible', value: false });
 				break;
 			case 'clear-console':
 				const term = xtermRef.current.terminal;
@@ -223,11 +202,13 @@ function App(props: appProps) {
 			case 'close-all':
 				setTabs(new Array<OpenTab>());
 				setProject(null);
-				setDialog('');
-				setIsWelcomeVisible(true);
+				dispatchAppState([
+					{ type: 'dialog', value: '' },
+					{ type: 'is-welcome-visible', value: true }
+				]);
 				break;
-			case 'game-started':	setDebugging(true); break;
-			case 'game-stopped':	setDebugging(false); break;
+			case 'game-started': dispatchAppState({ type:'is-debugging', value:true }); break;
+			case 'game-stopped':	dispatchAppState({ type:'is-debugging', value:false }); break;
 		}	
 
 		if (tabs.length > 0) {
@@ -279,13 +260,13 @@ function App(props: appProps) {
 	 * Handles the mouse moving.
 	 */
 	const handleMouseMove = (x: any, y: any) => {
-		switch (isTrackingMouse) {
+		switch (appState.isTrackingMouse) {
 			case 'splitter':
-				setSidebarWidth(x + 2);
+				dispatchAppState({ type:'sidebar-width', value: x + 2 });
 				break;
 			case 'splitter2':
 				const h = document.getElementById('main').clientHeight;
-				setConsoleHeight(h - y - 5);
+				dispatchAppState({ type:'console-height', value: h - y - 5 });
 				break;
 		}
 	};
@@ -309,7 +290,6 @@ function App(props: appProps) {
 	 */
 	const handleLabelChanged = (tab: OpenTab, newLabel: string) => {
 		setTabLabel(tab, newLabel);
-		doUpdateWindowTitle();
 	}
 
 
@@ -417,9 +397,9 @@ function App(props: appProps) {
 		if (typeof clone.recentProjects === 'undefined') {
 			clone.recentProjects = new Array<string>();
 		}
-		const newEntry = `${project.game.title}|${projectPath}`;
+		const newEntry = `${project.game.title}|${appState.projectPath}`;
 		// remove duplicates.
-		clone.recentProjects = clone.recentProjects.filter((e:string) => !e.endsWith(projectPath));
+		clone.recentProjects = clone.recentProjects.filter((e:string) => !e.endsWith(appState.projectPath));
 		// add to beginning of 
 		clone.recentProjects.unshift(newEntry);
 		// save changes.
@@ -456,7 +436,6 @@ function App(props: appProps) {
 		if (tab !== null) {
 			setSelectedTabIndex(index);
 		}
-		doUpdateWindowTitle();
 	};
 
 
@@ -517,7 +496,7 @@ function App(props: appProps) {
 	 */
 	const doHideContextMenu = () => {
 		setContextMenu(null);
-		setFocusPath(null);
+		dispatchAppState({ type: 'focus-path', value: null });
 	}
 
 	
@@ -597,24 +576,6 @@ function App(props: appProps) {
 
 
 	/**
-	 * 
-	 */
-	const doUpdateWindowTitle = () => {
-		try {
-			/* const activeTab = findActiveTab();
-			if (activeTab !== null) {
-				const label = activeTab.label ?? 'Untitled';
-				window.api.setTitle(`${label} - Xentu Creator`);
-			}
-			else {
-				window.api.setTitle(`Xentu Creator`);
-			} */
-		}
-		catch {}
-	};
-
-
-	/**
 	 * Close a specific tab.
 	 * @param tab The tab to close.
 	 * @return boolean True if closed, false if canceled.
@@ -630,7 +591,6 @@ function App(props: appProps) {
 			// select the next available.
 			const nextOpen = findFirstOpenTab();
 			setSelectedTab(nextOpen);
-			doUpdateWindowTitle();
 			return true;
 		}
 		return false;
@@ -664,7 +624,7 @@ function App(props: appProps) {
 			result.push(<TabItem key={"tabLabel"+i} label={label} 
 										active={selectedTabIndex == i} 
 										onClick={e => {setSelectedTab(tab)}} 
-										onClose={e => {handleTabCloseClicked(e, tab);}} 
+										onClose={e => {handleTabCloseClicked(e, tab)}} 
 										/>);
 		}
 		return result;
@@ -718,15 +678,18 @@ function App(props: appProps) {
 	 */
 	const renderDialog = () => {
 		const result = [];
-		switch (dialog) {
+		switch (appState.dialog) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
-			case 'new-game': result.push(<NewGameDialog key={'new-game'} onCancel={() => setDialog('')} />); break;
+			case 'new-game': result.push(<NewGameDialog key={'new-game'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} />); break;
 			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => setProject(s)} />); break;
 		}
 		return result;
 	};
 
 
+	/**
+	 * 
+	 */
 	const contextMenuAction = async (action:string, directory?:boolean, extension?:string) => {
 		console.log('Context Menu Action', {
 			'action': action,
@@ -811,34 +774,44 @@ function App(props: appProps) {
 	};
 
 
-	const c_tracking = isTrackingMouse ? 'is-tracking' : '';
-	const c_statusbar = showStatusBar ? '' : 'hide-statusbar';
-	const c_console = showConsole ? '' : 'hide-console';
+	// ########################################################################
+	// CSS State Constants
+	// ########################################################################
+
+
+	const c_tracking = appState.isTrackingMouse ? 'is-tracking' : '';
+	const c_statusbar = appState.showStatusBar ? '' : 'hide-statusbar';
+	const c_console = appState.showConsole ? '' : 'hide-console';
 	const c_roboto = settings.editor.fontFamily == 'roboto' ? 'font-roboto' : '';
-	const c_welcome = isWelcomeVisible ? 'welcome-visible' : '';
-	const isDark = settings.editor.colorTheme == 'dark';
+	const c_welcome = appState.isWelcomeVisible ? 'welcome-visible' : '';
+	const c_light = settings.editor.colorTheme == 'light' ? 'theme-is-light' : '';
+
+
+	// ########################################################################
+	// Render The App
+	// ########################################################################
 
 
 	return (
-		<div className={[isDark?'theme-is-dark':'theme-is-light', c_roboto, c_welcome].join(' ')}>
+		<div className={classList([c_light, c_roboto, c_welcome])}>
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
 
-					<MainMenu enabled={!isWelcomeVisible} canSave={canSave} showSidebar={showSidebar} 
-								 showStatus={showStatusBar} showConsole={showConsole} showThemeEditor={showThemeEditor}
-								 debugging={debugging}
+					<MainMenu enabled={!appState.isWelcomeVisible} canSave={appState.canSave} showSidebar={appState.showSidebar} 
+								 showStatus={appState.showStatusBar} showConsole={appState.showConsole} showThemeEditor={appState.showThemeEditor}
+								 debugging={appState.isDebugging}
 								 setFileCreator={setFileCreator}
 								 setFileCreatorOpt={setFileCreatorOpt}
 								 setFileCreatorExt={setFileCreatorExt} />
 
-					<div className={['columns', c_tracking, c_statusbar, c_console].join(' ')} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => setIsTrackingMouse('')}>
+					<div className={classList(['columns', c_tracking, c_statusbar, c_console])} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })}>
 
-						<div id="sidebar" className="column" style={{flexBasis: sidebarWidth + 'px', display: showSidebar ? 'flex' : 'none' }}>
+						<div id="sidebar" className="column" style={{flexBasis: appState.sidebarWidth + 'px', display: appState.showSidebar ? 'flex' : 'none' }}>
 							<div className="column-head tab-labels">
 								<div className='tab-label'>Files &amp; Folders</div>
 
 								<div className="buttons" style={{display:'none'}}>
-									<a className={["menu-item"].join(' ')} title="Config Game">
+									<a className="menu-item" title="Config Game">
 										<span className="menu-label"><i className='icon-cog'></i></span>
 									</a>
 								</div>
@@ -849,14 +822,14 @@ function App(props: appProps) {
 									onFileOpen={(filePath: string) => doLoadEditor(filePath)} 
 									onFileCreate={(filePath: string) => doCreateFile(filePath)}
 									onContextMenu={(name:string, x:number, y:number, path:string) => doShowContextMenu(name, x, y, path)} 
-									focusPath={focusPath} 
-									setFocusPath={setFocusPath} 
+									focusPath={appState.focusPath} 
+									setFocusPath={(p:string) => dispatchAppState({ type:'focus-path', value: p })}
 									fileCreator={fileCreator} 
 									setFileCreator={setFileCreator} />
 							</div>
 						</div>
 
-						<div id="splitter" onMouseDown={e => setIsTrackingMouse('splitter')} onMouseUp={e => setIsTrackingMouse('')} />
+						<div id="splitter" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
 					
 						<div id="main" className="column">
 							<div className="column-head tab-labels">
@@ -868,7 +841,7 @@ function App(props: appProps) {
 										{renderTabBodies()}
 									</div>
 									<div id="splitter2" />
-									<div id="console" style={{ /* flexBasis: consoleHeight + 'px', */ display: showConsole ? 'block' : 'none' }}>
+									<div id="console" style={{ /* flexBasis: consoleHeight + 'px', */ display: appState.showConsole ? 'block' : 'none' }}>
 										<XTerm ref={xtermRef} options={{ 
 											rows: 8, 
 											allowTransparency: true,
@@ -882,9 +855,9 @@ function App(props: appProps) {
 					</div>
 
 					<div id='status-bar'>Idle.</div>
-					<WelcomePanel visible={isWelcomeVisible} />
-					<ThemeEditor shown={showThemeEditor} onClose={(e:any) => setShowThemeEditor(!showThemeEditor)} onSettingsChanged={(s:any) => setSettings(s)} />
-					<DialogContainer visible={dialog!==''} onClose={() => setDialog('')}>
+					<WelcomePanel visible={appState.isWelcomeVisible} />
+					<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} />
+					<DialogContainer visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>
 						{renderDialog()}
 					</DialogContainer>
 					<ContextMenu onBlur={() => doHideContextMenu()}> 

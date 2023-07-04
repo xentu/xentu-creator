@@ -11,7 +11,8 @@ declare global {
 	  findEditor: Function,
 	  changeThemeColors: Function,
 	  hexToHsl: Function,
-	  hexToHs: Function
+	  hexToHs: Function,
+	  xterm: any
 	}
 }
 
