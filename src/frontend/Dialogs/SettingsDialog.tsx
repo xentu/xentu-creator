@@ -45,6 +45,15 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 	platformList.add('Arm64', 'Arm64');
 
 
+	const uiLanguages = new Dictionary<string>();
+	uiLanguages.add('en', 'EN - English (International)');
+	uiLanguages.add('fr', 'FR - Français (France)');
+	uiLanguages.add('it', 'IT - Italiano (Italy)')
+	uiLanguages.add('de', 'DE - German (Germany)');
+	uiLanguages.add('de', 'NL - Dutch (Netherlands)');
+	uiLanguages.add('jp', 'JP - 日本語 (Japan)');
+
+
 	useEffect(() => {
 		const fetchReport = async() => {
 			const rawReport = await window.api.listBinaries();
@@ -59,6 +68,10 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 		clone[group][option] = newValue;
 		props.onSettingsChanged(clone);
 		await window.api.setSettings(clone);
+
+		if (group == 'editor' && option == 'locale') {
+			i18n.changeLanguage(newValue);
+		}
 	};
 
 	const updateSetting2 = async (group:any, subgroup:any, option:any, newValue:any) => {
@@ -182,6 +195,11 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 
 					<h2>{t('editor')}</h2>
 					<p>{t('_tab_editor_desc')}</p>
+
+					<SettingCombo slug='uiLanguage' key={'uiLanguage'} title={t('ui_language')}
+									  description={t('_setting_ui_language_desc')}
+									  options={uiLanguages} value={settings.editor.locale ?? 'en'}
+									  setValue={(v:string) => { updateSetting('editor', 'locale', v) }} />
 
 					<SettingCombo slug='fontFamily' key={'fontFamily'} title={t('ui_font_family')}
 									  description={t('_setting_font_family_desc')}

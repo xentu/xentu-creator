@@ -4,6 +4,7 @@ import { createContext } from "react";
 export type SettingsSchema = {
 	counter: number;
 	editor: {
+		locale:string,
 		colorTheme?: string,
 		fontFamily?: string,
 		fontSize?: Number,

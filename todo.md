@@ -12,17 +12,16 @@
 - [feature] Make the recent projects list work. (done)
 - [feature] New Game Dialog. (done)
 - [feature] Add toolbars. (done)
-- [feature] Add ability to change the UI language, with detection from OS. (almost done)
-- [feature] Change 'Add File...' to multiple, like 'Add Code File...', 'Add Layout...' and 'New Conversation...' etc... (almost done)
+- [feature] Add ability to create various types of files (done)
+- [feature] Add ability to change the UI language, with detection from OS. (done)
 
-- [feature] Add ability to read xentu docs offline.
-- [feature] Add advanced search system.
-
-# Non Essential
+# Back Burner
 
 - [bug] Editor tab name does not update when you rename a file.
+- [feature] Add ability to read xentu docs offline.
+- [feature] Add advanced search system.
 - [feature] File Icons.
-- [feature] Cant rename files.
+- [feature] Add ability to rename files.
 - [feature] Add ability to export/import colour themes.
 
 # Add Editors for the following formats

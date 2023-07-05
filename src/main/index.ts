@@ -154,6 +154,7 @@ class XentuCreatorApp {
 
 		let settings = {
 			editor: {
+				locale: 'en',
 				colorTheme: 'dark',
 				fontFamily: 'default',
 				fontSize: 14,
