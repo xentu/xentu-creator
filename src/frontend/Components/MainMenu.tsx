@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import MenuItem, { MenuEntry } from './MenuItem';
+import { useTranslation } from "react-i18next";
 //import { SettingsContext } from '../Context/SettingsManager';
 
 
@@ -28,6 +29,7 @@ type MainMenuProps = {
 export default function MainMenu(props: MainMenuProps) {
 	const [selected, setSelected] = useState('');
 	const c_active = props.enabled ? '' : ' is-disabled';
+	const { i18n, t } = useTranslation();
 	//const settings = useContext(SettingsContext);
 
 	useEffect(() => {
@@ -62,78 +64,67 @@ export default function MainMenu(props: MainMenuProps) {
 						onClick={(e:any) => deselect(e)}
 						onKeyUp={(e:any) => kbDeselect(e)}>
 
-				<MenuItem label='File' click={() => setSelected('file')} active={selected=='file'}>
-					<MenuEntry click2={(e:any) => deselect(e)} label='New Game' hotKey='Ctrl+N' click={() => window.api.newGame()} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Open Game...' hotKey='Ctrl+O' click={() => window.api.openFolder()} />
+				<MenuItem label={t('file')} click={() => setSelected('file')} active={selected=='file'}>
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('new_game')} hotKey='Ctrl+N' click={() => window.api.newGame()} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('open_game')} hotKey='Ctrl+O' click={() => window.api.openFolder()} />
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label='Close Project' click={(() => window.api.menuCloseProject())} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled || !props.canSave} label='Save' hotKey='Ctrl+S' click={() => window.api.menuSave()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled || !props.canSave} label='Save Copy...' hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled || !props.canSave} label='Save All' hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label={t('close_game')} click={(() => window.api.menuCloseProject())} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled || !props.canSave} label={t('save')} hotKey='Ctrl+S' click={() => window.api.menuSave()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled || !props.canSave} label={t('save_copy')} hotKey='Ctrl+Shift+A' click={() => window.api.menuSaveCopy()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled || !props.canSave} label={t('save_all')} hotKey='Ctrl+Shift+S' click={() => window.api.menuSaveAll()} />
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label='Game Properties' click={() => window.api.menuGameProperties()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label='Reveal In Explorer' click={() => window.api.menuReveal()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label='Export...' click={() => window.api.menuExport()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label={t('game_properties')} click={() => window.api.menuGameProperties()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label={t('reveal_in_explorer')} click={() => window.api.menuReveal()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.enabled} label={t('export')} click={() => window.api.menuExport()} />
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Exit' hotKey='Alt+F4' click={() => window.api.menuExit()} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('exit')} hotKey='Alt+F4' click={() => window.api.menuExit()} />
 				</MenuItem>
-				<MenuItem label='Edit' disabled={!props.enabled} click={() => setSelected('edit')} active={selected=='edit'}>
-					<MenuEntry click2={() => setSelected('')} label='Undo' hotKey='Ctrl+Z' click={() => window.api.menuUndo()} />
-					<MenuEntry click2={() => setSelected('')} label='Redo' click={() => window.api.menuRedo()} />
-					<MenuEntry click2={() => setSelected('')} label='Cut' hotKey='Ctrl+X' click={() => window.api.menuCut()} />
-					<MenuEntry click2={() => setSelected('')} label='Copy' hotKey='Ctrl+C' click={() => window.api.menuCopy()} />
-					<MenuEntry click2={() => setSelected('')} label='Paste' hotKey='Ctrl+V' click={() => window.api.menuPaste()} />
+				<MenuItem label={t('edit')} disabled={!props.enabled} click={() => setSelected('edit')} active={selected=='edit'}>
+					<MenuEntry click2={() => setSelected('')} label={t('undo')} hotKey='Ctrl+Z' click={() => window.api.menuUndo()} />
+					<MenuEntry click2={() => setSelected('')} label={t('redo')} click={() => window.api.menuRedo()} />
+					<MenuEntry click2={() => setSelected('')} label={t('cut')} hotKey='Ctrl+X' click={() => window.api.menuCut()} />
+					<MenuEntry click2={() => setSelected('')} label={t('copy')} hotKey='Ctrl+C' click={() => window.api.menuCopy()} />
+					<MenuEntry click2={() => setSelected('')} label={t('paste')} hotKey='Ctrl+V' click={() => window.api.menuPaste()} />
 					<hr />
-					<MenuEntry click2={() => setSelected('')} label='Delete' hotKey='Del' click={() => window.api.menuDelete()} />
-					<MenuEntry click2={() => setSelected('')} label='Select All' hotKey='Ctrl+A' click={() => window.api.menuSelectAll()} />
+					<MenuEntry click2={() => setSelected('')} label={t('delete')} hotKey='Del' click={() => window.api.menuDelete()} />
+					<MenuEntry click2={() => setSelected('')} label={t('select_all')} hotKey='Ctrl+A' click={() => window.api.menuSelectAll()} />
 				</MenuItem>
-				<MenuItem label='Assets' click={() => setSelected('assets')} disabled={!props.enabled} active={selected=='assets'}>
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Code File..." click={() => showCreator(false)} />
+				<MenuItem label={t('run')} disabled={!props.enabled} click={() => setSelected('run')} active={selected=='run'}>
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={props.debugging} label={t('start_game')} hotKey='F5' click={() => !props.debugging && window.api.menuRun()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={props.debugging} label={t('start_without_debugging')} hotKey='F6' click={() => !props.debugging && window.api.menuRunWithoutDebug()} />
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.debugging} label={t('stop')} click={() => props.debugging && window.api.menuStop()} />
+				</MenuItem>
+				<MenuItem label={t('view')} click={() => setSelected('view')} active={selected=='view'}>
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('sidebar')} hotKey='Ctrl+B' click={() => window.api.menuSidebar()} checked={props.showSidebar} disabled={!props.enabled} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('status_bar')} hotKey='Ctrl+Shift+B' click={() => window.api.menuStatusBar()} checked={props.showStatus} disabled={!props.enabled} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('console')} hotKey='Ctrl+Shift+C' click={() => window.api.menuConsole()} checked={props.showConsole} disabled={!props.enabled} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('theme_editor')} hotKey='Ctrl+Shift+D' click={() => window.api.menuThemeEditor()} checked={props.showThemeEditor} />
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Conversation..." click={() => showCreator(false, '.xcf')} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Database..." click={() => showCreator(false, '.xdf')} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('actual_size')} click={() => window.api.menuActualSize()} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('zoom_in')} click={() => window.api.menuZoomIn()} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('zoom_out')} click={() => window.api.menuZoomOut()} />
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Layout..." click={() => showCreator(false, '.xlf')} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Graphic..." click={() => showCreator(false, '.xgf')} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Sheet..." click={() => showCreator(false, '.xsf')} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label="New Sprite Font..." click={() => showCreator(false, '.xff')} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('show_devtools')} click={() => window.api.menuDevTools()} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('toggle_fullscreen')} hotKey='F11' click={() => window.api.menuFullScreen()} />
 				</MenuItem>
-				<MenuItem label='Run' disabled={!props.enabled} click={() => setSelected('run')} active={selected=='run'}>
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={props.debugging} label='Start Game' hotKey='F5' click={() => !props.debugging && window.api.menuRun()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={props.debugging} label='Start Without Debugging' hotKey='F6' click={() => !props.debugging && window.api.menuRunWithoutDebug()} />
-					<MenuEntry click2={(e:any) => deselect(e)} disabled={!props.debugging} label='Stop' click={() => props.debugging && window.api.menuStop()} />
+				<MenuItem label={t('tools')} click={() => setSelected('tools')} active={selected=='tools'}>
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('options')} hotKey='F8' click={() => window.api.menuOptions()} />
+					<MenuEntry disabled={!props.enabled} click2={() => setSelected('')} label={t('clear_console')} click={() => window.api.menuClearConsole()} />
 				</MenuItem>
-				<MenuItem label='View' click={() => setSelected('view')} active={selected=='view'}>
-					<MenuEntry click2={(e:any) => deselect(e)} label='Sidebar' hotKey='Ctrl+B' click={() => window.api.menuSidebar()} checked={props.showSidebar} disabled={!props.enabled} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Status Bar' hotKey='Ctrl+Shift+B' click={() => window.api.menuStatusBar()} checked={props.showStatus} disabled={!props.enabled} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Console' hotKey='Ctrl+Shift+C' click={() => window.api.menuConsole()} checked={props.showConsole} disabled={!props.enabled} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Theme Editor' hotKey='Ctrl+Shift+D' click={() => window.api.menuThemeEditor()} checked={props.showThemeEditor} />
-					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Actual Size' click={() => window.api.menuActualSize()} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Zoom In' click={() => window.api.menuZoomIn()} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Zoom Out' click={() => window.api.menuZoomOut()} />
-					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Show DevTools' click={() => window.api.menuDevTools()} />
-					<MenuEntry click2={(e:any) => deselect(e)} label='Toggle FullScreen' hotKey='F11' click={() => window.api.menuFullScreen()} />
-				</MenuItem>
-				<MenuItem label='Tools' click={() => setSelected('tools')} active={selected=='tools'}>
-					<MenuEntry click2={(e:any) => deselect(e)} label='Options' hotKey='F8' click={() => window.api.menuOptions()} />
-					<MenuEntry disabled={!props.enabled} click2={() => setSelected('')} label='Clear Console' click={() => window.api.menuClearConsole()} />
-				</MenuItem>
-				<MenuItem label='Help' click={() => setSelected('help')} active={selected=='help'}>
-					<MenuEntry click2={() => setSelected('')} label='Learn More' hotKey='F1' click={() => window.api.menuHelp()} />
+				<MenuItem label={t('help')} click={() => setSelected('help')} active={selected=='help'}>
+					<MenuEntry click2={() => setSelected('')} label={t('learn_more')} hotKey='F1' click={() => window.api.menuHelp()} />
 				</MenuItem>
 
 				<div className="buttons" style={{ flexGrow: 1, textAlign: 'right', display: props.enabled?'block':'none' }}>
 					<div style={{display: 'inline-block'}}>
-						<a className={["menu-item"].join(' ')} title="Config Game" onClick={() => window.api.menuGameProperties()}>
-							<span className="menu-label"><i className='icon-cog'></i> Config</span>
+						<a className={["menu-item"].join(' ')} title={t('config_game')} onClick={() => window.api.menuGameProperties()}>
+							<span className="menu-label"><i className='icon-cog'></i> {t('config')}</span>
 						</a>
-						<a className={["menu-item", props.debugging?'':'is-disabled'].join(' ')} title="Stop Game" onClick={() => props.debugging && window.api.menuStop()}>
-							<span className="menu-label is-red"><i className='icon-stop'></i> Stop</span>
+						<a className={["menu-item", props.debugging?'':'is-disabled'].join(' ')} title={t('stop_game')} onClick={() => props.debugging && window.api.menuStop()}>
+							<span className="menu-label is-red"><i className='icon-stop'></i> {t('stop')}</span>
 						</a>
-						<a className={["menu-item", props.debugging?'is-disabled':''].join(' ')} title="Start Game" onClick={() => !props.debugging && window.api.menuRun()}>
-							<span className="menu-label is-green"><i className='icon-play'></i> Play</span>
+						<a className={["menu-item", props.debugging?'is-disabled':''].join(' ')} title={t('start_game')} onClick={() => !props.debugging && window.api.menuRun()}>
+							<span className="menu-label is-green"><i className='icon-play'></i> {t('start')}</span>
 						</a>
 					</div>
 				</div>

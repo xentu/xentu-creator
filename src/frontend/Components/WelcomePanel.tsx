@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
+import { useTranslation } from "react-i18next";
 import Logo from "./Logo";
 
 
@@ -17,6 +18,7 @@ declare global {
 
 export default function WelcomePanel(props: WelcomePanelProps) {
 	const settings = useContext(SettingsContext);
+	const { i18n, t } = useTranslation();
 
 	const openRecent = (path:string) => {
 		window.api.openFolderAt(path);
@@ -47,11 +49,11 @@ export default function WelcomePanel(props: WelcomePanelProps) {
 					<div>
 						<Logo src="../images/xentu-logo.png" size={128} />
 						<h1>Xentu Creator</h1>
-						<span>Version 0.0.6</span>
+						<span>{t('version')} 0.0.6</span>
 					</div>
 					<div className="buttons">
-						<a className="button" onClick={() => window.api.newGame()}>New Game</a>
-						<a className="button" onClick={() => window.api.openFolder()}>Open Project...</a>
+						<a className="button" onClick={() => window.api.newGame()}>{t('new_game')}</a>
+						<a className="button" onClick={() => window.api.openFolder()}>{t('open_game')}</a>
 					</div>
 				</div>
 			</div>
@@ -59,15 +61,15 @@ export default function WelcomePanel(props: WelcomePanelProps) {
 			<div className="welcome-panel-right column">
 				<div className="welcome-panel-inner">
 					<div>
-						<h3>Help &amp; Resources</h3>
+						<h3>{t('help_and_resources')}</h3>
 						<ul>
-							<li><a href="#">Xentu Website</a></li>
-							<li><a href="#">Documentation</a></li>
-							<li><a href="#">Release Notes</a></li>
+							<li><a href="#">Xentu {t('website')}</a></li>
+							<li><a href="#">{t('documentation')}</a></li>
+							<li><a href="#">{t('release_notes')}</a></li>
 						</ul>
 					</div>
 					<div>
-						<h3>Recent Projects</h3>
+						<h3>{t('recent_projects')}</h3>
 						<ul>
 							{listRecentProjects()}
 						</ul>

@@ -5,6 +5,7 @@ import SettingBool from '../Components/Settings/SettingBoolean';
 import SettingCombo from '../Components/Settings/SettingCombo';
 import SettingInput from '../Components/Settings/SettingInput';
 import { SettingsContext } from '../Context/SettingsManager';
+import { useTranslation } from "react-i18next";
 
 
 type SettingsDialogProps = {
@@ -19,28 +20,29 @@ declare global {
 }
 
 
-const colorThemes = new Dictionary<string>();
-colorThemes.add('dark', 'Dark');
-colorThemes.add('light', 'Light');
-//colorThemes.add('os-decides', 'OS Decides');
-
-const fontFamilies = new Dictionary<string>();
-fontFamilies.add('default', 'Default (System Defined)');
-fontFamilies.add('roboto', 'Roboto');
-
-const fontSizes = new Dictionary<string>();
-fontSizes.add('16', '16');
-
-const platformList = new Dictionary<string>();
-platformList.add('x86', 'x86');
-platformList.add('x64', 'x64');
-platformList.add('Arm64', 'Arm64');
-
-
 export default function SettingsDialog(props: SettingsDialogProps) {
 	const settings = useContext(SettingsContext);
 	const [page, setPage] = useState(0);
 	const [binaryReport, setBinaryReport] = useState('');
+	const { i18n, t } = useTranslation();
+
+
+	const colorThemes = new Dictionary<string>();
+	colorThemes.add('dark', t('dark'));
+	colorThemes.add('light', t('light'));
+	//colorThemes.add('os-decides', 'OS Decides');
+
+	const fontFamilies = new Dictionary<string>();
+	fontFamilies.add('default', t('_setting_default_font_family'));
+	fontFamilies.add('roboto', 'Roboto');
+
+	const fontSizes = new Dictionary<string>();
+	fontSizes.add('16', '16');
+
+	const platformList = new Dictionary<string>();
+	platformList.add('x86', 'x86');
+	platformList.add('x64', 'x64');
+	platformList.add('Arm64', 'Arm64');
 
 
 	useEffect(() => {
@@ -67,25 +69,25 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 	};
 
 	const themeOpts = {
-		mainBackground:			'Main Background',
-		mainText:					'Main Text',
-		sidebarBackground:		'Sidebar Background',
-		sidebarText:				'Sidebar Text',
-		hoverBackground:			'Hover Background',
-		hoverText:					'Hover Text',
-		activeBackground:			'Active Background',
-		activeText:					'Active Text',
-		editorBackground:			'Editor Background',
-		editorText:					'Editor Text',
-		terminalBackground:     'Terminal Background',
-		terminalText:     		'Terminal Text',
-		footerBackground:			'Footer Background',
-		footerText:					'Footer Text'
+		mainBackground: t('_color_main_bg'),
+		mainText: t('_color_main_text'),
+		sidebarBackground: t('_color_sidebar_bg'),
+		sidebarText: t('_color_sidebar_text'),
+		hoverBackground: t('_color_hover_bg'),
+		hoverText: t('_color_hover_text'),
+		activeBackground: t('_color_active_bg'),
+		activeText: t('_color_active_text'),
+		editorBackground: t('_color_editor_bg'),
+		editorText: t('_color_editor_text'),
+		terminalBackground: t('_color_terminal_bg'),
+		terminalText: t('_color_terminal_text'),
+		footerBackground: t('_color_footer_bg'),
+		footerText:	t('_color_footer_text'),
 	};
 	
 
 	const resetTheme = async () => {
-		if (await window.api.showConfirm('Are you sure?')) {
+		if (await window.api.showConfirm(t('are_you_sure'))) {
 			const clone = JSON.parse(JSON.stringify(settings));
 			if (settings.editor.colorTheme == 'dark') {
 				const templateJson = await window.api.getDefaultThemeDark();
@@ -108,7 +110,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 		for (const [key, label] of Object.entries(themeOpts)) {
 			res.push(
 				<SettingInput slug={key} key={key} title={label}
-					  description={`Change the color of ${label}.`}
+					  description={t('change_the_color_of') + ` ${label}.`}
 					  type='color' value={settings.theme[darkOrLight][key]}
 					  setValue={(v:string) => { updateSetting2('theme', darkOrLight, key, v) }} />
 			)
@@ -132,7 +134,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 		const resultJson = await window.api.exportTheme();
 		const result = JSON.parse(resultJson);
 		if (result.success) {
-			await window.api.showAlert('Export Successful');
+			await window.api.showAlert(t('export_successful'));
 		}
 	};
 
@@ -145,16 +147,16 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 			clone.theme = result.theme;
 			props.onSettingsChanged(clone);
 			await window.api.setSettings(clone);
-			await window.api.showAlert('Import Successful');
+			await window.api.showAlert(t('import_successful'));
 		}		
 	};
 
-	const doClearRecents = async () => {
+	const doClearRecentProjects = async () => {
 		const clone = JSON.parse(JSON.stringify(settings));
 		clone.recentProjects = [];
 		props.onSettingsChanged(clone);
 		await window.api.setSettings(clone);
-		await window.api.showAlert("Recent's Cleared");
+		await window.api.showAlert(t('recent_projects_cleared'));
 	};
 
 	
@@ -163,12 +165,12 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 			<div className="dialog-sidebar">
 				
 				<div>
-					<h2>Options</h2>
+					<h2>{t('options')}</h2>
 					<ul>
-						<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>Editor</li>
-						<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>Theme</li>
-						<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>Tools</li>
-						<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>Binaries</li>
+						<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>{t('editor')}</li>
+						<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>{t('theme')}</li>
+						<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>{t('tools')}</li>
+						<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>{t('binaries')}</li>
 					</ul>
 				</div>
 					
@@ -178,31 +180,31 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 
 				<div className="dialog-page" style={{display:page==0?'block':'none'}}>
 
-					<h2>Editor</h2>
-					<p>Settings for the code editor.</p>
+					<h2>{t('editor')}</h2>
+					<p>{t('_tab_editor_desc')}</p>
 
-					<SettingCombo slug='fontFamily' key={'fontFamily'} title='UI Font Family'
-									  description='Change the font family for the UI'
+					<SettingCombo slug='fontFamily' key={'fontFamily'} title={t('ui_font_family')}
+									  description={t('_setting_font_family_desc')}
 									  options={fontFamilies} value={settings.editor.fontFamily}
 									  setValue={(v:string) => { updateSetting('editor', 'fontFamily', v) }} />
 
-					<SettingInput slug='fontSize' key={'fontSize'} title='Font Size'
-									  description='Change the default font size for the code editor'
+					<SettingInput slug='fontSize' key={'fontSize'} title={t('font_size')}
+									  description={t('_setting_font_size_desc')}
 									  type='number' value={settings.editor.fontSize}
 									  setValue={(v:string) => { updateSetting('editor', 'fontSize', v ) }} />
 
-					<SettingBool slug='enableCodeLens' key={'enableCodeLens'} title='Enable CodeLens'
-									description='Enable the code-lens feature in Monaco'
+					<SettingBool slug='enableCodeLens' key={'enableCodeLens'} title={t('enable_code_lens')}
+									description={t('_setting_enable_code_lens_desc')}
 									checked={settings.editor.enableCodeLens}
 									setChecked={(v:boolean) => { updateSetting('editor', 'enableCodeLens', v) }} />
 
-					<SettingBool slug='enableLineNumbers' key={'enableLineNumbers'} title='Enable Line Numbers'
-									description='Show or hide the line numbers'
+					<SettingBool slug='enableLineNumbers' key={'enableLineNumbers'} title={t('enable_line_numbers')}
+									description={t('_setting_enable_line_numbers_desc')}
 									checked={settings.editor.enableLineNumbers}
 									setChecked={(v:boolean) => { updateSetting('editor', 'enableLineNumbers', v) }} />
 
-					<SettingBool slug='enableMinimap' key={'enableMinimap'} title='Enable Mini Map'
-									description='This is the right-hand bar'
+					<SettingBool slug='enableMinimap' key={'enableMinimap'} title={t('enable_mini_map')}
+									description={t('_setting_enable_minimap_desc')}
 									checked={settings.editor.enableMinimap}
 									setChecked={(v:boolean) => { updateSetting('editor', 'enableMinimap', v) }} />
 
@@ -210,19 +212,19 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 
 
 				<div className="dialog-page" style={{display:page==1?'block':'none'}}>
-					<h2>Theme</h2>
-					<p>Customize the visual theme for Xentu Creator.</p>
+					<h2>{t('theme')}</h2>
+					<p>{t('_tab_theme_desc')}</p>
 
-					<SettingCombo slug='colorTheme' key={'colorTheme'} title='Color Theme'
-									  description='Change the color theme of the app'
+					<SettingCombo slug='colorTheme' key={'colorTheme'} title={t('color_theme')}
+									  description={t('_setting_color_theme')}
 									  options={colorThemes} value={settings.editor.colorTheme}
 									  setValue={(v:string) => { updateSetting('editor', 'colorTheme', v) }} />
 
 					<SettingBlank wrapClass='settings-buttons'>
 						<div className="buttons">
-							<a className="button" onClick={() => doImportTheme()}>Import</a>
-							<a className="button" onClick={() => doExportTheme()}>Export</a>
-							<a className="button" onClick={() => resetTheme()}>Restore Defaults</a>
+							<a className="button" onClick={() => doImportTheme()}>{t('import')}</a>
+							<a className="button" onClick={() => doExportTheme()}>{t('export')}</a>
+							<a className="button" onClick={() => resetTheme()}>{t('restore_defaults')}</a>
 						</div>
 					</SettingBlank>
 
@@ -230,35 +232,31 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 				</div>
 				
 				<div className="dialog-page" style={{display:page==2?'block':'none'}}>
-					<h2>Tools</h2>
-					<p>
-						Various tools for managing things in app.
-					</p>
+					<h2>{t('tools')}</h2>
+					<p>{t('_tab_tools_desc')}</p>
 
-					<SettingBlank wrapClass='settings-buttons' title="Clear Recent Projects" description="Clear the list of projects on the welcome screen.">
+					<SettingBlank wrapClass='settings-buttons' title={t('clear_recent_projects')}
+									  description={t('_setting_clear_recent_projects_desc')}>
 						<div className="buttons">
-							<a className="button" onClick={() => doClearRecents()}>Clear</a>
+							<a className="button" onClick={() => doClearRecentProjects()}>{t('clear')}</a>
 						</div>
 					</SettingBlank>
 
 				</div>
 
 				<div className="dialog-page" style={{display:page==3?'block':'none'}}>
-					<h2>Binaries</h2>
-					<p>
-						Use this page to download the engine binaries you need to test, 
-						play or deploy your games.
-					</p>
+					<h2>{t('binaries')}</h2>
+					<p>{t('_tab_binaries_desc')}</p>
 
-					<SettingInput slug='alternateBinaryPath' key={'alternateBinaryPath'} title='Alternate Binary Path'
-									  description='Custom location for debugging binaries (empty to disable).'
+					<SettingInput slug='alternateBinaryPath' key={'alternateBinaryPath'} title={t('alternative_binary_path')}
+									  description={t('_setting_alt_binary_path_desc')}
 									  value={settings.debugging.alternateBinaryPath??""}
 									  setValue={(s:string) => { updateSetting('debugging', 'alternateBinaryPath', s) }} />
 
 					<div>
 						<div className="buttons">
-							<a className="button" onClick={(e:any) => doUpdateBinaries(false)}>Refresh Binaries</a>
-							<a className="button" onClick={(e:any) => doUpdateBinaries(true)}>Force Refresh Binaries (slower)</a>
+							<a className="button" onClick={(e:any) => doUpdateBinaries(false)}>{t('refresh_binaries')}</a>
+							<a className="button" onClick={(e:any) => doUpdateBinaries(true)}>{t('force_refresh_binaries')}</a>
 						</div>
 					</div>
 

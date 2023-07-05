@@ -25,6 +25,8 @@ import { SettingsContext } from './Context/SettingsManager';
 import { XTerm } from 'xterm-for-react';
 import { appStateReducer, appStateDefault } from './state'
 import { classList } from './helpers';
+import { useTranslation } from "react-i18next";
+import "./i18n";
 
 
 require('./window');
@@ -49,6 +51,7 @@ function App(props: appProps) {
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
+	const { i18n, t } = useTranslation();
 
 
 	// ########################################################################
@@ -69,7 +72,7 @@ function App(props: appProps) {
 			dispatchAppState({ type: 'project-path', value: newPath });
 		});
 
-		xtermRef.current.terminal.writeln("Hello, World!");
+		xtermRef.current.terminal.writeln(t('_terminal_greeting'));
 		xtermRef.current.terminal.write("$ ");
 		window.xterm = xtermRef.current.terminal;
 
@@ -84,7 +87,7 @@ function App(props: appProps) {
 					var clear = false;
 					switch (term.v ?? '') {
 						case 'clear': term.reset(); clear = true; break;
-						default:	term.write("\r\nCommand not recognised."); break;
+						default:	term.write("\r\n" + t('_terminal_cmd_not_recognised')); break;
 					}
 					term.v = '';
 					term.write(clear ? '$ ' : "\r\n$ ");
@@ -453,17 +456,17 @@ function App(props: appProps) {
 
 		// load the desired tab.
 		if (['lua', 'js', 'json', 'toml', 'txt', 'xml', 'py'].includes(ext)) {
-			newTab = new OpenTab('loading...', filePath, OpenTabType.CodeEditor);
+			newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.CodeEditor);
 		}
 		else if (['jpg', 'png'].includes(ext)) {
-			newTab = new OpenTab('loading...', filePath, OpenTabType.ImageViewer);
+			newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.ImageViewer);
 		}
-		else if (['xcf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.ConversationEditor);
-		else if (['xdf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.DatabaseClient);
-		else if (['xgf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.GraphicEditor);		
-		else if (['xlf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.LayoutEditor);
-		else if (['xff'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.SpriteFontEditor);
-		else if (['xsf'].includes(ext)) newTab = new OpenTab('loading...', filePath, OpenTabType.SpriteMapEditor);
+		else if (['xcf'].includes(ext)) newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.ConversationEditor);
+		else if (['xdf'].includes(ext)) newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.DatabaseClient);
+		else if (['xgf'].includes(ext)) newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.GraphicEditor);		
+		else if (['xlf'].includes(ext)) newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.LayoutEditor);
+		else if (['xff'].includes(ext)) newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.SpriteFontEditor);
+		else if (['xsf'].includes(ext)) newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.SpriteMapEditor);
 		
 		// set tab state if tab was loaded.
 		if (newTab != null) {
@@ -583,7 +586,7 @@ function App(props: appProps) {
 	const doCloseTab = (tab: OpenTab) : boolean => {
 		const index = tabs.indexOf(tab);
 		if (index < 0) return false;
-		if (tab?.changed == false || confirm("Are you sure you want to close this tab?")) {
+		if (tab?.changed == false || confirm(t('are_you_sure_you_want_to_close_this_tab'))) {
 			tabs[index] = null;
 			// update the tabs.
 			const allNull = tabs.every(el => el === null);
@@ -707,9 +710,8 @@ function App(props: appProps) {
 				setFileCreator(contextMenu.path ?? '');
 				break;
 			case 'delete':
-				if (contextMenu.path && confirm("Are you sure you wish to delete this?")) {
+				if (contextMenu.path && confirm(t('are_you_sure_you_want_to_delete_this'))) {
 					const r = await window.api.deleteFileOrFolder(contextMenu.path);
-					console.log("DeleteFile result", r);
 					doCloseTabByPath(contextMenu.path);
 				}
 				break;
@@ -728,45 +730,28 @@ function App(props: appProps) {
 			if (info.name == 'file-explorer') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file-code" disabled={false} label="New Code File..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file" disabled={false} label={t('new_file')} click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-folder" label={t('new_folder')} click={() => contextMenuAction('new-folder')} />
 						<hr />
-						<MenuEntry key="new-file-conversation" disabled={false} label="New Conversation..." click={() => contextMenuAction('new-file', true, '.xcf')} />
-						<MenuEntry key="new-file-database" disabled={false} label="New Database..." click={() => contextMenuAction('new-file', true, '.xdf')} />
-						<hr />
-						<MenuEntry key="new-file-graphic" disabled={false} label="New Graphic..." click={() => contextMenuAction('new-file', true, '.xgf')} />
-						<MenuEntry key="new-file-layout" disabled={false} label="New Layout..." click={() => contextMenuAction('new-file', true, '.xlf')} />
-						<MenuEntry key="new-file-sprite-sheet" disabled={false} label="New Sprite Sheet..." click={() => contextMenuAction('new-file', true, '.xsf')} />
-						<MenuEntry key="new-file-sprite-font" disabled={false} label="New Sprite Font..." click={() => contextMenuAction('new-file', true, '.xff')} />
-						<hr />
-						<MenuEntry key="new-folder" label="New Folder..." click={() => contextMenuAction('new-folder')} />
-						<hr />
-						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename')} />
-						<MenuEntry key="delete" label="Delete" disabled={true} click={() => contextMenuAction('delete')} />
+						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => contextMenuAction('rename')} />
+						<MenuEntry key="delete" label={t('delete')} disabled={true} click={() => contextMenuAction('delete')} />
 					</div>);
 			}
 			else if (info.name == 'file-explorer-directory') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file-code" disabled={false} label="New Code File..." click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-file-code" disabled={false} label={t('new_file')} click={() => contextMenuAction('new-file', true)} />
+						<MenuEntry key="new-folder" label={t('new_folder')} click={() => contextMenuAction('new-folder', true)} />
 						<hr />
-						<MenuEntry key="new-file-conversation" disabled={false} label="New Conversation..." click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-file-database" disabled={false} label="New Database..." click={() => contextMenuAction('new-file', true)} />
-						<hr />
-						<MenuEntry key="new-file-graphic" disabled={false} label="New Graphic..." click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-file-sprite-sheet" disabled={false} label="New Sprite Sheet..." click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-file-sprite-font" disabled={false} label="New Sprite Font..." click={() => contextMenuAction('new-file', true)} />
-						<hr />
-						<MenuEntry key="new-folder" label="New Folder..." click={() => contextMenuAction('new-folder', true)} />
-						<hr />
-						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename', true)} />
-						<MenuEntry key="delete" label="Delete" click={() => contextMenuAction('delete', true)} />
+						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => contextMenuAction('rename', true)} />
+						<MenuEntry key="delete" label={t('delete')} click={() => contextMenuAction('delete', true)} />
 					</div>);
 			}
 			else if (info.name == 'file-explorer-item') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="rename" label="Rename" disabled={true} click={() => contextMenuAction('rename')} />
-						<MenuEntry key="delete" label="Delete" click={() => contextMenuAction('delete')} />
+						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => contextMenuAction('rename')} />
+						<MenuEntry key="delete" label={t('delete')} click={() => contextMenuAction('delete')} />
 					</div>);
 			}
 		}
@@ -808,7 +793,7 @@ function App(props: appProps) {
 
 						<div id="sidebar" className="column" style={{flexBasis: appState.sidebarWidth + 'px', display: appState.showSidebar ? 'flex' : 'none' }}>
 							<div className="column-head tab-labels">
-								<div className='tab-label'>Files &amp; Folders</div>
+								<div className='tab-label'>{t('files_and_folders')}</div>
 
 								<div className="buttons" style={{display:'none'}}>
 									<a className="menu-item" title="Config Game">
@@ -854,7 +839,7 @@ function App(props: appProps) {
 						</div>
 					</div>
 
-					<div id='status-bar'>Idle.</div>
+					<div id='status-bar'>{t('idle')}</div>
 					<WelcomePanel visible={appState.isWelcomeVisible} />
 					<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} />
 					<DialogContainer visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>

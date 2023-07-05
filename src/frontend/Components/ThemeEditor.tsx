@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
+import { useTranslation } from "react-i18next";
 
 
 type StyleEditorProps = {
@@ -30,6 +31,7 @@ const themeOpts = {
 export default function ThemeEditor(props: StyleEditorProps) {
 	const settings = useContext(SettingsContext);
 	const [slide, isSlide] = useState(false);
+	const { i18n, t } = useTranslation();
 
 
 	const updateSetting2 = async (group:any, subgroup:any, option:any, newValue:any) => {
@@ -61,7 +63,7 @@ export default function ThemeEditor(props: StyleEditorProps) {
 		<div className={['style-editor', slide?'is-shown':'', props.shown?'':'is-closed'].join(' ')} style={{display:props.shown?'block':''}}>
 			<div>
 				<span className="icon-cancel" onClick={e => props.onClose()}></span>
-				<h4 onClick={e => isSlide(!slide)}>Style Editor</h4>
+				<h4 onClick={e => isSlide(!slide)}>{t('style_editor')}</h4>
 				<div>
 					{renderSettings()}
 				</div>

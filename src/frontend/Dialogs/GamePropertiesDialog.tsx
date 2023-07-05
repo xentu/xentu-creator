@@ -6,6 +6,7 @@ import SettingDualInput from '../Components/Settings/SettingDualInput';
 import SettingInput from '../Components/Settings/SettingInput';
 import { SettingsContext } from '../Context/SettingsManager';
 import { ProjectContext, ProjectSchema } from '../Context/ProjectManager';
+import { useTranslation } from "react-i18next";
 
 
 type GamePropertiesDialogProps = {
@@ -40,6 +41,7 @@ channelList.add('3', 'Quad Channel');
 export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 	const settings = useContext(SettingsContext);
 	const project = useContext(ProjectContext);
+	const { i18n, t } = useTranslation();
 	const [page, setPage] = useState(0);
 
 	const renderTestData = (str:string) => {
@@ -69,12 +71,12 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 			<div className="dialog-sidebar">
 				
 				<div>
-					<h2>Game Properties</h2>
+					<h2>{t('game_properties')}</h2>
 					<ul>
-						<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>General</li>
-						<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>Graphics</li>
-						<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>Sound</li>
-						<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>Dependencies</li>
+						<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>{t('general')}</li>
+						<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>{t('graphics')}</li>
+						<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>{t('sound')}</li>
+						<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>{t('dependencies')}</li>
 					</ul>
 				</div>
 					
@@ -82,88 +84,88 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 			<div className="dialog-main">
 				
 				<div className="dialog-page" style={{display:page==0?'block':'none'}}>
-					<h2>General</h2>
-					<p>Configure basic info about your game.</p>
+					<h2>{t('general')}</h2>
+					<p>{t('_tab_general_desc')}</p>
 
-					<SettingInput slug='gameTitle' key={'gameTitle'} title='Game Title'
-									  description='The title of your game'
+					<SettingInput slug='gameTitle' key={'gameTitle'} title={t('game_title')}
+									  description={t('_setting_game_title_desc')}
 									  value={project.game.title}
 									  setValue={(s:string) => { updateProjectProperty('title', s) }} />
 
-					<SettingInput slug='entryPoint' key={'entryPoint'} title='Entry Point'
-									  description='The main script file for your game'
+					<SettingInput slug='entryPoint' key={'entryPoint'} title={t('entry_point')}
+									  description={t('_setting_game_entry_point_desc')}
 									  value={project.game.entry_point}
 									  setValue={(s:string) => { updateProjectProperty('entry_point', s) }} />
 
-					<SettingInput slug='icon' key={'icon'} title='Icon File'
-									  description='The icon file for your game'
+					<SettingInput slug='icon' key={'icon'} title={t('icon_file')}
+									  description={t('_setting_game_icon_file_desc')}
 									  value={project.game.icon}
 									  setValue={(s:string) => { updateProjectProperty('icon', s) }}  />
 
-					<SettingInput slug='version' key={'version'} title='Version'
-									  description='The icon file for your game'
+					<SettingInput slug='version' key={'version'} title={t('version')}
+									  description={t('_setting_game_version_desc')}
 									  value={project.game.version}
 									  setValue={(s:string) => { updateProjectProperty('version', s) }} />
 
 				</div>
 
 				<div className="dialog-page" style={{display:page==1?'block':'none'}}>
-					<h2>Graphics</h2>
-					<p>Configure the graphical settings for your game.</p>
+					<h2>{t('graphics')}</h2>
+					<p>{t('_tab_graphics_desc')}</p>
 
-					<SettingDualInput slug='viewport' key={'viewport'} title='Viewport (width, height)'
-									  description='The size of your rendered viewport'
+					<SettingDualInput slug='viewport' key={'viewport'} title={t('viewport_w_h')}
+									  description={t('_setting_game_viewport_w_h_desc')}
 									  value1={project.game.viewport.width} setValue1={(s:string) => { updateProjectSubProperty('viewport', 'width', s) }}
 									  value2={project.game.viewport.height} setValue2={(s:string) => { updateProjectSubProperty('viewport', 'height', s) }} />
 
-					<SettingDualInput slug='windowSize' key={'windowSize'} title='Window Size (width, height)'
-									  description='The size of your game window when not full screen'
+					<SettingDualInput slug='windowSize' key={'windowSize'} title={t('window_size_w_h')}
+									  description={t('_setting_game_window_size_w_h_desc')}
 									  value1={project.game.window.width} setValue1={(s:string) => { updateProjectSubProperty('viewport', 'width', s) }}
 									  value2={project.game.window.height} setValue2={(s:string) => { updateProjectSubProperty('viewport', 'height', s) }} />
 
-					<SettingInput slug='updateFps' key={'updateFps'} title='Update FPS'	
-									  description='The target fps for logic updates.'
+					<SettingInput slug='updateFps' key={'updateFps'} title={t('update_fps')}
+									  description={t('_setting_game_update_fps_desc')}
 									  value={project.game.update_frequency} small={true}
 									  setValue={(s:string) => { updateProjectProperty('update_frequency', s) }} />
 
-					<SettingInput slug='drawFps' key={'drawFps'} title='Draw FPS'	
-									  description='The target fps for rendering frames.'
+					<SettingInput slug='drawFps' key={'drawFps'} title={t('draw_fps')}
+									  description={t('_setting_game_draw_fps_desc')}
 									  value={project.game.draw_frequency} small={true}
 									  setValue={(s:string) => { updateProjectProperty('draw_frequency', s) }} />
 
-					<SettingBool slug='vSync' key={'vSync'} title='Enable V-Sync'
-									description='Enable vertical sync.'
+					<SettingBool slug='vSync' key={'vSync'} title={t('enable_v_sync')}
+									description={t('_setting_game_enable_v_sync_desc')}
 									checked={project.game.v_sync}
 									setChecked={(v:boolean) => { updateProjectProperty('v_sync', v) }} />
 
-					<SettingBool slug='fullScreen' key={'fullScreen'} title='Start Fullscreen'
-									description='Start the game in full-screen by default.'
+					<SettingBool slug='fullScreen' key={'fullScreen'} title={t('start_fullscreen')}
+									description={t('_setting_game_start_fullscreen_desc')}
 									checked={project.game.fullscreen}
 									setChecked={(v:boolean) => { updateProjectProperty('fullscreen', v) }} />
 					
-					<SettingBool slug='resizable' key={'resizable'} title='Resizable'
-									description='Enable to make it possible for the game window to be resized (when not in fullscreen).'
+					<SettingBool slug='resizable' key={'resizable'} title={t('resizable')}
+									description={t('_setting_game_resizable_desc')}
 									checked={project.game.resizable}
 									setChecked={(v:boolean) => { updateProjectProperty('resizable', v) }} />
 
 				</div>
 
 				<div className="dialog-page" style={{display:page==2?'block':'none'}}>
-					<h2>Sound</h2>
-					<p>Configure the audio settings for your game.</p>
+					<h2>{t('sound')}</h2>
+					<p>{t('_tab_sound_desc')}</p>
 					
-					<SettingCombo slug='sampleRate' key={'sampleRate'} title='Sample Rate'
-									  description='Change the color theme of the code editor'
+					<SettingCombo slug='sampleRate' key={'sampleRate'} title={t('sample_rate')}
+									  description={t('_setting_game_sample_rate_desc')}
 									  options={sampleRates} value={project.game.audio.frequency}
 									  setValue={(v:string) => {  }} />
 
-					<SettingCombo slug='bitDepth' key={'bitDepth'} title='Bit Depth'
-									  description='Change the color theme of the code editor'
+					<SettingCombo slug='bitDepth' key={'bitDepth'} title={t('bit_depth')}
+									  description={t('_setting_game_bit_depth_desc')}
 									  options={bitDepths} value={project.game.audio.depth}
 									  setValue={(v:string) => {  }} />
 
-					<SettingCombo slug='channels' key={'channels'} title='Channels'
-									  description='Change the color theme of the code editor'
+					<SettingCombo slug='channels' key={'channels'} title={t('channels')}
+									  description={t('_setting_game_channels_desc')}
 									  options={channelList} value={project.game.audio.channels}
 									  setValue={(v:string) => {  }} />
 					
@@ -171,8 +173,8 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 
 				<div className="dialog-page" style={{display:page==3?'block':'none'}}>
 					
-					<h2>Dependencies</h2>
-					<p>Configure which dependencies to use with your game.</p>
+					<h2>{t('dependencies')}</h2>
+					<p>{t('_tab_dependencies_desc')}</p>
 					
 				</div>
 
