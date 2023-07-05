@@ -35,6 +35,8 @@ class XentuCreatorMenu {
     ipcMain.on('menu-zoom-out',       (e) => this.Owner.mainWindow.webContents.zoomFactor = Math.max(this.Owner.mainWindow.webContents.getZoomFactor() - 0.05, 0.8));
     ipcMain.on('menu-dev-tools',      (e) => this.Owner.mainWindow.webContents.openDevTools());
     ipcMain.on('menu-fullscreen',     (e) => this.Owner.mainWindow.setFullScreen(!this.Owner.mainWindow.isFullScreen()));
+    ipcMain.on('menu-new-file',       (e) => this.Owner.triggerAction('show-new-file'));
+    ipcMain.on('menu-new-folder',     (e) => this.Owner.triggerAction('show-new-folder'));
     ipcMain.on('menu-options',        (e) => this.Owner.triggerAction('show-settings'));
     ipcMain.on('menu-clear-console',  (e) => this.Owner.triggerAction('clear-console'));
     ipcMain.on('menu-help',     async (e) => await shell.openExternal('https://electronjs.org'));

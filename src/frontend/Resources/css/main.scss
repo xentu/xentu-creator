@@ -52,22 +52,23 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 		&.is-disabled { opacity: 0.4; }
 	}
 
-	.menu-entry {
-		padding: 6px 16px 6px 24px;
-		&:hover { cursor:pointer; }
-		.menu-hotkey { text-align:right; }
-		.menu-entry-label {
-			display:flex; flex-direction:row; position:relative;
-			span + span { flex-grow:1; }
-			span:first-of-type { position: absolute; left:-20px; }
-		}
-		&.is-disabled .menu-entry-label { opacity: 0.5; }
-		&:not(.is-checked) .menu-entry-label span:first-of-type { display:none; }
-	}
-
 	i[class^="icon-"] { font-size: 14px; vertical-align: text-bottom; }
 }
 #menu-back-target { position: absolute; height: 100vh; width: 100%; z-index: 99999998; }
+
+
+.menu-entry {
+	padding: 6px 16px 6px 24px;
+	&:hover { cursor:pointer; }
+	.menu-hotkey { text-align:right; }
+	.menu-entry-label {
+		display:flex; flex-direction:row; position:relative;
+		span + span { flex-grow:1; }
+		span:first-of-type { position: absolute; left:-20px; }
+	}
+	&.is-disabled .menu-entry-label { opacity: 0.5; }
+	&:not(.is-checked) .menu-entry-label span:first-of-type { display:none; }
+}
 
 
 /**
@@ -277,7 +278,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 
 	.dialog {
 		opacity: 1; border: 0px solid; border-radius: 5px; flex: 1; margin: auto;
-		position: relative; max-width: 900px; max-height: 100vh; min-height: 480px; 
+		position: relative; max-width: 900px; max-height: 100vh; /* min-height: 480px; */
 
 		&:has(.new-game-dialog) {	max-width:500px; }
 		& > div {
@@ -309,7 +310,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 @media (max-width:900px) { .dialog-container .dialog > div { width: 100%!important; } }
 @media (max-width:950px) { .dialog-container .dialog { max-width: calc(100vw - 36px); } }
 @media (max-height:610px) {
-  .dialog-container .dialog {height: calc(100vh - 70px); min-height: 0; margin-top:47px; }
+  .dialog-container .dialog { height: calc(100vh - 70px); min-height: 0; margin-top:47px; } 
   .dialog > div { height: 100%; }
 }
 
@@ -325,17 +326,23 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	display: flex; max-width:calc(100% - 20px); border-top: 1px solid; padding: 20px 0;
 	.setting-left {
 		flex: 1 0;
-		div {font-weight: 500; font-size: 15px; margin-bottom: 5px;}
-		small { opacity: 0.6; }
+		display: flex; justify-content: center; flex-direction: column;
+		div {font-weight: 500; font-size: 15px; }
+		small { opacity: 0.6; margin-top: 5px; }
+		small:empty { display: none; }
 	}
 	.setting-right {
 		select { padding: 5px; min-width: 160px; border-radius: 5px; }
 		input[type='text'], input[type='number'] { min-width: 160px; }
-		input[type='text'] { width: 320px; }
+		input[type='text'] { min-width: 50%; }
 		&.is-small input { min-width:0; width: 90px; }
 	}
 	&.half-size { 
 		width: calc(50% - 30px); float: left; padding-right: 20px;
+	}
+	&.stacked {
+		flex-direction: column;
+		gap: 10px;
 	}
 	&.half-size + .setting { width: calc(50% - 10px); }
 	&.half-size + .setting + * {clear:left;}

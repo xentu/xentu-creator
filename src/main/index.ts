@@ -520,16 +520,16 @@ class XentuCreatorApp {
 
 		self.fileWatcher = chokidar.watch(thePath, {
 			ignored: /(^|[\/\\])\../, // ignore dot files
-			persistent: true
-		});
-		self.fileWatcher
+			persistent: true,
+			depth: 3
+		})
 		.on('add',			(path:string) => self.triggerFileAction('file-created', path))
 		.on('change',		(path:string) => self.triggerFileAction('file-changed', path))
 		.on('unlink',		(path:string) => self.triggerFileAction('file-removed', path))
 		.on('addDir',		(path:string) => self.triggerFileAction('dir-created', path))
-		 .on('unlinkDir',	(path:string) => self.triggerFileAction('dir-removed', path));
+		.on('unlinkDir',	(path:string) => self.triggerFileAction('dir-removed', path));
 
-		 self.projectPath = thePath;
+		self.projectPath = thePath;
 		window.webContents.send('projectPathChanged', thePath);
 		window.webContents.send('projectChanged', JSON.stringify(self.theProject));
 		window.webContents.send('triggerAction', 'hide-welcome', null );

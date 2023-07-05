@@ -6,6 +6,7 @@ import FileExplorer from "./Components/Sidebar/FileExplorer";
 import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
 import MainMenu from './Components/MainMenu';
 import NewGameDialog from './Dialogs/NewGameDialog';
+import NewFileDialog from './Dialogs/NewFileDialog';
 import OpenTab, { OpenTabType } from "./Classes/OpenTab";
 import SettingsDialog from './Dialogs/SettingsDialog';
 import TabCodeEditor from "./Tabs/TabCodeEditor";
@@ -40,9 +41,6 @@ const root = createRoot(container!);
 function App(props: appProps) {
 	const [appState, dispatchAppState] = useReducer(appStateReducer, appStateDefault);
 	const [contextMenu, setContextMenu] = useState(null);
-	const [fileCreator, setFileCreator] = useState(null);
-	const [fileCreatorOpt, setFileCreatorOpt] = useState(false); /* when true, file creator created directories instead */
-	const [fileCreatorExt, setFileCreatorExt] = useState(null); /* when true, file creator created directories instead */
 	const [project, setProject] = useState({} as ProjectSchema);
 	const [settings, setSettings] = useState(props.loadedSettings);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
@@ -119,7 +117,6 @@ function App(props: appProps) {
 			if (e.key == 'Escape') {
 				setContextMenu('');
 				dispatchAppState([ { type:'focus-path', value:'' }, { type:'dialog', value:'' } ]);
-				setFileCreator(null);
 			}
 		};
 
@@ -189,6 +186,13 @@ function App(props: appProps) {
 			case 'show-settings':
 				dispatchAppState({ type: 'dialog', value: 'settings' });
 				break;
+			case 'show-new-file':
+				dispatchAppState({ type: 'dialog', value: 'new-file' });
+				break;
+			case 'show-new-folder':
+				dispatchAppState({ type: 'dialog', value: 'new-folder' });
+				console.log('todo');
+				break;
 			case 'show-game-properties':
 				dispatchAppState({ type: 'dialog', value: 'game-properties' });
 				break;
@@ -210,6 +214,14 @@ function App(props: appProps) {
 					{ type: 'is-welcome-visible', value: true }
 				]);
 				break;
+			case 'file-created':
+			case 'file-changed':
+			case 'file-removed':
+			case 'dir-created':
+			case 'dir-removed':
+				//console.log(`Action ${action} for ${data}`);
+				dispatchAppState({ type:'file-changed', value:data }); 
+				break;
 			case 'game-started': dispatchAppState({ type:'is-debugging', value:true }); break;
 			case 'game-stopped':	dispatchAppState({ type:'is-debugging', value:false }); break;
 		}	
@@ -227,13 +239,6 @@ function App(props: appProps) {
 					break;
 				case 'select-all':
 					doSelectAll();
-					break;
-				case 'file-created':
-				case 'file-changed':
-				case 'file-removed':
-				case 'dir-created':
-				case 'dir-removed':
-					console.log(`Action ${action} for ${data}`);
 					break;
 				case 'resize':
 					const tab = findActiveTab();
@@ -476,16 +481,6 @@ function App(props: appProps) {
 	};
 
 
-	const doCreateFile = async (filePath: string) => {
-		if (fileCreatorOpt == true) {
-			await window.api.createFolder(filePath);	
-		}
-		else {
-			await window.api.createFile(filePath, fileCreatorExt);
-		}
-	};
-
-
 	/**
 	 * Sets the arguments for where to show a context menu.
 	 */
@@ -520,6 +515,9 @@ function App(props: appProps) {
 	};
 
 
+	/**
+	 * 
+	 */
 	const doSaveAllTabs = () => {
 		const saveTabData = async(path:string, data:string) => {
 			const theJSON = await window.api.saveFile(path, data);
@@ -610,6 +608,28 @@ function App(props: appProps) {
 	};
 
 
+	/**
+	 * 
+	 */
+	const doContextMenuAction = async (action:string, directory?:boolean, extension?:string) => {
+		/* console.log('Context Menu Action', { 'action': action, 'path': contextMenu?.path ?? '' }); */
+		switch (action) {
+			case 'new-file':
+				window.api.menuNewFile();
+				break;
+			case 'new-folder':
+				window.api.menuNewFolder();
+				break;
+			case 'delete':
+				if (contextMenu.path && confirm(t('are_you_sure_you_want_to_delete_this'))) {
+					const r = await window.api.deleteFileOrFolder(contextMenu.path);
+					doCloseTabByPath(contextMenu.path);
+				}
+				break;
+		}
+	}
+
+
 	// ########################################################################
 	// ReactJS Render Methods
 	// ########################################################################
@@ -684,39 +704,12 @@ function App(props: appProps) {
 		switch (appState.dialog) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
 			case 'new-game': result.push(<NewGameDialog key={'new-game'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} />); break;
+			case 'new-file': result.push(<NewFileDialog key={'new-file'} folderFirst={false} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
+			case 'new-folder': result.push(<NewFileDialog key={'new-file'} folderFirst={true} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
 			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => setProject(s)} />); break;
 		}
 		return result;
 	};
-
-
-	/**
-	 * 
-	 */
-	const contextMenuAction = async (action:string, directory?:boolean, extension?:string) => {
-		console.log('Context Menu Action', {
-			'action': action,
-			'path': contextMenu?.path ?? ''
-		});
-
-		switch (action) {
-			case 'new-file':
-				setFileCreatorOpt(false);
-				setFileCreatorExt(extension);
-				setFileCreator(contextMenu.path ?? '');
-				break;
-			case 'new-folder':
-				setFileCreatorOpt(true);
-				setFileCreator(contextMenu.path ?? '');
-				break;
-			case 'delete':
-				if (contextMenu.path && confirm(t('are_you_sure_you_want_to_delete_this'))) {
-					const r = await window.api.deleteFileOrFolder(contextMenu.path);
-					doCloseTabByPath(contextMenu.path);
-				}
-				break;
-		}
-	}
 
 
 	/**
@@ -730,28 +723,28 @@ function App(props: appProps) {
 			if (info.name == 'file-explorer') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file" disabled={false} label={t('new_file')} click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-folder" label={t('new_folder')} click={() => contextMenuAction('new-folder')} />
+						<MenuEntry key="new-file" disabled={false} label={t('new_file')} click={() => doContextMenuAction('new-file', true)} />
+						<MenuEntry key="new-folder" label={t('new_folder')} click={() => doContextMenuAction('new-folder')} />
 						<hr />
-						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => contextMenuAction('rename')} />
-						<MenuEntry key="delete" label={t('delete')} disabled={true} click={() => contextMenuAction('delete')} />
+						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => doContextMenuAction('rename')} />
+						<MenuEntry key="delete" label={t('delete')} disabled={true} click={() => doContextMenuAction('delete')} />
 					</div>);
 			}
 			else if (info.name == 'file-explorer-directory') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="new-file-code" disabled={false} label={t('new_file')} click={() => contextMenuAction('new-file', true)} />
-						<MenuEntry key="new-folder" label={t('new_folder')} click={() => contextMenuAction('new-folder', true)} />
+						<MenuEntry key="new-file-code" disabled={false} label={t('new_file')} click={() => doContextMenuAction('new-file', true)} />
+						<MenuEntry key="new-folder" label={t('new_folder')} click={() => doContextMenuAction('new-folder', true)} />
 						<hr />
-						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => contextMenuAction('rename', true)} />
-						<MenuEntry key="delete" label={t('delete')} click={() => contextMenuAction('delete', true)} />
+						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => doContextMenuAction('rename', true)} />
+						<MenuEntry key="delete" label={t('delete')} click={() => doContextMenuAction('delete', true)} />
 					</div>);
 			}
 			else if (info.name == 'file-explorer-item') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => contextMenuAction('rename')} />
-						<MenuEntry key="delete" label={t('delete')} click={() => contextMenuAction('delete')} />
+						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => doContextMenuAction('rename')} />
+						<MenuEntry key="delete" label={t('delete')} click={() => doContextMenuAction('delete')} />
 					</div>);
 			}
 		}
@@ -784,10 +777,7 @@ function App(props: appProps) {
 
 					<MainMenu enabled={!appState.isWelcomeVisible} canSave={appState.canSave} showSidebar={appState.showSidebar} 
 								 showStatus={appState.showStatusBar} showConsole={appState.showConsole} showThemeEditor={appState.showThemeEditor}
-								 debugging={appState.isDebugging}
-								 setFileCreator={setFileCreator}
-								 setFileCreatorOpt={setFileCreatorOpt}
-								 setFileCreatorExt={setFileCreatorExt} />
+								 debugging={appState.isDebugging} />
 
 					<div className={classList(['columns', c_tracking, c_statusbar, c_console])} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })}>
 
@@ -805,12 +795,13 @@ function App(props: appProps) {
 							<div className="column-body">
 								<FileExplorer path="d:/temp" 
 									onFileOpen={(filePath: string) => doLoadEditor(filePath)} 
-									onFileCreate={(filePath: string) => doCreateFile(filePath)}
 									onContextMenu={(name:string, x:number, y:number, path:string) => doShowContextMenu(name, x, y, path)} 
-									focusPath={appState.focusPath} 
-									setFocusPath={(p:string) => dispatchAppState({ type:'focus-path', value: p })}
-									fileCreator={fileCreator} 
-									setFileCreator={setFileCreator} />
+									focusPath={appState.focusPath} eventPath={appState.eventPath}
+									setFocusPath={(p:string) => {
+										dispatchAppState({ type:'focus-path', value: p });
+										dispatchAppState({ type:'selected-path', value: p });
+									}}
+									/>
 							</div>
 						</div>
 

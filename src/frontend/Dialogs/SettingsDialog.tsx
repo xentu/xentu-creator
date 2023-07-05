@@ -249,7 +249,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 					<p>{t('_tab_binaries_desc')}</p>
 
 					<SettingInput slug='alternateBinaryPath' key={'alternateBinaryPath'} title={t('alternative_binary_path')}
-									  description={t('_setting_alt_binary_path_desc')}
+									  description={t('_setting_alt_binary_path_desc')} width={'300px'}
 									  value={settings.debugging.alternateBinaryPath??""}
 									  setValue={(s:string) => { updateSetting('debugging', 'alternateBinaryPath', s) }} />
 

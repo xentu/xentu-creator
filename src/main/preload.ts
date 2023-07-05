@@ -67,6 +67,8 @@ contextBridge.exposeInMainWorld('api', {
     menuDevTools:        () => ipcRenderer.send('menu-dev-tools'),
     menuThemeEditor:     () => ipcRenderer.send('menu-theme-editor'),
     menuFullScreen:      () => ipcRenderer.send('menu-fullscreen'),
+    menuNewFile:         () => ipcRenderer.send('menu-new-file'),
+    menuNewFolder:       () => ipcRenderer.send('menu-new-folder'),
     menuOptions:         () => ipcRenderer.send('menu-options'),
     menuClearConsole:    () => ipcRenderer.send('menu-clear-console'),
     menuHelp:            () => ipcRenderer.send('menu-help'),

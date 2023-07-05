@@ -17,6 +17,7 @@ i18n
           are_you_sure: "Are you sure?",
           are_you_sure_you_want_to_close_this_tab: "Are you sure you want to close this tab?",
           are_you_sure_you_want_to_delete_this: "Are you sure you wish to delete this?",
+          assets: "Assets",
           bit_depth: "Bit Depth",
           binaries: "Binaries",
           blank_game: "Blank Game",
@@ -49,7 +50,10 @@ i18n
           export: "Export...",
           export_successful: "Export Successful",
           file: "File",
+          file_name: "File Name",
+          file_type: "File Type",
           files_and_folders: "Files & Folders",
+          folder: "Folder",
           font_size: "Font Size",
           force_refresh_binaries: "Force Refresh Binaries (slower)",
           game_template: "Game Template",
@@ -149,7 +153,9 @@ i18n
           _setting_clear_recent_projects_desc: "Clear the list of projects on the welcome screen.",
           _setting_alt_binary_path_desc: "Custom location for debugging binaries (empty to disable).",
 
-
+          _new_file_name_desc: "The name of the file you wish to create (without extension)",
+          _new_file_type_desc: "The type fo file you wish to create",
+          _new_file_folder_desc: "The location where to add your file.",
 
           _new_game_title_len_warning: "Please choose a title longer than 3 characters",
           _new_game_vp_width_warning: "Please enter a viewport width larger than 128px",
@@ -174,6 +180,14 @@ i18n
           _terminal_greeting: "Hello, World!",
           _terminal_cmd_not_recognised: "Command not recognised.",
           _tab_loading: "Loading...",
+
+          _filetype_label_code: "Code File",
+          _filetype_label_conversation: "Conversation",
+          _filetype_label_layout: "Layout",
+          _filetype_label_graphic: "Graphic",
+          _filetype_label_sprite_map: "Sprite Map",
+          _filetype_label_sprite_font: "Sprite Font",
+          _filetype_label_database: "Database"
         },
       }
     },

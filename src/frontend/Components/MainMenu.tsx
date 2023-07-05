@@ -20,9 +20,6 @@ type MainMenuProps = {
 	showStatus: boolean,
 	showConsole: boolean,
 	showThemeEditor: boolean
-	setFileCreator: Function
-	setFileCreatorOpt: Function,
-	setFileCreatorExt: Function
 }
 
 
@@ -49,13 +46,6 @@ export default function MainMenu(props: MainMenuProps) {
 		if (e.key == 'Escape') deselect(e);
 	};
 
-	const showCreator = (folder:boolean, extension?:string) => {
-		console.log('show file creator ');
-		props.setFileCreatorOpt(folder);
-		props.setFileCreatorExt(extension);
-		props.setFileCreator('');
-	}
-
 	return (
 		<>
 			<div id="menu-back-target" style={{ display:selected!=''?'block':'none' }}></div>
@@ -79,6 +69,9 @@ export default function MainMenu(props: MainMenuProps) {
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('exit')} hotKey='Alt+F4' click={() => window.api.menuExit()} />
 				</MenuItem>
+				{/* <MenuItem label={t('assets')} click={() => setSelected('assets')} disabled={!props.enabled} active={selected=='assets'}>
+					<MenuEntry click2={(e:any) => deselect(e)} disabled={false} label={t('new_file')} click={() => window.api.menuNewFile()} />
+				</MenuItem> */}
 				<MenuItem label={t('edit')} disabled={!props.enabled} click={() => setSelected('edit')} active={selected=='edit'}>
 					<MenuEntry click2={() => setSelected('')} label={t('undo')} hotKey='Ctrl+Z' click={() => window.api.menuUndo()} />
 					<MenuEntry click2={() => setSelected('')} label={t('redo')} click={() => window.api.menuRedo()} />

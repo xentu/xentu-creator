@@ -1,14 +1,10 @@
-import React from 'react';
-import Dictionary from '../../main/classes/Dictionary';
-
-
-type SettingButtonsProps = {
+type ComponentProps = {
 	onSubmit?: Function,
 	onCancel?: Function
 }
 
 
-export default function SettingButtons(props: SettingButtonsProps) {
+export default function SettingButtons(props: ComponentProps) {
 	return (
 		<div className="setting setting-buttons">
 			<div className="setting-left">

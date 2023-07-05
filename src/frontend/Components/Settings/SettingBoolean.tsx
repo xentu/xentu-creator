@@ -1,20 +1,23 @@
 import React from 'react';
+import { classList } from '../../helpers';
 
 
-type SettingBoolProps = {
+type ComponentProps = {
 	title: string,
 	slug: string,
 	half?: boolean,
 	description?: string,
 	checked: boolean,
-	setChecked: React.Dispatch<React.SetStateAction<boolean>>
+	setChecked: React.Dispatch<React.SetStateAction<boolean>>,
+	stack?: boolean
 }
 
 
-export default function SettingBool(props: SettingBoolProps) {
+export default function SettingBool(props: ComponentProps) {
 	const c_half = props.half ? 'half-size' : '';
+	const c_stack = props.stack ? 'stacked' : '';
 	return (
-		<div className={['setting setting-boolean', c_half].join(' ')} key={props.slug}>
+		<div className={classList(['setting setting-boolean', c_half, c_stack])} key={props.slug}>
 			<div className="setting-left">
 				<div>{props.title}</div>
 				<small>{props.description}</small>

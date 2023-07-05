@@ -1,18 +1,22 @@
-import React from 'react';
-import Dictionary from '../../main/classes/Dictionary';
+import React, { CSSProperties } from 'react';
+import Dictionary from '../../../main/classes/Dictionary';
+import { classList } from '../../helpers';
 
 
-type SettingComboProps = {
+type ComponentProps = {
 	title: string,
 	slug: string,
 	description?: string,
+	tooltip?: string,
 	value: any,
 	setValue: React.Dispatch<React.SetStateAction<string>>,
-	options: Dictionary<string>
+	options: Dictionary<string>,
+	stack?: boolean,
+	width?: string
 }
 
 
-export default function SettingCombo(props: SettingComboProps) {
+export default function SettingCombo(props: ComponentProps) {
 	const renderOptions = () => {
 		const result = new Array<any>();
 		props.options.keys().forEach((key:string) => {
@@ -21,14 +25,22 @@ export default function SettingCombo(props: SettingComboProps) {
 		});
 		return result;
 	};
+
+	const style = {} as CSSProperties;
+	if (props.width !== null) {
+		style.width = props.width;
+	}
+
+	const c_stack = props.stack ? 'stacked' : '';
+
 	return (
-		<div className="setting setting-boolean">
+		<div className={classList(['setting setting-combo', c_stack])}>
 			<div className="setting-left">
 				<div>{props.title}</div>
 				<small>{props.description}</small>
 			</div>
 			<div className="setting-right">
-				<select key={props.slug} onChange={(e:any) => { props.setValue(e.target.value) }} value={props.value}>
+				<select style={style} key={props.slug} onChange={(e:any) => { props.setValue(e.target.value) }} value={props.value} title={props.tooltip}>
 					{renderOptions()}
 				</select>
 			</div>

@@ -1,20 +1,24 @@
 import React, { CSSProperties, useRef, useEffect } from 'react';
+import { classList } from '../../helpers';
 
 
-type SettingInputProps = {
+type ComponentProps = {
 	title: string,
 	slug: string,
 	description?: string,
+	tooltip?: string,
 	value: any,
 	setValue: React.Dispatch<React.SetStateAction<string>>,
 	minimum?: number,
 	type?: string,
 	small?: boolean,
-	autoFocus?: boolean
+	autoFocus?: boolean,
+	stack?: boolean,
+	width?: string
 }
 
 
-export default function SettingInput(props: SettingInputProps) {
+export default function SettingInput(props: ComponentProps) {
 	const inputElement = useRef(null);
 	useEffect(() => {
 		if (props.autoFocus == true && inputElement.current) {
@@ -30,15 +34,21 @@ export default function SettingInput(props: SettingInputProps) {
 		style.width = '27px';
 		style.borderRadius = '20px';
 	}
+	if (props.width !== null) {
+		style.width = props.width;
+	}
+
+	const c_stack = props.stack ? 'stacked' : '';
 
 	return (
-		<div className="setting setting-input">
+		<div className={classList(['setting setting-input', c_stack])}>
 			<div className="setting-left">
 				<div>{props.title}</div>
 				<small>{props.description}</small>
 			</div>
 			<div className={["setting-right", props.small?'is-small':''].join(' ')}>
-				<input className="input" ref={inputElement} type={props.type??'text'} value={props.value} min={props.minimum} onChange={(e:any) => { props.setValue(e.target.value) }} style={style} />
+				<input className="input" ref={inputElement} type={props.type??'text'} title={props.tooltip} 
+						 value={props.value} min={props.minimum} onChange={(e:any) => { props.setValue(e.target.value) }} style={style} />
 			</div>
 		</div>
 	);

@@ -1,4 +1,4 @@
-type SettingBlankProps = {
+type ComponentProps = {
 	children?: string | JSX.Element | JSX.Element[],
 	wrapClass?: string,
 	title?: string,
@@ -6,7 +6,7 @@ type SettingBlankProps = {
 }
 
 
-export default function SettingBlank(props: SettingBlankProps) {
+export default function SettingBlank(props: ComponentProps) {
 	return (
 		<div className={["setting", props.wrapClass].join(' ')}>
 			<div className="setting-left">

@@ -1,19 +1,22 @@
 import React from 'react';
+import { classList } from '../../helpers';
 
-
-type SettingTextProps = {
+type ComponentProps = {
 	title: string,
 	slug: string,
 	description?: string,
 	value: string,
 	setValue: React.Dispatch<React.SetStateAction<string>>,
-	type?: string
+	type?: string,
+	stack?: boolean
 }
 
 
-export default function SettingText(props: SettingTextProps) {
+export default function SettingText(props: ComponentProps) {
+	const c_stack = props.stack ? 'stacked' : '';
+
 	return (
-		<div className="setting setting-boolean">
+		<div className={classList(['setting setting-color', c_stack])}>
 			<div className="setting-left">
 				<div>{props.title}</div>
 				<small>{props.description}</small>

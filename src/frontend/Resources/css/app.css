@@ -137,33 +137,6 @@ html, body, #app, #app > div {
 #main-menu .menu-item.is-disabled {
   opacity: 0.4;
 }
-#main-menu .menu-entry {
-  padding: 6px 16px 6px 24px;
-}
-#main-menu .menu-entry:hover {
-  cursor: pointer;
-}
-#main-menu .menu-entry .menu-hotkey {
-  text-align: right;
-}
-#main-menu .menu-entry .menu-entry-label {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-}
-#main-menu .menu-entry .menu-entry-label span + span {
-  flex-grow: 1;
-}
-#main-menu .menu-entry .menu-entry-label span:first-of-type {
-  position: absolute;
-  left: -20px;
-}
-#main-menu .menu-entry.is-disabled .menu-entry-label {
-  opacity: 0.5;
-}
-#main-menu .menu-entry:not(.is-checked) .menu-entry-label span:first-of-type {
-  display: none;
-}
 #main-menu i[class^=icon-] {
   font-size: 14px;
   vertical-align: text-bottom;
@@ -174,6 +147,34 @@ html, body, #app, #app > div {
   height: 100vh;
   width: 100%;
   z-index: 99999998;
+}
+
+.menu-entry {
+  padding: 6px 16px 6px 24px;
+}
+.menu-entry:hover {
+  cursor: pointer;
+}
+.menu-entry .menu-hotkey {
+  text-align: right;
+}
+.menu-entry .menu-entry-label {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+.menu-entry .menu-entry-label span + span {
+  flex-grow: 1;
+}
+.menu-entry .menu-entry-label span:first-of-type {
+  position: absolute;
+  left: -20px;
+}
+.menu-entry.is-disabled .menu-entry-label {
+  opacity: 0.5;
+}
+.menu-entry:not(.is-checked) .menu-entry-label span:first-of-type {
+  display: none;
 }
 
 /**
@@ -541,8 +542,7 @@ html, body, #app, #app > div {
   margin: auto;
   position: relative;
   max-width: 900px;
-  max-height: 100vh;
-  min-height: 480px;
+  max-height: 100vh; /* min-height: 480px; */
 }
 .dialog-container .dialog:has(.new-game-dialog) {
   max-width: 500px;
@@ -637,14 +637,20 @@ html, body, #app, #app > div {
 }
 .setting .setting-left {
   flex: 1 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 .setting .setting-left div {
   font-weight: 500;
   font-size: 15px;
-  margin-bottom: 5px;
 }
 .setting .setting-left small {
   opacity: 0.6;
+  margin-top: 5px;
+}
+.setting .setting-left small:empty {
+  display: none;
 }
 .setting .setting-right select {
   padding: 5px;
@@ -655,7 +661,7 @@ html, body, #app, #app > div {
   min-width: 160px;
 }
 .setting .setting-right input[type=text] {
-  width: 320px;
+  min-width: 50%;
 }
 .setting .setting-right.is-small input {
   min-width: 0;
@@ -665,6 +671,10 @@ html, body, #app, #app > div {
   width: calc(50% - 30px);
   float: left;
   padding-right: 20px;
+}
+.setting.stacked {
+  flex-direction: column;
+  gap: 10px;
 }
 .setting.half-size + .setting {
   width: calc(50% - 10px);
@@ -934,7 +944,8 @@ html, body, #app, #app > div {
   background-color: var(--mainBackground);
   color: var(--mainText);
 }
-#main-menu .menu-entry:hover {
+
+.menu-entry:not(.is-disabled):hover {
   background: var(--activeBackground);
 }
 
@@ -1076,7 +1087,8 @@ html, body, #app, #app > div {
 
 .context-menu {
   background-color: var(--mainBackground);
-  color: var(--menu-text); /* border-color: #999; */
+  color: var(--menu-text);
+  border-color: #999 !important;
 }
 
 input[type=text].input:focus, input[type=number].input:focus, select:focus {

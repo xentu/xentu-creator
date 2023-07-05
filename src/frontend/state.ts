@@ -13,7 +13,10 @@ function _handleStateReducerField(clone:any, action:any) {
 		case 'sidebar-width': clone.sidebarWidth = action.value; return true;
 		case 'dialog': clone.dialog = action.value; return true;
 		case 'focus-path': clone.focusPath = action.value; return true;
+		case 'selected-path': clone.selectedPath = action.value; return true;
 		case 'project-path': clone.projectPath = action.value; return true;
+		case 'file-changed': clone.eventPath = action.value; return true;
+		case 'event-path': clone.eventPath = action.value; return true;
 	}
 	return false;
 }
@@ -37,17 +40,19 @@ export function appStateReducer(state:any, action:any) {
 
 
 export const appStateDefault = {
-	showConsole: true,
-	showSidebar: true,
-	showStatusBar: true,
-	showThemeEditor: false,
-	isTrackingMouse: '',
-	isWelcomeVisible: true,
-	isDebugging: false,
-	canSave: false,
-	consoleHeight: 150,
-	sidebarWidth: 240,
-	dialog: '',
-	focusPath: '',
-	projectPath: ''
+	showConsole: true,		// true to show the terminal.
+	showSidebar: true,		// true to show the sidebar.
+	showStatusBar: true,		// true to show the status bar.
+	showThemeEditor: false,	// true to show the theme editor widget.
+	isTrackingMouse: '',		// true when the program is tracking the mouse.
+	isWelcomeVisible: true,	// true when the welcome page is visible.
+	isDebugging: false,		// true when the game is running.
+	canSave: false,			// weather or not a file can be saved.
+	consoleHeight: 150,		// the height of the terminal.
+	sidebarWidth: 240,		// the width of the left sidebar.
+	dialog: '',					// the key of the dialog to show.
+	focusPath: '',    		// the path highlighted when a context menu appears.
+	selectedPath: '',			// the path of the selected file or directory.
+	projectPath: '',			// the project path.
+	eventPath: '' 				// changes when a file changes in the project directory.
 };

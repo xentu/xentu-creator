@@ -51,8 +51,8 @@ html, body, #app, #app > div { color: var(--mainText); }
 		&:not(.is-disabled) .menu-label:hover { background: var(--mainBackgroundSemiDark); }
 		.menu-label { background-color: var(--mainBackground); color: var(--mainText); }
 	}
-	.menu-entry:hover { background: var(--activeBackground); }
 }
+.menu-entry:not(.is-disabled):hover { background: var(--activeBackground); }
 
 
 
@@ -139,7 +139,7 @@ html, body, #app, #app > div { color: var(--mainText); }
 #sidebar .column-body {	background-color: var(--sidebarBackground); color: var(--sidebarText); }
 #main .column-body, .columns .column .column-head.tab-labels .tab-label.is-active { background-color: var(--editorBackground); color: var(--editorText); }
 #main #console { background: #0a0a0a; border-top-color: var(--footerBackgroundDark); }
-.context-menu { background-color: var(--mainBackground); color: var(--menu-text); /* border-color: #999; */ }
+.context-menu { background-color: var(--mainBackground); color: var(--menu-text); border-color: #999!important; }
 input[type='text'].input:focus, input[type='number'].input:focus, select:focus { outline:1px solid var(--activeBackground); }
 
 .toolbar { border-bottom: 1px solid var(--footerBackground); }

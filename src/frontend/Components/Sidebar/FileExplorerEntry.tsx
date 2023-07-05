@@ -1,24 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Icon from '../Icon';
-import { Editor, loader } from '@monaco-editor/react';
-import * as monaco from 'monaco-editor';
-import FileCreator from './FileCreator';
 
 
-loader.config({ monaco });
-
-
-monaco.editor.defineTheme('my-dark', {
-	base: 'vs-dark',
-	inherit: true,
-	rules: [],
-	colors: {
-		"editor.background": '#2c3835'
-	},
-});
-
-
-type FileExplorerEntryProps = {
+type ComponentProps = {
 	label: string,
 	path?: string,
 	directory: boolean,
@@ -26,19 +10,15 @@ type FileExplorerEntryProps = {
 	setActive: Function,
 	setFocusPath: Function,
 	activePath: string,
-	focusPath: string,
-	onContextMenu: Function,
-	fileCreator?: string,
-	setFileCreator: Function,
-	onFileCreate: Function
-	/* children?: string | JSX.Element | JSX.Element[] */
+	focusPath: string, // the path focused for a context menu.
+	eventPath?: string, // passed down the tree when a file event happens.
+	onContextMenu: Function
 }
 
 
-export default function FileExplorerEntry(props: FileExplorerEntryProps) {
+export default function FileExplorerEntry(props: ComponentProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [entries, setEntries] = useState([]);
-	//const [fileCreatorValue, setFileCreatorValue] = useState(fileCreator);
 
 	const c_open = isOpen ? 'is-open' : '';
 	const c_label = props.directory ? 'has-children' : '';
@@ -54,32 +34,19 @@ export default function FileExplorerEntry(props: FileExplorerEntryProps) {
 			};
 			fetchFiles().catch(console.error);
 		}
-	}, [isOpen]);
-
-
-	useEffect(() => {
-		if (!isOpen && props.fileCreator == props.path) {
-			setIsOpen(true);
-		}
-	}, [props.fileCreator])
-
-
-	/* if (fileCreator != fileCreatorValue) {
-		setFileCreatorValue(fileCreator);
-		if (!isOpen) setIsOpen(true);
-	} */
+	}, [isOpen, props.eventPath]);
 
 
 	const listEntries = () => {
 		const result = new Array<any>();
 		entries.map((file: any) => {
 			if (file.ext == 'folder') {
-				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={props.setActive} setFocusPath={props.setFocusPath} activePath={props.activePath} focusPath={props.focusPath} onContextMenu={props.onContextMenu} fileCreator={props.fileCreator} setFileCreator={props.setFileCreator} onFileCreate={props.onFileCreate} />);
+				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={props.setActive} setFocusPath={props.setFocusPath} activePath={props.activePath} focusPath={props.focusPath} onContextMenu={props.onContextMenu} />);
 			}
 		});
 		entries.map((file: any) => {
 			if (file.ext != 'folder') {
-				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={props.setActive} setFocusPath={props.setFocusPath} activePath={props.activePath} focusPath={props.focusPath} onContextMenu={props.onContextMenu} fileCreator={props.fileCreator} setFileCreator={props.setFileCreator} onFileCreate={props.onFileCreate} />);
+				result.push(<FileExplorerEntry key={file.path} path={file.path} label={file.name} directory={file.directory} ext={file.ext} setActive={props.setActive} setFocusPath={props.setFocusPath} activePath={props.activePath} focusPath={props.focusPath} onContextMenu={props.onContextMenu} />);
 			}
 		});
 		return result;
@@ -100,7 +67,7 @@ export default function FileExplorerEntry(props: FileExplorerEntryProps) {
 	const triggerContextMenu = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		props.setFocusPath(props.path);
-		props.onContextMenu(e, props.directory);
+		props.onContextMenu(e, props.path, props.directory);
 	};
 
 
@@ -115,9 +82,6 @@ export default function FileExplorerEntry(props: FileExplorerEntryProps) {
 			</a>
 			{props.directory == true && <ul className="file-folder">
 				{listEntries()}
-				<FileCreator label='Untitled' visible={props.fileCreator == props.path} path={props.path}
-								 doHide={() => props.setFileCreator(null)}
-								 onSubmit={props.onFileCreate} />
 			</ul>}
 		</li>
 	);

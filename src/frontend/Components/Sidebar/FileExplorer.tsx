@@ -1,8 +1,20 @@
 import { useState, useEffect } from 'react';
 import FileExplorerEntry from './FileExplorerEntry';
-import MenuItem, { MenuEntry } from '../MenuItem';
-import ContextMenu from '../ContextMenu';
-import FileCreator from './FileCreator';
+import { loader } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
+
+
+loader.config({ monaco });
+
+
+monaco.editor.defineTheme('my-dark', {
+	base: 'vs-dark',
+	inherit: true,
+	rules: [],
+	colors: {
+		"editor.background": '#2c3835'
+	},
+});
 
 
 declare global {
@@ -12,19 +24,17 @@ declare global {
 }
 
 
-type FileExplorerProps = {
+type ComponentProps = {
 	path: string,
 	onFileOpen?: Function
 	onContextMenu?: Function,
 	focusPath: string,
-	setFocusPath: Function,
-	fileCreator?: string,
-	setFileCreator: Function,
-	onFileCreate: Function
+	eventPath?: string,
+	setFocusPath: Function
 }
 
 
-export default function FileExplorer(props: FileExplorerProps) {
+export default function FileExplorer(props: ComponentProps) {
 	const [entries, setEntries] = useState([]);
 	const [activePath, setActivePath] = useState('');
 	const [rootPath, setRootPath] = useState('');
@@ -43,7 +53,6 @@ export default function FileExplorer(props: FileExplorerProps) {
 		};
 		window.api.onProjectPathChanged((newPath:string) => {
 			fetchFiles(newPath).catch(console.error);
-			//setActivePath(newPath);
 		});
 	}, []);
 
@@ -64,12 +73,9 @@ export default function FileExplorer(props: FileExplorerProps) {
 														 path={file.path} directory={file.directory}
 														 ext={file.ext} setActive={setActive}
 														 setFocusPath={props.setFocusPath}
-														 onContextMenu={(e: React.MouseEvent, directory:boolean) => showContextMenu(e, file.path, directory)}
-														 activePath={activePath}
-														 focusPath={props.focusPath}
-														 setFileCreator={props.setFileCreator}
-														 fileCreator={props.fileCreator}
-														 onFileCreate={props.onFileCreate} />);
+														 onContextMenu={(e: React.MouseEvent, path:string, directory:boolean) => showContextMenu(e, path, directory)}
+														 activePath={activePath} eventPath={props.eventPath}
+														 focusPath={props.focusPath} />);
 			}
 		});
 		entries.map((file: any) => {
@@ -78,19 +84,17 @@ export default function FileExplorer(props: FileExplorerProps) {
 													    path={file.path} directory={file.directory}
 														 ext={file.ext} setActive={setActive}
 														 setFocusPath={props.setFocusPath}
-														 onContextMenu={(e: React.MouseEvent, directory:boolean) => showContextMenu(e, file.path, directory)}
-														 activePath={activePath}
-														 focusPath={props.focusPath}
-														 setFileCreator={props.setFileCreator}
-														 fileCreator={props.fileCreator}
-														 onFileCreate={props.onFileCreate} />);
+														 onContextMenu={(e: React.MouseEvent, path:string, directory:boolean) => showContextMenu(e, path, directory)}
+														 activePath={activePath} eventPath={props.eventPath}
+														 focusPath={props.focusPath} />);
 			}
 		});
 		return result;
 	};
 
 	
-	const showContextMenu = (e: React.MouseEvent, path:string, directory:boolean) => {
+	const showContextMenu = (e:React.MouseEvent, path:string, directory:boolean) => {
+		e.stopPropagation();
 		if (directory) {
 			props.onContextMenu('file-explorer-directory', e.clientX, e.clientY, path);
 		}
@@ -113,9 +117,6 @@ export default function FileExplorer(props: FileExplorerProps) {
 			  >
 			<ul className="file-explorer">
 				{listEntries()}
-				<FileCreator label='Untitled' visible={props.fileCreator==''} 
-								 path={rootPath}
-								 doHide={() => props.setFileCreator(null)} onSubmit={props.onFileCreate} />
 			</ul>
 		</div>
 	);
