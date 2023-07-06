@@ -32,6 +32,7 @@ import "./i18n";
 
 require('./window');
 require('./types');
+require('./autocomplete');
 
 
 const container = document.getElementById('app');

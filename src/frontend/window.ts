@@ -38,7 +38,7 @@ window.findEditor = function(guid:string) {
 };
 
 
-window.changeThemeColors = function(isDark:boolean, color:string = '#2e3231') {
+window.changeThemeColors = function(isDark:boolean, color:string = '#2E3231') {
 	monaco.editor.defineTheme('my-theme', {
 		base: isDark ? 'vs-dark' : 'vs',
 		inherit: true,

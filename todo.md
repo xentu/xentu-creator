@@ -4,8 +4,8 @@
 - [bug] Editor tab name does not update when you rename a file. (done, tab gets marked as dirty)
 - [bug] Remove recent entries when they are found to no longer exist. (fixed)
 - [routine] Make toolbar buttons work for the editors that exist. (done)
+- [feature] Add auto-complete and code hints for the xentu API, so that its easier to write code. (done)
 - [routine] Make the help and resources links go somewhere.
-- [feature] Add auto-complete and code hints for the xentu API, so that its easier to write code.
 
 
 # Later Date
