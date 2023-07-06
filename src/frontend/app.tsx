@@ -274,7 +274,7 @@ function App(props: appProps) {
 				break;
 			case 'splitter2':
 				const h = document.getElementById('main').clientHeight;
-				dispatchAppState({ type:'console-height', value: h - y - 5 });
+				dispatchAppState({ type:'console-height', value: h - y + 30 });
 				break;
 		}
 	};
@@ -816,8 +816,8 @@ function App(props: appProps) {
 									<div className="tab-bodies">
 										{renderTabBodies()}
 									</div>
-									<div id="splitter2" />
-									<div id="console" style={{ /* flexBasis: consoleHeight + 'px', */ display: appState.showConsole ? 'block' : 'none' }}>
+									<div id="splitter2" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter2' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
+									<div id="console" style={{ flexBasis: appState.consoleHeight + 'px', display: appState.showConsole ? 'block' : 'none' }}>
 										<XTerm ref={xtermRef} options={{ 
 											rows: 8, 
 											allowTransparency: true,

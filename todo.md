@@ -1,4 +1,29 @@
-# Bugs & Missing Features
+
+# To do List
+
+- [routine] Make toolbar buttons work for the editors that exist.
+- [routine] Make the help and resources links go somewhere.
+- [feature] Add auto-complete and code hints for the xentu API, so that its easier to write code.
+- [bug] Remove recent entries when they are found to no longer exist.
+- [bug] Editor tab name does not update when you rename a file.
+
+
+# Later Date
+
+- [feature] Create sprite map editor.
+- [feature] Create the Conversation Editor (like Sutori Studio, make more streamline).
+- [feature] Create the Layout Editor (basic scene graph, selection tool, property editor etc...).
+- [feature] Create the graphic file editor.
+- [feature] Create the sprite font file editor (See https://kodaloid.com/tools/sprite-font-generator/)
+- [feature] Create the database editor.
+- [feature] Add ability to read xentu docs offline.
+- [feature] Add advanced search system.
+- [feature] Re-design all of the icons so Fontello is no longer needed.
+- [feature] Add ability to rename files.
+- [feature] Add ability to export/import colour themes.
+- [feature] Make the status bar do something more useful, or remove.
+
+# Complete
 
 - [bug] WelcomePage needs user-select:none. (done)
 - [bug] Dialog's do not sit over main menu. (done)
@@ -10,25 +35,12 @@
 - [feature] Save All. (done)
 - [feature] Create 'Files' menu to aid in adding files. (done)
 - [feature] Make the recent projects list work. (done)
-- [feature] New Game Dialog. (done)
-- [feature] Add toolbars. (done)
-- [feature] Add ability to create various types of files (done)
-- [feature] Add ability to change the UI language, with detection from OS. (done)
+- [feature] New Game Dialog. (done 4th July)
+- [feature] Add toolbars. (done 4th July)
+- [feature] Add ability to create various types of files (done 5th July)
+- [feature] Add ability to change the UI language, with detection from OS. (done 5th July)
 
-# Back Burner
 
-- [bug] Editor tab name does not update when you rename a file.
-- [feature] Add ability to read xentu docs offline.
-- [feature] Add advanced search system.
-- [feature] File Icons.
-- [feature] Add ability to rename files.
-- [feature] Add ability to export/import colour themes.
+# Links For Research
 
-# Add Editors for the following formats
-
-Xentu Layout File				(.XLF) 	Like a basic scene graph editor.
-Xentu Conversation File 	(.XCF)	Based on Sutori Studio.
-Xentu SpriteMap File			(.XSF) 	Based on design from previous Xen Studio.
-Xentu Graphic File			(.XGF)	A basic multi-layer pixel art editor.
-Xentu Font File				(.XFF)	See https://kodaloid.com/tools/sprite-font-generator/
-Xentu Database File			(.XDF)	SQLite databases with XDF extension.
+https://www.npmjs.com/package/react-data-grid

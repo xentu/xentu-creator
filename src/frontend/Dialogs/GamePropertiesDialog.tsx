@@ -67,7 +67,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 	};
 
 	return (
-		<div className={`settings-dialog`} style={{width:'900px',height:'500px'}}>
+		<div className={`settings-dialog`} style={{width:'900px',minHeight:'500px'}}>
 			<div className="dialog-sidebar">
 				
 				<div>

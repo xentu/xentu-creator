@@ -12,6 +12,7 @@ type ComponentProps = {
 	setValue: React.Dispatch<React.SetStateAction<string>>,
 	options: Dictionary<string>,
 	stack?: boolean,
+	collapsible?: boolean,
 	width?: string
 }
 
@@ -32,9 +33,10 @@ export default function SettingCombo(props: ComponentProps) {
 	}
 
 	const c_stack = props.stack ? 'stacked' : '';
+	const c_collapsible = props.collapsible ? 'collapsible' : '';
 
 	return (
-		<div className={classList(['setting setting-combo', c_stack])}>
+		<div className={classList(['setting setting-combo', c_stack, c_collapsible])}>
 			<div className="setting-left">
 				<div>{props.title}</div>
 				<small>{props.description}</small>

@@ -99,7 +99,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 			}
 		}
 		.column-body { flex: 1 1 50%; }
-		.tab-bodies .tab-active { display: block; }
+		.tab-bodies .tab-active { display: block; height: 100%; }
 		.tab-bodies .tab-inactive { display: none; }
 	}
 }
@@ -129,7 +129,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 			padding: 2px 0 0 2px;
 			&:hover:not(:has(li:hover)) > a { cursor: pointer; }
 			& > a {
-				line-height: 24px; display: flex; align-items: center; overflow: hidden; max-width: 100%; user-select:none;
+				line-height: 24px; display: flex; align-items: center; overflow: hidden; max-width: calc(100% - 1px); user-select:none;
 				* { white-space: nowrap; pointer-events:none; }
 				& > i { flex-shrink: 1; flex-basis: 16px; margin-left: 5px; }
 				& > img {line-height: unset;flex: 0 0;flex-basis: 16px; margin: 0 8px 0 5px; }
@@ -155,7 +155,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 // ---- Splitters ----
 
 #splitter { flex: 0 0 5px; margin-left: -5px; margin-top: 30px; cursor: ew-resize; }
-#splitter2 { flex: 0 0 5px; /* cursor: ns-resize; */ }
+#splitter2 { flex: 0 0 5px; cursor: ns-resize; }
 .columns.is-tracking .column, .columns.is-tracking .column * { user-select: none!important; }
 .columns.is-tracking .tab-bodies * { pointer-events:none; }
 
@@ -172,7 +172,10 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	}
 
 	.xterm { padding: 8px; }
-	#console { flex-grow: 0; flex-shrink: 1; border-top: 1px solid; }
+	#console { 
+		flex-grow: 0; flex-shrink: 1; border-top: 1px solid;
+		& > div, .terminal { height: 100%; }
+	}
 }
 
 
@@ -185,7 +188,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 
 .toolbar-container {
 	position: relative;
-	height: -webkit-fill-available;
+	height: 100%;
 	padding-top: 1px;
 }
 .toolbar {
@@ -195,7 +198,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
    top: -3px;
    /* border-radius: 4px; */
 	& + div { margin-top: 31px; }
-	& + section { margin-top: 31px; height: calc(100vh - 276px)!important; }
+	& + section { margin-top: 31px; max-height: calc(100% - 31px)!important; position: absolute!important; }
 	&, & * { user-select: none; }
 	.toolbar-button {
 		padding: 0 5px;
@@ -272,12 +275,19 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	p, h2, .setting-left, .setting-left * { user-select: none; }
 
 	.dialog-close {
-		position: absolute; top: 10px; right: 10px; height: 20px; width: 20px; line-height: 20px; text-align: center; border-radius: 3px;
+		position: absolute; top: 20px; right: 20px;
+		height: 24px;
+		width: 24px;
+		line-height: 24px;
+		text-align: center;
+		border-radius: 3px;
+		font-size: 1.4em;
+		border-radius: 3px;
 		&:hover { cursor: pointer; }
 	}
 
 	.dialog {
-		opacity: 1; border: 0px solid; border-radius: 5px; flex: 1; margin: auto;
+		opacity: 1; border: 0px solid; border-radius: 5px; flex: 1; margin: auto; margin-top: 47px;
 		position: relative; max-width: 900px; max-height: 100vh; /* min-height: 480px; */
 
 		&:has(.new-game-dialog) {	max-width:500px; }
@@ -285,10 +295,10 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 			display: flex; max-height: 570px; max-width: 100%;
 
 			.dialog-sidebar {
-				flex-basis: 200px; border-radius: 3px 0 0 3px; padding-top: 10px; border-radius:5px 0 0 5px; border: 0px solid; border-right: 0; margin: -1px 0 -1px -1px;
+				flex-basis: 200px; border-radius: 3px 0 0 3px; padding-top: 10px; border-radius:5px 0 0 5px; border: 0px solid; border-right: 0; margin: 0;
 				& > div {
 					padding:10px;
-					h2 { font-size: 15px; font-weight: 500; padding: 5px; opacity: 0.8; }
+					h2 { font-size: 15px; font-weight: 500; padding: 5px; opacity: 0.8; margin-bottom:.5em; }
 					li {padding: 7px 8px; cursor: pointer;  border-radius: 3px; margin-bottom:2px; }
 				}
 			}
@@ -309,9 +319,9 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 @media (min-width:900px) { .dialog-container .dialog { max-width: max-content; } }
 @media (max-width:900px) { .dialog-container .dialog > div { width: 100%!important; } }
 @media (max-width:950px) { .dialog-container .dialog { max-width: calc(100vw - 36px); } }
-@media (max-height:610px) {
-  .dialog-container .dialog { height: calc(100vh - 70px); min-height: 0; margin-top:47px; } 
-  .dialog > div { height: 100%; }
+@media (max-height:680px) {
+  .dialog-container .dialog { height: calc(100vh - 70px); min-height: 0; } 
+  .dialog > div { height: 100%; min-height: 0!important; }
 }
 
 
@@ -335,6 +345,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 		select { padding: 5px; min-width: 160px; border-radius: 5px; }
 		input[type='text'], input[type='number'] { min-width: 160px; }
 		input[type='text'] { min-width: 50%; }
+		input[type='color'] { width:27px; }
 		&.is-small input { min-width:0; width: 90px; }
 	}
 	&.half-size { 
@@ -353,7 +364,12 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 		input { min-width:0; width: 90px; margin-left: 10px; }
 	}
 }
-
+@media (max-width:800px) {
+	.setting.collapsible {
+		flex-direction: column;
+		gap: 10px;
+	}
+}
 
 /**
  * ----------------------------------------------------------------------------
@@ -367,7 +383,7 @@ input[type='text'].input, input[type='number'].input {
 }
 
 .toggle-button {
-	display: block; position: relative; width: 38px; height: 24px; border-radius: 12px;
+	display: block; position: relative; width: 38px; height: 24px; border-radius: 12px; margin-left: 20px;
 	&:before { content: ''; display: block; width: 20px; height: 20px; border-radius: 12px; position: absolute; top: 2px; left: 2px; transition: left 200ms; }
 	&.is-toggled:before { left: 16px; transition: left 200ms; }
 }

@@ -14,6 +14,7 @@ type ComponentProps = {
 	small?: boolean,
 	autoFocus?: boolean,
 	stack?: boolean,
+	collapsible?: boolean,
 	width?: string
 }
 
@@ -39,9 +40,10 @@ export default function SettingInput(props: ComponentProps) {
 	}
 
 	const c_stack = props.stack ? 'stacked' : '';
+	const c_collapsible = props.collapsible ? 'collapsible' : '';
 
 	return (
-		<div className={classList(['setting setting-input', c_stack])}>
+		<div className={classList(['setting setting-input', c_stack, c_collapsible])}>
 			<div className="setting-left">
 				<div>{props.title}</div>
 				<small>{props.description}</small>

@@ -225,6 +225,7 @@ html, body, #app, #app > div {
 }
 .columns .column .tab-bodies .tab-active {
   display: block;
+  height: 100%;
 }
 .columns .column .tab-bodies .tab-inactive {
   display: none;
@@ -278,7 +279,7 @@ html, body, #app, #app > div {
   display: flex;
   align-items: center;
   overflow: hidden;
-  max-width: 100%;
+  max-width: calc(100% - 1px);
   user-select: none;
 }
 #sidebar .file-explorer-wrapper li > a * {
@@ -338,7 +339,8 @@ html, body, #app, #app > div {
 }
 
 #splitter2 {
-  flex: 0 0 5px; /* cursor: ns-resize; */
+  flex: 0 0 5px;
+  cursor: ns-resize;
 }
 
 .columns.is-tracking .column, .columns.is-tracking .column * {
@@ -372,6 +374,9 @@ html, body, #app, #app > div {
   flex-shrink: 1;
   border-top: 1px solid;
 }
+#main #console > div, #main #console .terminal {
+  height: 100%;
+}
 
 /**
  * ----------------------------------------------------------------------------
@@ -380,7 +385,7 @@ html, body, #app, #app > div {
  */
 .toolbar-container {
   position: relative;
-  height: -webkit-fill-available;
+  height: 100%;
   padding-top: 1px;
 }
 
@@ -396,7 +401,8 @@ html, body, #app, #app > div {
 }
 .toolbar + section {
   margin-top: 31px;
-  height: calc(100vh - 276px) !important;
+  max-height: calc(100% - 31px) !important;
+  position: absolute !important;
 }
 .toolbar, .toolbar * {
   user-select: none;
@@ -523,12 +529,14 @@ html, body, #app, #app > div {
 }
 .dialog-container .dialog-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  height: 20px;
-  width: 20px;
-  line-height: 20px;
+  top: 20px;
+  right: 20px;
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
   text-align: center;
+  border-radius: 3px;
+  font-size: 1.4em;
   border-radius: 3px;
 }
 .dialog-container .dialog-close:hover {
@@ -540,6 +548,7 @@ html, body, #app, #app > div {
   border-radius: 5px;
   flex: 1;
   margin: auto;
+  margin-top: 47px;
   position: relative;
   max-width: 900px;
   max-height: 100vh; /* min-height: 480px; */
@@ -559,7 +568,7 @@ html, body, #app, #app > div {
   border-radius: 5px 0 0 5px;
   border: 0px solid;
   border-right: 0;
-  margin: -1px 0 -1px -1px;
+  margin: 0;
 }
 .dialog-container .dialog > div .dialog-sidebar > div {
   padding: 10px;
@@ -569,6 +578,7 @@ html, body, #app, #app > div {
   font-weight: 500;
   padding: 5px;
   opacity: 0.8;
+  margin-bottom: 0.5em;
 }
 .dialog-container .dialog > div .dialog-sidebar > div li {
   padding: 7px 8px;
@@ -614,14 +624,14 @@ html, body, #app, #app > div {
     max-width: calc(100vw - 36px);
   }
 }
-@media (max-height: 610px) {
+@media (max-height: 680px) {
   .dialog-container .dialog {
     height: calc(100vh - 70px);
     min-height: 0;
-    margin-top: 47px;
   }
   .dialog > div {
     height: 100%;
+    min-height: 0 !important;
   }
 }
 /**
@@ -663,6 +673,9 @@ html, body, #app, #app > div {
 .setting .setting-right input[type=text] {
   min-width: 50%;
 }
+.setting .setting-right input[type=color] {
+  width: 27px;
+}
 .setting .setting-right.is-small input {
   min-width: 0;
   width: 90px;
@@ -692,6 +705,12 @@ html, body, #app, #app > div {
   margin-left: 10px;
 }
 
+@media (max-width: 800px) {
+  .setting.collapsible {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
 /**
  * ----------------------------------------------------------------------------
  * Input Styles
@@ -711,6 +730,7 @@ input[type=text].input, input[type=number].input {
   width: 38px;
   height: 24px;
   border-radius: 12px;
+  margin-left: 20px;
 }
 .toggle-button:before {
   content: "";
