@@ -11,10 +11,7 @@ export default function DialogContainer(props:PropsWithChildren<DialogContainerP
 	const c_visible = props.visible ? '' : 'is-hidden';
 	return (
 		<div className={`dialog-container ${c_visible}`}>
-			<div className={'dialog'}>
-				{props.children}
-				<a className="dialog-close" onClick={e => props.onClose(e)}><span className="icon-cancel"></span></a>
-			</div>
+			{props.children}
 		</div>
 	);
 }

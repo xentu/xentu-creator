@@ -1,0 +1,112 @@
+.sprite-map-editor {
+	height: calc(100% - 30px);
+	display: flex;
+	flex-direction: column;
+}
+
+.sprite-map-viewport {
+	flex: 1;
+}
+
+.sprite-map-options {
+	border-top: 1px solid var(--footerBackground);
+	display: flex;
+	flex: 0 0;
+	min-height: 190px;
+	display: flex;
+	flex-direction: row;
+	background: var(--footerBackground);
+}
+
+
+.group-box {
+	height: calc(100% - 18px);
+   border: 1px solid var(--editorBackground);
+   margin: 10px 0px 5px 8px;
+   padding: 10px;
+   position: relative;
+   min-width: 200px;
+}
+.group-box:last-of-type {
+	flex-grow: 1;
+	margin-right: 8px;
+}
+.group-box:before {
+	content: attr(data-header);
+	position: absolute;
+	top: -7px;
+	color: var(--footerText);
+	display: inline-block;
+	background: var(--footerBackground);
+	padding: 0 4px;
+}
+.group-box .list-box {
+	height: calc(100% - 35px);
+}
+.group-box .list-box select {
+	width: 100%;
+   height: 100%;
+   margin: 2px 0;
+	user-select: none;
+	overflow-y: auto;
+}
+.group-box .list-box select option {
+	padding: 4px;
+}
+
+.group-box .list-box select option:focus,
+.group-box .list-box select option:checked {
+	color: var(--activeText);
+	background-color: var(--activeBackground);
+	border-radius: 2px;
+}
+.group-box .button {
+	height: 25px;
+    line-height: 25px;
+    padding: 0 5px;
+}
+.group-box .buttons {
+	position: relative;
+   top: 10px;
+}
+.group-box .buttons .button + .button {
+	margin-left: 5px;
+}
+
+
+.sprite-map-option {
+	display: flex;
+   align-items: center;
+   height: 30px;
+   margin-bottom: 1em;
+   padding: 5px;
+}
+.sprite-map-option > span {
+	display: inline-block;
+	min-width: 115px;
+}
+.sprite-map-option > div {
+	flex: 1;
+}
+.sprite-map-option input[type="text"] { width: calc(100% - 15px); min-width: 100px; }
+.sprite-map-option input[type="number"] { width: 60px; min-width: 0; }
+.sprite-map-option label { margin-right: 8px; }
+.sprite-map-option label span { vertical-align: text-top; }
+
+
+.toolbar .toggle-button {
+	height: 18px;
+	border-radius: 10px;
+	top: 5px;
+	width: 30px;
+	margin-left: 5px;
+}
+
+.toolbar .toggle-button:before {
+	height: 14px;
+	width: 14px;
+	top: 2px;
+}
+.toolbar .toggle-button.is-toggled:before {
+	left: 14px;
+}

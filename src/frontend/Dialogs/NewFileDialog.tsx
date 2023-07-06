@@ -100,33 +100,36 @@ export default function NewFileDialog(props: ComponentProps) {
 
 	
 	return (
-		<div className={`settings-dialog`} style={{width:'400px'}}>
-			<div className="dialog-main">
-				
-			<div className="dialog-page" style={{display:'block'}}>
-					<h2>{t('new_file')}</h2>
-					{ /* <p>Configure basic info about your game.</p> */ }
+		<div className={'dialog'}>
+			<div className={`settings-dialog`} style={{width:'400px'}}>
+				<div className="dialog-main">
+					
+				<div className="dialog-page" style={{display:'block'}}>
+						<h2>{t('new_file')}</h2>
+						{ /* <p>Configure basic info about your game.</p> */ }
 
-					<SettingInput slug='fileName' key={'fileName'} title={t('file_name')}
-									  tooltip={t('_new_file_name_desc')} width='200px'
-									  value={info.file_name} autoFocus={true}
-									  setValue={(s:string) => {updateSetting('file_name', s)}} />
+						<SettingInput slug='fileName' key={'fileName'} title={t('file_name')}
+										tooltip={t('_new_file_name_desc')} width='200px'
+										value={info.file_name} autoFocus={true}
+										setValue={(s:string) => {updateSetting('file_name', s)}} />
 
-					<SettingCombo slug='fileType' key={'fileType'} title={t('file_type')}
-					              tooltip={t('_new_file_type_desc')} width='218px'
-									  options={codeTypes} value={info.file_type}
-									  setValue={(v:string) => {updateSetting('file_type', v)}} />
+						<SettingCombo slug='fileType' key={'fileType'} title={t('file_type')}
+										tooltip={t('_new_file_type_desc')} width='218px'
+										options={codeTypes} value={info.file_type}
+										setValue={(v:string) => {updateSetting('file_type', v)}} />
 
-					<SettingCombo slug='folder' key={'folder'} title={t('folder')}
-									  tooltip={t('_new_file_folder_desc')} width='218px'
-									  options={folders} value={info.folder}
-									  setValue={(s:string) => {updateSetting('folder', s)}} />
+						<SettingCombo slug='folder' key={'folder'} title={t('folder')}
+										tooltip={t('_new_file_folder_desc')} width='218px'
+										options={folders} value={info.folder}
+										setValue={(s:string) => {updateSetting('folder', s)}} />
 
-					<SettingButtons onSubmit={onSubmit} onCancel={props.onCancel} />
+						<SettingButtons onSubmit={onSubmit} onCancel={props.onCancel} />
 
+					</div>
 				</div>
-			</div>
 
+			</div>
+			<a className="dialog-close" onClick={e => props.onCancel()}><span className="icon-cancel"></span></a>
 		</div>
 	);
 }

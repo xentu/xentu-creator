@@ -1,3 +1,6 @@
+import { newGuid } from "../helpers";
+
+
 class OpenTab {
 	guid: string;
 	label?: string;
@@ -7,7 +10,7 @@ class OpenTab {
 	data?: any;
 
 	constructor(label:string, path:string, tabType:OpenTabType) {
-		this.guid = Math.floor(Date.now() / 1000).toString(36);
+		this.guid = newGuid();
 		this.label = label;
 		this.changed = false;
 		this.type = tabType;

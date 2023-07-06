@@ -155,7 +155,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 // ---- Splitters ----
 
 #splitter { flex: 0 0 5px; margin-left: -5px; margin-top: 30px; cursor: ew-resize; }
-#splitter2 { flex: 0 0 5px; cursor: ns-resize; }
+#splitter2 { flex: 0 0 5px; cursor: ns-resize; border-top: 1px solid; z-index: 1; width: calc(100% - 14px); }
 .columns.is-tracking .column, .columns.is-tracking .column * { user-select: none!important; }
 .columns.is-tracking .tab-bodies * { pointer-events:none; }
 
@@ -173,7 +173,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 
 	.xterm { padding: 8px; }
 	#console { 
-		flex-grow: 0; flex-shrink: 1; border-top: 1px solid;
+		flex-grow: 0; flex-shrink: 1;
 		& > div, .terminal { height: 100%; }
 	}
 }
@@ -209,6 +209,10 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 		font-size: 14px;
 		&:not(.is-disabled) { cursor: pointer; }
 		&.is-disabled { opacity: 0.5; }
+	}
+	.toolbar-label {
+		padding: 5px 10px;
+    	display: inline-block;
 	}
  }
 
@@ -318,9 +322,9 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 
 @media (min-width:900px) { .dialog-container .dialog { max-width: max-content; } }
 @media (max-width:900px) { .dialog-container .dialog > div { width: 100%!important; } }
-@media (max-width:950px) { .dialog-container .dialog { max-width: calc(100vw - 36px); } }
+@media (max-width:950px) { .dialog-container .dialog.stretch-height { max-width: calc(100vw - 36px); } }
 @media (max-height:680px) {
-  .dialog-container .dialog { height: calc(100vh - 70px); min-height: 0; } 
+  .dialog-container .dialog.stretch-height { height: calc(100vh - 70px); min-height: 0; } 
   .dialog > div { height: 100%; min-height: 0!important; }
 }
 
@@ -445,7 +449,19 @@ input[type='text'].input, input[type='number'].input {
 
 
 .image-viewer {
-	height: calc(100% - 90px); overflow-y: scroll; overflow-x: auto; padding: 30px;
+	height: calc(100% - 30px); overflow-y: scroll; overflow-x: auto; padding: 30px;
+}
+
+
+/**
+ * ----------------------------------------------------------------------------
+ * Sprite Map Editor
+ * ----------------------------------------------------------------------------
+ **/
+
+
+.sprite-map-editor {
+	height: calc(100% - 90px); 
 }
 
 
@@ -460,4 +476,13 @@ input[type='text'].input, input[type='number'].input {
 ::-webkit-scrollbar-button { 
 	width: 10px; height: 13px; background-size: 10px 10px; height: 13px;
 	background-repeat: no-repeat; background-position: center center; width: 10px;
+}
+
+
+
+
+.tab-placeholder { 
+	width: 100%;
+	text-align: center;
+	margin-top: 4em;
 }

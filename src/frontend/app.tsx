@@ -358,6 +358,8 @@ function App(props: appProps) {
 				--activeText: ${th.activeText};
 				--editorBackground: ${th.editorBackground};
 				--editorText: ${th.editorText};
+				--terminalBackground: ${th.terminalBackground};
+				--terminalText: ${th.terminalText};
 				--footerBackground: ${th.footerBackground};
 				--footerBackgroundHs: ` + window.hexToHs(th.footerBackground) + `;
 				--footerBackgroundL: ` + window.hexToHsl(th.footerBackground)[2] + `%;
@@ -739,11 +741,11 @@ function App(props: appProps) {
 	const renderDialog = () => {
 		const result = [];
 		switch (appState.dialog) {
-			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onSettingsChanged={(s:any) => setSettings(s)} />); break;
+			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onSettingsChanged={(s:any) => setSettings(s)} />); break;
 			case 'new-game': result.push(<NewGameDialog key={'new-game'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} />); break;
 			case 'new-file': result.push(<NewFileDialog key={'new-file'} folderFirst={false} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
 			case 'new-folder': result.push(<NewFileDialog key={'new-file'} folderFirst={true} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
-			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onPropertiesChanged={(s:any) => setProject(s)} />); break;
+			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onPropertiesChanged={(s:any) => setProject(s)} />); break;
 		}
 		return result;
 	};

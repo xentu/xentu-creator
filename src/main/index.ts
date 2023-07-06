@@ -110,6 +110,7 @@ class XentuCreatorApp {
 		ipcMain.handle('export-theme', this.handleExportTheme);
 		ipcMain.handle('import-theme', this.handleImportTheme);
 		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
+		ipcMain.handle('navigate-to', this.handleNavigateTo);
 	}
 
 
@@ -124,8 +125,8 @@ class XentuCreatorApp {
 	createWindow(): void {
 		// Create the browser window.
 		this.mainWindow = new BrowserWindow({
-			height: 660,
-			width: 970,
+			height: 680,
+			width: 980,
 			minWidth: 620,
 			minHeight: 430,
 			icon: path.join(__dirname, '/../renderer/images/xentu-icon.ico'),
@@ -241,6 +242,11 @@ class XentuCreatorApp {
 		dialog.showMessageBox(win, {
 			message: message
 		});
+	}
+
+
+	async handleNavigateTo(event:any, url:string) {
+		await shell.openExternal(url);
 	}
 
 

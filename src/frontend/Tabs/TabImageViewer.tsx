@@ -39,8 +39,9 @@ export default function TabCodeEditor(props: TabImageViewerProps) {
 	}, []);
 
 	const imageStyle = {} as CSSProperties;
-	imageStyle.transform = `scale(${zoom}) translate(-30px, -30px)`;
+	imageStyle.transform = `translate(-30px, -30px) scale(${zoom})`;
 	imageStyle.transformOrigin = 'top left';
+	imageStyle.imageRendering = 'pixelated';
 
 	const canZoomIn = zoom < 10;
 	const canZoomOut = zoom > 1;
@@ -52,7 +53,7 @@ export default function TabCodeEditor(props: TabImageViewerProps) {
 					<div className="toolbar-group">
 						{/* <Button className="toolbar-button" disabled={true}><i className='icon-arrows-cw'></i></Button> */}
 						<Button className="toolbar-button" disabled={!canZoomOut} onClick={() => updateZoom(zoom - 1)}><i className='icon-zoom-out'></i></Button>
-						<span style={{padding:'5px 0', display:'inline-block'}}>{`${zoom}x`}</span>
+						<span className="toolbar-label">{`${zoom}x`}</span>
 						<Button className="toolbar-button" disabled={!canZoomIn} onClick={() => updateZoom(zoom + 1)}><i className='icon-zoom-in'></i></Button>
 					</div>
 				</TabToolbar>

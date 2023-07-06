@@ -68,9 +68,8 @@ export default function WelcomePanel(props: WelcomePanelProps) {
 					<div>
 						<h3>{t('help_and_resources')}</h3>
 						<ul>
-							<li><a href="#">Xentu {t('website')}</a></li>
-							<li><a href="#">{t('documentation')}</a></li>
-							<li><a href="#">{t('release_notes')}</a></li>
+							<li><a href="#" onClick={() => window.api.navigateTo('https://xentu.net')}>Xentu {t('website')}</a></li>
+							<li><a href="#" onClick={() => window.api.navigateTo('https://docs.xentu.net')}>{t('documentation')}</a></li>
 						</ul>
 					</div>
 					<div>

@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld('api', {
     showConfirm: (message:string) => ipcRenderer.invoke('show-confirm', message),
     getDefaultThemeDark: () => ipcRenderer.invoke('get-default-theme-dark'),
     getDefaultThemeLight: () => ipcRenderer.invoke('get-default-theme-light'),
+    navigateTo: (url:string) => ipcRenderer.invoke('navigate-to', url),
 
     exportTheme: () => ipcRenderer.invoke('export-theme'),
     importTheme: () => ipcRenderer.invoke('import-theme'),

@@ -100,54 +100,57 @@ export default function NewGameDialog(props: NewGameDialogProps) {
 
 	
 	return (
-		<div className={`settings-dialog`} style={{width:'600px'}}>
-			<div className="dialog-main">
-				
-			<div className="dialog-page" style={{display:'block'}}>
-					<h2>{t('new_game')}</h2>
-					{ /* <p>Configure basic info about your game.</p> */ }
+		<div className={'dialog stretch-height'}>
+			<div className={`settings-dialog`} style={{width:'600px'}}>
+				<div className="dialog-main">
+					
+				<div className="dialog-page" style={{display:'block'}}>
+						<h2>{t('new_game')}</h2>
+						{ /* <p>Configure basic info about your game.</p> */ }
 
-					<SettingInput slug='gameTitle' key={'gameTitle'} title={t('game_title')}
-									  description={t('_setting_game_title_desc')}
-									  value={conf.title} autoFocus={true}
-									  setValue={(s:string) => {updateSetting('title', s)}} />
+						<SettingInput slug='gameTitle' key={'gameTitle'} title={t('game_title')}
+										description={t('_setting_game_title_desc')}
+										value={conf.title} autoFocus={true}
+										setValue={(s:string) => {updateSetting('title', s)}} />
 
-					<SettingCombo slug='codeLanguage' key={'codeLanguage'} title={t('coding_language')}
-									  description={t('_new_game_coding_language_desc')}
-									  options={codeLanguages} value={conf.language}
-									  setValue={(v:string) => {updateSetting('language', v)}} />
+						<SettingCombo slug='codeLanguage' key={'codeLanguage'} title={t('coding_language')}
+										description={t('_new_game_coding_language_desc')}
+										options={codeLanguages} value={conf.language}
+										setValue={(v:string) => {updateSetting('language', v)}} />
 
-					<SettingCombo slug='gameTemplate' key={'gameTemplate'} title={t('game_template')}
-									  description={t('_new_game_template_desc')}
-									  options={gameTemplates} value={conf.template}
-									  setValue={(v:string) => {updateSetting('template', v)}} />
+						<SettingCombo slug='gameTemplate' key={'gameTemplate'} title={t('game_template')}
+										description={t('_new_game_template_desc')}
+										options={gameTemplates} value={conf.template}
+										setValue={(v:string) => {updateSetting('template', v)}} />
 
-					<SettingDualInput slug='viewport' key={'viewport'} title={t('viewport_w_h')}
-									  description={t('_setting_game_viewport_w_h_desc')} type={'number'}
-									  value1={conf.vp_width} minimum1={128} setValue1={(s:string) => {updateSetting('vp_width', s)}}
-									  value2={conf.vp_height} minimum2={128} setValue2={(s:string) => {updateSetting('vp_height', s)}} />
+						<SettingDualInput slug='viewport' key={'viewport'} title={t('viewport_w_h')}
+										description={t('_setting_game_viewport_w_h_desc')} type={'number'}
+										value1={conf.vp_width} minimum1={128} setValue1={(s:string) => {updateSetting('vp_width', s)}}
+										value2={conf.vp_height} minimum2={128} setValue2={(s:string) => {updateSetting('vp_height', s)}} />
 
-					<SettingInput slug='drawFps' key={'drawFps'} title={t('draw_fps')} 
-									  description={t('_setting_game_draw_fps_desc')} 
-									  value={conf.target_fps} small={true} minimum={1} type={'number'} 
-									  setValue={(s:string) => {updateSetting('target_fps', s)}} />
+						<SettingInput slug='drawFps' key={'drawFps'} title={t('draw_fps')} 
+										description={t('_setting_game_draw_fps_desc')} 
+										value={conf.target_fps} small={true} minimum={1} type={'number'} 
+										setValue={(s:string) => {updateSetting('target_fps', s)}} />
 
-					<SettingBool slug='vSync' key={'vSync'} title={t('enable_v_sync')}
-									description={t('_setting_game_enable_v_sync_desc')} half={true}
-									checked={conf.v_sync}
-									setChecked={(v:boolean) => {updateSetting('v_sync', v)}} />
+						<SettingBool slug='vSync' key={'vSync'} title={t('enable_v_sync')}
+										description={t('_setting_game_enable_v_sync_desc')} half={true}
+										checked={conf.v_sync}
+										setChecked={(v:boolean) => {updateSetting('v_sync', v)}} />
 
-					<SettingBool slug='fullScreen' key={'fullScreen'} title={t('start_fullscreen')}
-									description={t('_setting_game_start_fullscreen_desc')}
-									checked={conf.fullscreen}
-									setChecked={(v:boolean) => {updateSetting('fullscreen', v)}} />
+						<SettingBool slug='fullScreen' key={'fullScreen'} title={t('start_fullscreen')}
+										description={t('_setting_game_start_fullscreen_desc')}
+										checked={conf.fullscreen}
+										setChecked={(v:boolean) => {updateSetting('fullscreen', v)}} />
 
-					<SettingButtons onSubmit={onSubmit} onCancel={props.onCancel} />
+						<SettingButtons onSubmit={onSubmit} onCancel={props.onCancel} />
+
+					</div>
 
 				</div>
 
 			</div>
-
+			<a className="dialog-close" onClick={e => props.onCancel()}><span className="icon-cancel"></span></a>
 		</div>
 	);
 }

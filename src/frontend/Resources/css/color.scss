@@ -10,6 +10,9 @@
    --menu-light-sub-bg: #fff;
 }
 
+.theme-is-light {
+	color-scheme: light;
+}
 
 
 @keyframes dialogFadeOut {
@@ -66,7 +69,10 @@ html, body, #app, #app > div { color: var(--mainText); }
 #splitter, #splitter2 { 
 	background: transparent;
 }
-
+#splitter2{
+	background-color: var(--terminalBackground);
+	border-top-color: var(--footerBackgroundDark);
+}
 
 
 .file-explorer-wrapper {
@@ -113,8 +119,13 @@ html, body, #app, #app > div { color: var(--mainText); }
 .setting {
 	border-top-color: #444;
 	.setting-right select { border-color: #444; }
-	input[type='text'].input, input[type='number'].input { border-color: #444; }
 }
+
+
+
+input[type='text'].input, 
+input[type='number'].input,
+select { border-color: #444; }
 
 
 
@@ -138,7 +149,7 @@ html, body, #app, #app > div { color: var(--mainText); }
 #sidebar .column-head .tab-label { background: var(--sidebarBackground); color: var(--editorText); }
 #sidebar .column-body {	background-color: var(--sidebarBackground); color: var(--sidebarText); }
 #main .column-body, .columns .column .column-head.tab-labels .tab-label.is-active { background-color: var(--editorBackground); color: var(--editorText); }
-#main #console { background: #0a0a0a; border-top-color: var(--footerBackgroundDark); }
+#main #console { background: #0a0a0a; }
 .context-menu { background-color: var(--mainBackground); color: var(--menu-text); border-color: #999!important; }
 input[type='text'].input:focus, input[type='number'].input:focus, select:focus { outline:1px solid var(--activeBackground); }
 
@@ -187,3 +198,10 @@ input[type='text'].input:focus, input[type='number'].input:focus, select:focus {
 .theme-is-light .style-editor h4 { background: var(--mainBackground); }
 .theme-is-light .context-menu { background: var(--menu-light-sub-bg); color: var(--menu-light-text); box-shadow: 1px 1px 5px #8f8f8f; }
 .theme-is-light .context-menu hr { border-top-color: #8f8f8f; }
+
+
+.theme-is-light input[type='text'].input, 
+.theme-is-light input[type='number'].input,
+.theme-is-light select {
+	border-color: #444;
+}

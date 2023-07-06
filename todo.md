@@ -5,12 +5,12 @@
 - [bug] Remove recent entries when they are found to no longer exist. (fixed)
 - [routine] Make toolbar buttons work for the editors that exist. (done)
 - [feature] Add auto-complete and code hints for the xentu API, so that its easier to write code. (done)
-- [routine] Make the help and resources links go somewhere.
+- [routine] Make the help and resources links go somewhere. (done)
+- [feature] Create sprite map editor. (in progress)
 
 
 # Later Date
 
-- [feature] Create sprite map editor.
 - [feature] Create the Conversation Editor (like Sutori Studio, make more streamline).
 - [feature] Create the Layout Editor (basic scene graph, selection tool, property editor etc...).
 - [feature] Create the graphic file editor.
