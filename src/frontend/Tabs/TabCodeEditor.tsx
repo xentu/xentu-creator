@@ -2,12 +2,15 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Editor } from '@monaco-editor/react';
 import { SettingsContext } from '../Context/SettingsManager';
 import TabToolbar from '../Components/TabToolbar';
+import Button from '../Components/Button';
+import { classList } from '../helpers';
 
 
 type TabCodeEditorProps = {
 	guid: string,
 	filePath:string,
 	active: boolean,
+	changed: boolean,
 	labelChanged: Function, 
 	onSetData: Function
 };
@@ -16,7 +19,31 @@ type TabCodeEditorProps = {
 export default function TabCodeEditor(props: TabCodeEditorProps) {
 	const [data, setData] = useState('');
 	const [lang, setLang] = useState('text');
+	const [hasFocus, setHasFocus] = useState(false);
 	const settings = useContext(SettingsContext);
+
+	const doEditorAction = (action:string) => {
+		const editor = window.findEditor(props.guid);
+		if (editor) {
+			editor.getAction(action).run();
+		}
+	};
+
+	const doListenForSelection = () => {
+		const editor = window.findEditor(props.guid);
+		if (editor) {
+			editor.onDidChangeCursorSelection(() => {
+				const sel = editor.getSelection();
+				const empty = sel.isEmpty();
+				setHasFocus(empty == false);
+			});
+			/* editor.onDidBlurEditorWidget(() => {
+				if (editor.getSelection().isEmpty()) setHasFocus(false);
+			}); */
+		} else {
+			console.log('could not find editor');
+		}
+	};
 
 	useEffect(() => {
 		const fetchData = async(thePath:string) => {
@@ -26,19 +53,20 @@ export default function TabCodeEditor(props: TabCodeEditorProps) {
 			setData(theResponse.data);
 			props.labelChanged(theResponse.label);
 			props.onSetData(theResponse.data, false);
+			doListenForSelection();
 		};
 		fetchData(props.filePath);
 	}, []);
 
 	return (
-		<div className={[props.active?'tab-active':'tab-inactive'].join(' ')}>
+		<div className={classList([props.active?'tab-active':'tab-inactive'])}>
 			<div className='toolbar-container'>
 				<TabToolbar>
 					<div className="toolbar-group">
-						<a className="toolbar-button is-disabled"><i className='icon-floppy'></i></a>
-						<a className="toolbar-button is-disabled"><i className='icon-arrows-cw'></i></a>
-						<a className="toolbar-button is-disabled"><i className='icon-indent-left'></i></a>
-						<a className="toolbar-button is-disabled"><i className='icon-indent-right'></i></a>
+						<Button className='toolbar-button' disabled={!props.changed} onClick={() => window.api.menuSave()}><i className='icon-floppy'></i></Button>
+						{/* <Button className='toolbar-button' disabled={true}><i className='icon-arrows-cw'></i></Button> */}
+						{/* <Button className='toolbar-button' disabled={true}><i className='icon-indent-left'></i></Button> */}
+						<Button className='toolbar-button' disabled={!hasFocus} onClick={() => doEditorAction('editor.action.indentLines')}><i className='icon-indent-right'></i></Button>
 					</div>
 				</TabToolbar>
 				<Editor className={`monaco-${props.guid}`} language={lang} theme='my-theme'

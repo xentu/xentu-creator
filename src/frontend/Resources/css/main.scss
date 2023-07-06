@@ -445,7 +445,7 @@ input[type='text'].input, input[type='number'].input {
 
 
 .image-viewer {
-	height: calc(100vh - 265px); overflow-y: scroll; overflow-x: auto; padding: 15px;
+	height: calc(100% - 90px); overflow-y: scroll; overflow-x: auto; padding: 30px;
 }
 
 

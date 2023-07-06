@@ -61,6 +61,7 @@ typings/
 
 # dotenv environment variables file
 .dev
+dev
 .env
 .env.test
 

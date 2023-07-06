@@ -5,6 +5,7 @@ type ComponentProps = {
 	guid: string,
 	filePath:string,
 	active: boolean,
+	changed: boolean,
 	labelChanged: Function, 
 	onSetData: Function
 };

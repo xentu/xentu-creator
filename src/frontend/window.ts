@@ -8,12 +8,18 @@ const convert = require('color-convert');
 declare global {
 	interface Window {
 	  api?: any;
+	  listEditors: Function,
 	  findEditor: Function,
 	  changeThemeColors: Function,
 	  hexToHsl: Function,
 	  hexToHs: Function,
 	  xterm: any
 	}
+}
+
+
+window.listEditors = function() {
+	return monaco.editor.getEditors();
 }
 
 

@@ -216,11 +216,14 @@ function App(props: appProps) {
 				break;
 			case 'file-created':
 			case 'file-changed':
-			case 'file-removed':
 			case 'dir-created':
 			case 'dir-removed':
 				//console.log(`Action ${action} for ${data}`);
 				dispatchAppState({ type:'file-changed', value:data }); 
+				break;
+			case 'file-removed':
+				dispatchAppState({ type:'file-changed', value:data }); 
+				doMarkTabDirty(data);
 				break;
 			case 'game-started': dispatchAppState({ type:'is-debugging', value:true }); break;
 			case 'game-stopped':	dispatchAppState({ type:'is-debugging', value:false }); break;
@@ -313,6 +316,18 @@ function App(props: appProps) {
 		const tabsCopy = [...tabs];
 		setTabs(tabsCopy);
 	};
+
+
+	/**
+	 * Remove a recent path, and update settings.
+	 * @param path 
+	 */
+	const handleRemoveRecent = async (path: string) => {
+		const clone = JSON.parse(JSON.stringify(settings));
+		clone.recentProjects = clone.recentProjects.filter((e:string) => !e.endsWith(path));
+		setSettings(clone);
+		await window.api.setSettings(clone);
+	}
 
 
 	// ########################################################################
@@ -576,6 +591,13 @@ function App(props: appProps) {
 	};
 
 
+	const doJiggleZoom = () => {
+		dispatchAppState({ type:'console-height', value:appState.consoleHeight + 1 });
+		setTimeout(() => {
+			dispatchAppState({ type:'console-height', value:appState.consoleHeight - 1 });
+		}, 10);
+	};
+
 	/**
 	 * Close a specific tab.
 	 * @param tab The tab to close.
@@ -606,6 +628,20 @@ function App(props: appProps) {
 		const tab = findTab(path);
 		doCloseTab(tab);
 	};
+
+
+	/**
+	 * Mark an open tab as changed (dirty) so it needs to be saved before closing.
+	 * @param path 
+	 */
+	const doMarkTabDirty = (path: string) => {
+		const tab = findTab(path);
+		if (tab) {
+			const index = tabs.indexOf(tab);
+			tabs[index].changed = true;
+			setTabs([...tabs]);
+		}
+	}
 
 
 	/**
@@ -667,28 +703,28 @@ function App(props: appProps) {
 
 			switch (tab.type) {
 				case OpenTabType.CodeEditor:
-					result.push(<TabCodeEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabCodeEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.ConversationEditor:
-					result.push(<TabConversationEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabConversationEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.DatabaseClient:
-					result.push(<TabDatabaseClient key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabDatabaseClient key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.GraphicEditor:
-					result.push(<TabGraphicEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabGraphicEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.ImageViewer:
-					result.push(<TabImageViewer key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => {}} />);
+					result.push(<TabImageViewer key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => {}} onZoom={() => doJiggleZoom()} />);
 					break;
 				case OpenTabType.LayoutEditor:
-					result.push(<TabLayoutEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabLayoutEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.SpriteFontEditor:
-					result.push(<TabSpriteFontEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabSpriteFontEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.SpriteMapEditor:
-					result.push(<TabSpriteMapEditor key={key} filePath={tab.path} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabSpriteMapEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 			}			
 		}
@@ -831,7 +867,7 @@ function App(props: appProps) {
 					</div>
 
 					<div id='status-bar'>{t('idle')}</div>
-					<WelcomePanel visible={appState.isWelcomeVisible} />
+					<WelcomePanel visible={appState.isWelcomeVisible} removeRecent={handleRemoveRecent} />
 					<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} />
 					<DialogContainer visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>
 						{renderDialog()}

@@ -5,7 +5,8 @@ import Logo from "./Logo";
 
 
 type WelcomePanelProps = {
-	visible: boolean
+	visible: boolean,
+	removeRecent: Function
 }
 
 
@@ -20,8 +21,12 @@ export default function WelcomePanel(props: WelcomePanelProps) {
 	const settings = useContext(SettingsContext);
 	const { i18n, t } = useTranslation();
 
-	const openRecent = (path:string) => {
-		window.api.openFolderAt(path);
+	const openRecent = async (path:string) => {
+		const opened = await window.api.openFolderAt(path);
+		if (!opened) {
+			props.removeRecent(path);
+			console.log('removed recent path.');
+		}
 	};
 
 	const listRecentProjects = () => {

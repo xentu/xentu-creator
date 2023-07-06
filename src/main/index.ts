@@ -480,6 +480,10 @@ class XentuCreatorApp {
 	}
 
 
+	/**
+	 * 
+	 * @returns 
+	 */
 	async handleOpenFolder(event:any) {
 		const window = BrowserWindow.getAllWindows()[0];
 		const self = myCreator;
@@ -487,11 +491,17 @@ class XentuCreatorApp {
 		if (dlgResult.canceled == false) {
 			// read the selected path.
 			const selectedPath = dlgResult.filePaths[0];
-			await self.handleOpenFolderAt(event, selectedPath);
+			return await self.handleOpenFolderAt(event, selectedPath);
 		}
+		return false;
 	}
 
 
+	/**
+	 * Open a folder/project/game.
+	 * @param thePath The path to open.
+	 * @returns Boolean on success.
+	 */
 	async handleOpenFolderAt(event:any, thePath:string) {
 		const window = BrowserWindow.getAllWindows()[0];
 
@@ -514,7 +524,7 @@ class XentuCreatorApp {
 			dialog.showMessageBox(window, {
 				message: "The project at the chosen location no longer exists."
 			});
-			return;
+			return false;
 			//self.theProject = ProjectTemplate();
 			//window.setTitle('Xentu Creator');
 		}
@@ -534,6 +544,7 @@ class XentuCreatorApp {
 		window.webContents.send('projectPathChanged', thePath);
 		window.webContents.send('projectChanged', JSON.stringify(self.theProject));
 		window.webContents.send('triggerAction', 'hide-welcome', null );
+		return true;
 	}
 
 
