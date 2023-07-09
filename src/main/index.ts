@@ -475,8 +475,13 @@ class XentuCreatorApp {
 	}
 
 	
-	async handleOpenImage(event:any, filePath:string) {
-		const theData = await fs.readFile(filePath, "base64");
+	async handleOpenImage(event:any, filePath:string, relative:boolean) {
+		let _filePath = filePath;
+		if (relative) {
+			_filePath = path.join(myCreator.projectPath, filePath);
+		}
+
+		const theData = await fs.readFile(_filePath, "base64");
 		const ext = filePath.split('.').pop();
 		return JSON.stringify({
 			label: path.basename(filePath),

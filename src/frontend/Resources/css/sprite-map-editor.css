@@ -88,10 +88,10 @@
 .sprite-map-option > div {
 	flex: 1;
 }
-.sprite-map-option input[type="text"] { width: calc(100% - 15px); min-width: 100px; }
+.sprite-map-option input[type="text"] { width: 150px; min-width: 100px; }
 .sprite-map-option input[type="number"] { width: 60px; min-width: 0; }
 .sprite-map-option label { margin-right: 8px; }
-.sprite-map-option label span { vertical-align: text-top; }
+.sprite-map-option label span { vertical-align: text-top; margin: 0 8px 0 4px; }
 
 
 .toolbar .toggle-button {

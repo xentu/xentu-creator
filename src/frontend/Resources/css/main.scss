@@ -86,6 +86,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 		display: flex; flex-direction: column; height: 100%;
 		.column-head {
 			display: block; height: 30px; user-select: none;
+			white-space: nowrap; overflow: auto; overflow-y: hidden;
 
 			strong { font-size: 14px; }
 
@@ -193,13 +194,18 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 }
 .toolbar {
 	position: absolute;
+	display: flex;
+   flex-direction: row;
    left: 2px;
    right: 2px;
    top: -3px;
+	
    /* border-radius: 4px; */
 	& + div { margin-top: 31px; }
 	& + section { margin-top: 31px; max-height: calc(100% - 31px)!important; position: absolute!important; }
 	&, & * { user-select: none; }
+	.toolbar-fill { flex-grow: 1;	}
+	.toolbar-end { padding-right: 5px; }
 	.toolbar-button {
 		padding: 0 5px;
 		line-height: 2.1em;
@@ -462,6 +468,19 @@ input[type='text'].input, input[type='number'].input {
 
 .sprite-map-editor {
 	height: calc(100% - 90px); 
+	.sprite-map-viewport {
+		.sprite-map-viewport-inner {
+			height: 100%; overflow-y: scroll; overflow-x: auto; padding: 30px;
+			position: relative;
+			span {
+				position: absolute;
+				border: 1px solid #6e6e6e59;
+			}
+			span.is-active {
+				border: 1px solid #00ff067d;
+			} 
+		}
+	}
 }
 
 
@@ -474,10 +493,14 @@ input[type='text'].input, input[type='number'].input {
 ::-webkit-scrollbar { width: 14px; height: 14px; }
 ::-webkit-scrollbar-button:single-button { display:none; }
 ::-webkit-scrollbar-button { 
-	width: 10px; height: 13px; background-size: 10px 10px; height: 13px;
+	width: 10px; height: 13px; background-size: 10px 10px;
 	background-repeat: no-repeat; background-position: center center; width: 10px;
 }
 
+
+/* special case for tab headers */
+.columns .column .column-head::-webkit-scrollbar { width: 14px; height: 2px; }
+.columns .column .column-head::-webkit-scrollbar-button { height: 2px; }
 
 
 

@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld('api', {
     createFile: (filePath: string, extension?:string) => ipcRenderer.invoke('create-file', filePath, extension),
     createFolder: (folderPath: string) => ipcRenderer.invoke('create-folder', folderPath),
     deleteFileOrFolder: (filePath: string) => ipcRenderer.invoke('delete', filePath),
-    openImage: (filePath: string) => ipcRenderer.invoke('open-image', filePath),
+    openImage: (filePath: string, relative: boolean = false) => ipcRenderer.invoke('open-image', filePath, relative),
     newGame: () => ipcRenderer.invoke('new-game'),
     openFolder: () => ipcRenderer.invoke('open-folder'),
     openFolderAt: (path:string) => ipcRenderer.invoke('open-folder-at', path),

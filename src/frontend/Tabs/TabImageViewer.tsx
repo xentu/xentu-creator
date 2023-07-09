@@ -53,8 +53,8 @@ export default function TabCodeEditor(props: TabImageViewerProps) {
 					<div className="toolbar-group">
 						{/* <Button className="toolbar-button" disabled={true}><i className='icon-arrows-cw'></i></Button> */}
 						<Button className="toolbar-button" disabled={!canZoomOut} onClick={() => updateZoom(zoom - 1)}><i className='icon-zoom-out'></i></Button>
-						<span className="toolbar-label">{`${zoom}x`}</span>
 						<Button className="toolbar-button" disabled={!canZoomIn} onClick={() => updateZoom(zoom + 1)}><i className='icon-zoom-in'></i></Button>
+						<span className="toolbar-label">{`${zoom}x`}</span>
 					</div>
 				</TabToolbar>
 				<div className='image-viewer'>

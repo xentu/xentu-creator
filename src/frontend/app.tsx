@@ -108,7 +108,7 @@ function App(props: appProps) {
 					}
 					break;
 			}
-		 });
+		});
 
 		window.onresize = () => { 
 			handleAction.current('resize', '');
@@ -120,6 +120,8 @@ function App(props: appProps) {
 				dispatchAppState([ { type:'focus-path', value:'' }, { type:'dialog', value:'' } ]);
 			}
 		};
+
+		dispatchAppState({ type: 'show-console', value: false });
 
 	}, []);
 
@@ -133,6 +135,7 @@ function App(props: appProps) {
 	useEffect(() => {
 		if (project !== null && typeof project.game !== 'undefined') {
 			recordProjectOpen();
+			//todo: fix doLoadDefaultEditor();
 		}
 	}, [project]);
 
@@ -226,7 +229,11 @@ function App(props: appProps) {
 				dispatchAppState({ type:'file-changed', value:data }); 
 				doMarkTabDirty(data);
 				break;
-			case 'game-started': dispatchAppState({ type:'is-debugging', value:true }); break;
+			case 'game-started': dispatchAppState([
+					{ type:'is-debugging', value:true },
+					{ type:'show-console', value:true }
+				]);
+				break;
 			case 'game-stopped':	dispatchAppState({ type:'is-debugging', value:false }); break;
 		}	
 
@@ -248,7 +255,7 @@ function App(props: appProps) {
 					const tab = findActiveTab();
 					if (tab && tab.guid && tab.type == OpenTabType.CodeEditor) {
 						const editor = window.findEditor(tab.guid);
-						editor.layout({  });
+						editor?.layout({  });
 					}
 					break;
 			}
@@ -466,6 +473,15 @@ function App(props: appProps) {
 
 
 	/**
+	 * Load the entry point when the project loads.
+	 */
+	const doLoadDefaultEditor = () => {
+		const path = appState.projectPath + '/' + project.game.entry_point;
+		doLoadEditor(path);
+	};
+
+
+	/**
 	 * Load an editor for a specific file.
 	 * @param filePath The absolute path to the file to edit.
 	 */
@@ -588,7 +604,7 @@ function App(props: appProps) {
 		const tab = findActiveTab();
 		if (tab && tab.guid) {
 			const editor = window.findEditor(tab.guid);
-			editor.layout();
+			editor?.layout();
 		}
 		window.dispatchEvent(new Event("resize"));
 	};

@@ -203,6 +203,9 @@ html, body, #app, #app > div {
   display: block;
   height: 30px;
   user-select: none;
+  white-space: nowrap;
+  overflow: auto;
+  overflow-y: hidden;
 }
 .columns .column .column-head strong {
   font-size: 14px;
@@ -394,6 +397,8 @@ html, body, #app, #app > div {
 
 .toolbar {
   position: absolute;
+  display: flex;
+  flex-direction: row;
   left: 2px;
   right: 2px;
   top: -3px;
@@ -409,6 +414,12 @@ html, body, #app, #app > div {
 }
 .toolbar, .toolbar * {
   user-select: none;
+}
+.toolbar .toolbar-fill {
+  flex-grow: 1;
+}
+.toolbar .toolbar-end {
+  padding-right: 5px;
 }
 .toolbar .toolbar-button {
   padding: 0 5px;
@@ -874,6 +885,20 @@ input[type=text].input, input[type=number].input {
 .sprite-map-editor {
   height: calc(100% - 90px);
 }
+.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: auto;
+  padding: 30px;
+  position: relative;
+}
+.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner span {
+  position: absolute;
+  border: 1px solid rgba(110, 110, 110, 0.3490196078);
+}
+.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner span.is-active {
+  border: 1px solid rgba(0, 255, 6, 0.4901960784);
+}
 
 /**
  * ----------------------------------------------------------------------------
@@ -893,10 +918,19 @@ input[type=text].input, input[type=number].input {
   width: 10px;
   height: 13px;
   background-size: 10px 10px;
-  height: 13px;
   background-repeat: no-repeat;
   background-position: center center;
   width: 10px;
+}
+
+/* special case for tab headers */
+.columns .column .column-head::-webkit-scrollbar {
+  width: 14px;
+  height: 2px;
+}
+
+.columns .column .column-head::-webkit-scrollbar-button {
+  height: 2px;
 }
 
 .tab-placeholder {

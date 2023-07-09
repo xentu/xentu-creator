@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import MenuItem, { MenuEntry } from './MenuItem';
 import { useTranslation } from "react-i18next";
+import { classList } from '../helpers';
 //import { SettingsContext } from '../Context/SettingsManager';
 
 
@@ -110,14 +111,17 @@ export default function MainMenu(props: MainMenuProps) {
 
 				<div className="buttons" style={{ flexGrow: 1, textAlign: 'right', display: props.enabled?'block':'none' }}>
 					<div style={{display: 'inline-block'}}>
-						<a className={["menu-item"].join(' ')} title={t('config_game')} onClick={() => window.api.menuGameProperties()}>
-							<span className="menu-label"><i className='icon-cog'></i> {t('config')}</span>
+						<a className="menu-item" title={t('console')} onClick={() => window.api.menuConsole()}>
+							<span className="menu-label"><i className="icon-terminal" /></span>
 						</a>
-						<a className={["menu-item", props.debugging?'':'is-disabled'].join(' ')} title={t('stop_game')} onClick={() => props.debugging && window.api.menuStop()}>
-							<span className="menu-label is-red"><i className='icon-stop'></i> {t('stop')}</span>
+						<a className="menu-item" title={t('config_game')} onClick={() => window.api.menuGameProperties()}>
+							<span className="menu-label"><i className='icon-cog' /></span>
 						</a>
-						<a className={["menu-item", props.debugging?'is-disabled':''].join(' ')} title={t('start_game')} onClick={() => !props.debugging && window.api.menuRun()}>
-							<span className="menu-label is-green"><i className='icon-play'></i> {t('start')}</span>
+						<a className={classList(["menu-item", props.debugging?'':'is-disabled'])} title={t('stop_game')} onClick={() => props.debugging && window.api.menuStop()}>
+							<span className="menu-label is-red"><i className='icon-stop' /> {t('stop')}</span>
+						</a>
+						<a className={classList(["menu-item", props.debugging?'is-disabled':''])} title={t('start_game')} onClick={() => !props.debugging && window.api.menuRun()}>
+							<span className="menu-label is-green"><i className='icon-play' /> {t('start')}</span>
 						</a>
 					</div>
 				</div>

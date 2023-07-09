@@ -143,6 +143,12 @@
       "css": "pencil",
       "code": 59407,
       "src": "fontawesome"
+    },
+    {
+      "uid": "fa10777b2d88cc64cd6e4f26ef0e5264",
+      "css": "terminal",
+      "code": 61728,
+      "src": "fontawesome"
     }
   ]
 }

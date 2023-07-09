@@ -1,5 +1,6 @@
 function _handleStateReducerField(clone:any, action:any) {
 	switch (action.type) {
+		case 'show-console': clone.showConsole = action.value; return true;
 		case 'toggle-console': clone.showConsole = !clone.showConsole;	return true;
 		case 'toggle-sidebar': clone.showSidebar = !clone.showSidebar; return true;
 		case 'toggle-statusbar': clone.showStatusBar = !clone.showStatusBar;	return true;

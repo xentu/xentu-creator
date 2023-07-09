@@ -30,7 +30,8 @@ export default function ListBox(props: ComponentProps) {
 
 	return (
 		<div className={classList(['list-box', props.className, props.disabled ? 'is-disabled':''])}>
-			<select size={props.size ?? 5} value={props.value} onChange={handleOnChange}>
+			<select size={props.size ?? 5} value={props.value} onChange={handleOnChange} autoFocus={false}>
+				<option key={'default-opt'} hidden disabled value=''> -- select an option -- </option>
 				{renderItems()}
 			</select>
 		</div>
