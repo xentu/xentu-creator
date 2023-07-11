@@ -126,7 +126,7 @@ class XentuCreatorApp {
 		// Create the browser window.
 		this.mainWindow = new BrowserWindow({
 			height: 680,
-			width: 980,
+			width: 1000,
 			minWidth: 620,
 			minHeight: 430,
 			icon: path.join(__dirname, '/../renderer/images/xentu-icon.ico'),
@@ -237,11 +237,12 @@ class XentuCreatorApp {
 
 
 	handleShowAlert(event: any, message:string): void {
+		myCreator.triggerAction('alert', message);
+		/*const win = BrowserWindow.fromWebContents(webContents);
 		const webContents = event.sender;
-		const win = BrowserWindow.fromWebContents(webContents);
 		dialog.showMessageBox(win, {
 			message: message
-		});
+		}); */
 	}
 
 
@@ -251,13 +252,14 @@ class XentuCreatorApp {
 
 
 	async handleShowConfirm(event: any, message:string) {
-		const webContents = event.sender;
+		myCreator.triggerAction('confirm', message);
+		/* const webContents = event.sender;
 		const win = BrowserWindow.fromWebContents(webContents);
 		const res = await dialog.showMessageBox(win, {
 			message: message,
 			buttons: ['OK', 'Cancel']
 		});
-		return res.response == 0;
+		return res.response == 0; */
 	}
 
 

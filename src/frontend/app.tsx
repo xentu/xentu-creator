@@ -28,6 +28,9 @@ import { appStateReducer, appStateDefault } from './state'
 import { classList } from './helpers';
 import { useTranslation } from "react-i18next";
 import "./i18n";
+import PickImageDialog from './Dialogs/PickImageDialog';
+import AlertDialog from './Dialogs/AlertDialog';
+import ConfirmDialog from './Dialogs/ConfirmDialog';
 
 
 require('./window');
@@ -234,7 +237,15 @@ function App(props: appProps) {
 					{ type:'show-console', value:true }
 				]);
 				break;
-			case 'game-stopped':	dispatchAppState({ type:'is-debugging', value:false }); break;
+			case 'game-stopped':	
+				dispatchAppState({ type:'is-debugging', value:false });
+				break;
+			case 'alert':
+				dispatchAppState({ type:'dialog2', value:'alert', data:data });
+				break;
+			case 'confirm':
+				dispatchAppState({ type:'dialog2', value:'confirm', data:data });
+				break;
 		}	
 
 		if (tabs.length > 0) {
@@ -625,16 +636,28 @@ function App(props: appProps) {
 	const doCloseTab = (tab: OpenTab) : boolean => {
 		const index = tabs.indexOf(tab);
 		if (index < 0) return false;
-		if (tab?.changed == false || confirm(t('are_you_sure_you_want_to_close_this_tab'))) {
+
+		if (tab?.changed == false) {
 			tabs[index] = null;
-			// update the tabs.
 			const allNull = tabs.every(el => el === null);
 			setTabs(allNull ? [] : [...tabs]);
-			// select the next available.
 			const nextOpen = findFirstOpenTab();
 			setSelectedTab(nextOpen);
 			return true;
 		}
+		else {
+			window.api.showConfirm(t('are_you_sure_you_want_to_close_this_tab'), async (result:boolean) => {
+				if (result == true) {
+					tabs[index] = null;
+					const allNull = tabs.every(el => el === null);
+					setTabs(allNull ? [] : [...tabs]);
+					const nextOpen = findFirstOpenTab();
+					setSelectedTab(nextOpen);
+					return true;
+				}
+			});
+		}
+		
 		return false;
 	};
 
@@ -676,9 +699,13 @@ function App(props: appProps) {
 				window.api.menuNewFolder();
 				break;
 			case 'delete':
-				if (contextMenu.path && confirm(t('are_you_sure_you_want_to_delete_this'))) {
-					const r = await window.api.deleteFileOrFolder(contextMenu.path);
-					doCloseTabByPath(contextMenu.path);
+				if (contextMenu.path) {
+					window.api.showConfirm(t('are_you_sure_you_want_to_delete_this'), async (result:boolean) => {
+						if (result == true) {
+							const r = await window.api.deleteFileOrFolder(contextMenu.path);
+							doCloseTabByPath(contextMenu.path);
+						}
+					});
 				}
 				break;
 		}
@@ -743,7 +770,14 @@ function App(props: appProps) {
 					result.push(<TabSpriteFontEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.SpriteMapEditor:
-					result.push(<TabSpriteMapEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabSpriteMapEditor key={key} filePath={tab.path} 
+															  changed={tab.changed}
+															  guid={tab.guid} 
+															  active={active} 
+															  labelChanged={(l: string) => handleLabelChanged(tab, l)} 
+															  onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)}
+															  onPickImage={(c: Function) => dispatchAppState({ type:'pick-image', value:c })}
+															  />);
 					break;
 			}			
 		}
@@ -762,6 +796,23 @@ function App(props: appProps) {
 			case 'new-file': result.push(<NewFileDialog key={'new-file'} folderFirst={false} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
 			case 'new-folder': result.push(<NewFileDialog key={'new-file'} folderFirst={true} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
 			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onPropertiesChanged={(s:any) => setProject(s)} />); break;
+			case 'pick-image': result.push(<PickImageDialog key={'pick-image'} onClose={(e:any) => dispatchAppState({ type:'pick-image-finished', value:e })} />); break;
+		}
+		return result;
+	};
+
+
+	const renderDialog2 = () => {
+		const result = [];
+		switch (appState.dialog2) {
+			case 'alert':
+				result.push(<AlertDialog key={'alert'} message={appState.dialog2data} onClose={() => dispatchAppState({ type:'dialog2', value:'' })} />);
+				break;
+			case 'confirm':
+				result.push(<ConfirmDialog key={'confirm'} message={appState.dialog2data} onClose={(r:any) => {
+					dispatchAppState({ type:'dialog2-finished', value:r });
+				}} />);
+				break;
 		}
 		return result;
 	};
@@ -888,8 +939,11 @@ function App(props: appProps) {
 					<div id='status-bar'>{t('idle')}</div>
 					<WelcomePanel visible={appState.isWelcomeVisible} removeRecent={handleRemoveRecent} />
 					<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} />
-					<DialogContainer visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>
+					<DialogContainer key='dialog1' visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>
 						{renderDialog()}
+					</DialogContainer>
+					<DialogContainer key='dialog2' visible={appState.dialog2!==''} onClose={() => dispatchAppState({ type: 'dialog2', value: '' })}>
+						{renderDialog2()}
 					</DialogContainer>
 					<ContextMenu onBlur={() => doHideContextMenu()}> 
 						{renderContextMenu()}

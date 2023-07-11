@@ -1,3 +1,10 @@
+type DialogContextType = {
+	callback?: Function
+};
+
+const dialogContext = { callback: null } as DialogContextType;
+
+
 function _handleStateReducerField(clone:any, action:any) {
 	switch (action.type) {
 		case 'show-console': clone.showConsole = action.value; return true;
@@ -18,6 +25,24 @@ function _handleStateReducerField(clone:any, action:any) {
 		case 'project-path': clone.projectPath = action.value; return true;
 		case 'file-changed': clone.eventPath = action.value; return true;
 		case 'event-path': clone.eventPath = action.value; return true;
+
+		case 'pick-image': 
+			clone.dialog = 'pick-image';
+			dialogContext.callback = action.value;
+			return true;
+		case 'pick-image-finished':
+			clone.dialog = '';
+			dialogContext.callback(action.value);
+			dialogContext.callback = null;
+			return true;
+		case 'dialog2':
+			clone.dialog2 = action.value;
+			clone.dialog2data = action?.data;
+			return true;
+		case 'dialog2-finished':
+			clone.dialog2 = '';
+			window.api.finishConfirm(action.value);
+			return true;
 	}
 	return false;
 }
@@ -52,6 +77,8 @@ export const appStateDefault = {
 	consoleHeight: 150,		// the height of the terminal.
 	sidebarWidth: 240,		// the width of the left sidebar.
 	dialog: '',					// the key of the dialog to show.
+	dialog2: '',				// the key of the 2nd level dialog to show.
+	dialog2data: '',			// an argument passed to the 2nd level dialog.
 	focusPath: '',    		// the path highlighted when a context menu appears.
 	selectedPath: '',			// the path of the selected file or directory.
 	projectPath: '',			// the project path.

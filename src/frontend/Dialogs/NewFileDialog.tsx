@@ -104,7 +104,7 @@ export default function NewFileDialog(props: ComponentProps) {
 			<div className={`settings-dialog`} style={{width:'400px'}}>
 				<div className="dialog-main">
 					
-				<div className="dialog-page" style={{display:'block'}}>
+				<div className="dialog-page" style={{display:'block', height:'100%'}}>
 						<h2>{t('new_file')}</h2>
 						{ /* <p>Configure basic info about your game.</p> */ }
 

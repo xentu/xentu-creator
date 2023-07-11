@@ -22,7 +22,7 @@ export default class XentuDefaults {
 			hoverBackground: "#1672D4",
 			hoverText: "#ffffff",
 			activeBackground: "#7a3a98",
-			activeText: "#000000",
+			activeText: "#ffffff",
 			terminalBackground: "#000000",
 			terminalText: "#ffffff"
 		};

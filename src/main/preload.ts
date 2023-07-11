@@ -2,7 +2,8 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron');
+var confirmCallback:Function = null;
 
 
 contextBridge.exposeInMainWorld('api', {
@@ -26,7 +27,6 @@ contextBridge.exposeInMainWorld('api', {
     refreshBinaries: (overwrite:boolean) => ipcRenderer.invoke('refresh-binaries', overwrite),
     listBinaries: () => ipcRenderer.invoke('list-binaries'),
     showAlert: (message:string) => ipcRenderer.send('show-alert', message),
-    showConfirm: (message:string) => ipcRenderer.invoke('show-confirm', message),
     getDefaultThemeDark: () => ipcRenderer.invoke('get-default-theme-dark'),
     getDefaultThemeLight: () => ipcRenderer.invoke('get-default-theme-light'),
     navigateTo: (url:string) => ipcRenderer.invoke('navigate-to', url),
@@ -94,5 +94,22 @@ contextBridge.exposeInMainWorld('api', {
 
     onConsoleData: (cb: (data:string) => void) => {
         ipcRenderer.on('consoleData', (event, data) => cb(data));
+    },
+
+
+    /* -- confirm functionality -------------------------------------------- */
+
+
+    showConfirm: (message:string, cb:Function) => {
+        confirmCallback = cb;
+        ipcRenderer.invoke('show-confirm', message);
+    },
+
+    finishConfirm: (result:boolean) => {
+        if (confirmCallback != null) {
+            confirmCallback(result);
+            confirmCallback = null;
+        }
     }
+    
 });

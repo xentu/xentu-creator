@@ -16,7 +16,8 @@ type ComponentProps = {
 	active: boolean,
 	changed: boolean,
 	labelChanged: Function,
-	onSetData: Function
+	onSetData: Function,
+	onPickImage: Function
 };
 type SpriteMapType = {
 	image: string,
@@ -47,6 +48,7 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 	const [aniObj, setAniObj] = useState(null as AnimationType); // info about the selected group/animation.
 	const [preview, setPreview] = useState(false); // weather or not to show the preview screen.
 	const [zoom, setZoom] = useState(1); // the zoom factor.
+	const [playing, setPlaying] = useState(false);
 	const settings = useContext(SettingsContext); // app settings context.
 	const image = useRef(null);
 	const previewCanvas = useRef(null);
@@ -121,12 +123,23 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 					flip_y: _frame.flip_y
 				});
 			}
-			nextPreviewFrame();
 		}
 		else {
 			setFrameObj({ coords:'', delay:'', flip_x:false, flip_y:false });
 		}
 	}, [frame]);
+
+
+	useEffect(() => {
+		nextPreviewFrame();
+	}, [frameObj]);
+
+
+	useEffect(() => {
+		if (playing == true) {
+			nextPreviewFrame();
+		}
+	}, [playing]);
 
 
 	// ########################################################################
@@ -156,8 +169,12 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 		// update the underlying sprite map data.
 		const frameIndex = frames.indexOf(frame);
 		const newData = JSON.parse(JSON.stringify(data));
+
+		if (newFrame.delay < 10) newFrame.delay = 10;
+
 		newData.animations[groupIndex].frames[frameIndex] = newFrame;
 		setData(newData);
+		props.onSetData(JSON.stringify(newData, null, 2), true);
 		setFrameObj(newFrame);
 	}
 
@@ -168,16 +185,54 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 
 
 	const nextPreviewFrame = () => {
+		if (!frameObj) return;
+		if (!image.current) return;
+		if (!previewCanvas.current) return;
+
 		const _canvas = previewCanvas.current as HTMLCanvasElement;
-		if (_canvas) {
+		const p = (frameObj.coords ?? '0,0,0,0').split(',');
+		if (p.length > 3) {
+			const x = parseInt(p[0].trim());
+			const y = parseInt(p[1].trim());
+			const w = parseInt(p[2].trim());
+			const h = parseInt(p[3].trim());
+			if (w <= 0 || h <= 0) return;
+
 			const _ctx = _canvas.getContext("2d");
-			const _source = image.current;
-			console.log("Drawing", image, "onto", previewCanvas);
-			if (_source) {
-				_ctx.drawImage(_source, 0, 0, 25, 25, 0, 0, 25, 25);
+			_ctx.clearRect(0, 0, w, h);
+			_ctx.save();
+			_ctx.scale(
+				frameObj?.flip_x == true ? -1 : 1,
+				frameObj?.flip_y == true ? -1 : 1
+			);
+			const ww = frameObj?.flip_x == true ? w*-1 : w;
+			const hh = frameObj?.flip_y == true ? h*-1 : h;
+
+			_ctx.drawImage(image.current, x, y, w, h, 0, 0, ww, hh);
+			_ctx.restore();
+
+			if (playing && frames.length > 1) {
+				setTimeout(() => {
+					const _index = frames.indexOf(frame);
+					let _next_index = _index + 1;
+					if (_next_index == frames.length) _next_index = 0; 
+					setFrame(frames[_next_index]);
+				}, parseInt(frameObj?.delay) ?? 1000);
 			}
 		}
 	};
+
+
+	const pickImage = async () => {
+		props.onPickImage((res:any) => {
+			if (res !== null) {
+				const newData = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+				newData.image = res;
+				setData(newData);
+				props.onSetData(JSON.stringify(newData, null, 2), true);
+			}
+		});
+	}
 
 
 	// ########################################################################
@@ -207,7 +262,7 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 					const w = p[2].trim() + 'px';
 					const h = p[3].trim() + 'px';
 					const c_active = frameIndex == i ? 'is-active' : '';
-					result.push(<span className={classList([c_active])} key={`frame${i}`} style={{top:x, left:y, width:w, height:h}}></span>)
+					result.push(<span className={classList([c_active])} key={`frame${i}`} style={{left:x, top:y, width:w, height:h}}></span>)
 				}
 			}
 		}
@@ -223,9 +278,9 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 						<Button className="toolbar-button" disabled={!canZoomOut} onClick={() => updateZoom(zoom - 1)}><i className='icon-zoom-out'></i></Button>
 						<Button className="toolbar-button" disabled={!canZoomIn} onClick={() => updateZoom(zoom + 1)}><i className='icon-zoom-in'></i></Button>
 						<span className="toolbar-label">{`${zoom}x`}</span>
-						<Button className="toolbar-button" disabled={false} onClick={() => {}}><i className='icon-folder'></i></Button>
+						<Button className="toolbar-button" disabled={false} onClick={() => pickImage()}><i className='icon-folder'></i></Button>
 						<span className="toolbar-label" style={{fontWeight:'bold', paddingRight:0}}>Texture:</span>
-						<span className="toolbar-label">/assets/ZOMBIE_1.png</span>
+						<span className="toolbar-label">{data?.image ?? 'No image set.'}</span>
 					</div>
 					<div className="toolbar-group toolbar-end">
 						<ToggleButton className="toolbar-button" toggle={preview} onClick={() => setPreview(!preview)} />
@@ -263,6 +318,9 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 							<div className="buttons">
 								<Button className='button'>New</Button>
 								<Button className='button'><i className="icon-cancel" /></Button>
+								<span className="button-spacer" />
+								<Button className={classList(['button', playing ? '':'is-disabled'])} onClick={() => setPlaying(false)}><i className="icon-stop" /></Button>
+								<Button className={classList(['button', playing ? 'is-disabled':''])} onClick={() => setPlaying(true)}><i className="icon-play" /></Button>
 							</div>
 						</GroupBox>
 						<GroupBox header='Selected Frame'>
@@ -276,18 +334,18 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 								<div className='sprite-map-option'>
 									<span>Frame Time (ms)</span>
 									<div>
-										<input className="input" type="number" value={frameObj.delay} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:e.target.value, flip_x:frameObj.flip_x, flip_y:frameObj.flip_y })} />
+										<input className="input" type="number" value={frameObj.delay} min={10} max={9999} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:e.target.value, flip_x:frameObj.flip_x, flip_y:frameObj.flip_y })} />
 									</div>
 								</div>
 								<div className='sprite-map-option'>
 									<span>Features</span>
 									<div>
 										<label>
-											<input type="checkbox" checked={frameObj?.flip_x ?? false}  onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:e, flip_y:frameObj.flip_y })} />
+											<input type="checkbox" checked={frameObj?.flip_x ?? false} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:e.target.checked, flip_y:frameObj.flip_y })} />
 											<span>Flip X</span>
 										</label>
 										<label>
-										<input type="checkbox" checked={frameObj?.flip_y ?? false} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:frameObj.flip_x, flip_y:e })} />
+										<input type="checkbox" checked={frameObj?.flip_y ?? false} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:frameObj.flip_x, flip_y:e.target.checked })} />
 											<span>Flip Y</span>
 										</label>
 									</div>

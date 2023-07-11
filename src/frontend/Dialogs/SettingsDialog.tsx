@@ -101,7 +101,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 	
 
 	const resetTheme = async () => {
-		if (await window.api.showConfirm(t('are_you_sure'))) {
+		window.api.showConfirm(t('are_you_sure'), async (result:boolean) => {
 			const clone = JSON.parse(JSON.stringify(settings));
 			if (settings.editor.colorTheme == 'dark') {
 				const templateJson = await window.api.getDefaultThemeDark();
@@ -113,7 +113,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 			}
 			props.onSettingsChanged(clone);
 			await window.api.setSettings(clone);
-		}
+		});
 	};
 
 

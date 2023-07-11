@@ -653,6 +653,18 @@ html, body, #app, #app > div {
   }
 }
 /**
+ *
+ * Pick Image Dialog
+ *
+ */
+.pick-image-dialog .list-box {
+  margin: 20px 20px 0 0;
+}
+.pick-image-dialog .list-box select {
+  width: 100%;
+}
+
+/**
  * ----------------------------------------------------------------------------
  * Dialog Setting Styles
  * ----------------------------------------------------------------------------

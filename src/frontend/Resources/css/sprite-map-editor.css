@@ -65,9 +65,17 @@
     line-height: 25px;
     padding: 0 5px;
 }
+.group-box .button.is-disabled {
+	opacity: 0.4;
+	cursor: default;
+}
 .group-box .buttons {
 	position: relative;
+	display: flex;
    top: 10px;
+}
+.group-box .buttons .button-spacer {
+	flex-grow: 1;
 }
 .group-box .buttons .button + .button {
 	margin-left: 5px;
