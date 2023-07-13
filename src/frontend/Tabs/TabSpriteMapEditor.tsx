@@ -7,7 +7,7 @@ import GroupBox from '../Components/GroupBox';
 import SpriteMapViewport from '../Components/SpriteMapViewport';
 import ListBox from '../Components/ListBox';
 
-import '../Resources/css/sprite-map-editor.css';
+import './TabSpriteMapEditor.css';
 import { classList } from '../helpers';
 
 type ComponentProps = {

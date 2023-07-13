@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, CSSProperties } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
 import TabToolbar from '../Components/TabToolbar';
 import Button from '../Components/Button';
-
+import './TabImageViewer.css';
 
 type TabImageViewerProps = {
 	guid: string,
@@ -39,7 +39,7 @@ export default function TabCodeEditor(props: TabImageViewerProps) {
 	}, []);
 
 	const imageStyle = {} as CSSProperties;
-	imageStyle.transform = `translate(-30px, -30px) scale(${zoom})`;
+	imageStyle.transform = `translate(-40px, -30px) scale(${zoom})`;
 	imageStyle.transformOrigin = 'top left';
 	imageStyle.imageRendering = 'pixelated';
 

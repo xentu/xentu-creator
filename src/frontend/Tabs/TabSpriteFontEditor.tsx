@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
+import './TabSpriteFontEditor.css';
 
 type ComponentProps = {
 	guid: string,

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { SettingsContext } from '../Context/SettingsManager';
+import './TabLayoutEditor.css';
 
 type ComponentProps = {
 	guid: string,

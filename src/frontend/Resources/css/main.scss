@@ -57,6 +57,33 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 #menu-back-target { position: absolute; height: 100vh; width: 100%; z-index: 99999998; }
 
 
+/**
+ * ----------------------------------------------------------------------------
+ * Right Bar Container
+ * ----------------------------------------------------------------------------
+ */
+
+
+.right-bar-container {
+   display: flex; height: 100%;
+   div { flex: 1; }
+   aside {
+		width: 300px;
+		background-color: var(--sidebarBackground);
+		color: var(--sidebarText);
+		margin-top: -5px;
+		padding: 15px;
+		position: relative;
+		&:not([data-title='']):before {
+			content: attr(data-title);	position: absolute; display: inline-block;
+			background-color: var(--sidebarBackground); left: 0; top: -30px;
+			height: 30px; line-height: 30px; padding: 0 10px;
+			color: var(--sidebarText);
+		}
+   }
+}
+
+
 .menu-entry {
 	padding: 6px 16px 6px 24px;
 	&:hover { cursor:pointer; }
@@ -156,7 +183,11 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 // ---- Splitters ----
 
 #splitter { flex: 0 0 5px; margin-left: -5px; margin-top: 30px; cursor: ew-resize; }
+#splitter:hover { background:#a3a3a3bb!important; }
 #splitter2 { flex: 0 0 5px; cursor: ns-resize; border-top: 1px solid; z-index: 1; width: calc(100% - 14px); }
+#splitter2:hover { background:#a3a3a3bb!important; }
+#splitter3 { flex: 0 0 5px; margin-left: -5px; cursor: ew-resize; display: block; z-index: 8; margin-top: -5px; }
+#splitter3:hover { background:#a3a3a3bb!important; }
 .columns.is-tracking .column, .columns.is-tracking .column * { user-select: none!important; }
 .columns.is-tracking .tab-bodies * { pointer-events:none; }
 
@@ -456,48 +487,6 @@ input[type='text'].input, input[type='number'].input {
 	.context-menu { 
 		position: absolute; width: 200px; border: 1px solid; z-index: 9999999; border-radius: 0; padding: 5px 0;
 		hr { border-top: 1px solid; }
-	}
-}
-
-
-/**
- * ----------------------------------------------------------------------------
- * Image Viewer
- * ----------------------------------------------------------------------------
- **/
-
-
-.image-viewer {
-	position: absolute; left: 0; right: 0; bottom: 0; top: 0;
-	scrollbar-gutter: stable both-edges;
-	overflow-y: scroll; overflow-x: auto; padding: 30px;
-}
-
-
-/**
- * ----------------------------------------------------------------------------
- * Sprite Map Editor
- * ----------------------------------------------------------------------------
- **/
-
-
-.sprite-map-editor {
-	height: calc(100% - 90px); 
-	.sprite-map-viewport {
-		position: relative;
-		.sprite-map-viewport-inner {
-			position: absolute; left: 0; right: 0; bottom: 0; top: 0;
-			scrollbar-gutter: stable both-edges;
-			overflow-y: scroll; overflow-x: auto; padding: 30px;
-			div { display: inline-block; }
-			span {
-				position: absolute;
-				border: 1px solid #6e6e6e59;
-			}
-			span.is-active {
-				border: 1px solid #00ff067d;
-			} 
-		}
 	}
 }
 

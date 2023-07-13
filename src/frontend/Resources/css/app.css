@@ -150,6 +150,39 @@ html, body, #app, #app > div {
   z-index: 99999998;
 }
 
+/**
+ * ----------------------------------------------------------------------------
+ * Right Bar Container
+ * ----------------------------------------------------------------------------
+ */
+.right-bar-container {
+  display: flex;
+  height: 100%;
+}
+.right-bar-container div {
+  flex: 1;
+}
+.right-bar-container aside {
+  width: 300px;
+  background-color: var(--sidebarBackground);
+  color: var(--sidebarText);
+  margin-top: -5px;
+  padding: 15px;
+  position: relative;
+}
+.right-bar-container aside:not([data-title=""]):before {
+  content: attr(data-title);
+  position: absolute;
+  display: inline-block;
+  background-color: var(--sidebarBackground);
+  left: 0;
+  top: -30px;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+  color: var(--sidebarText);
+}
+
 .menu-entry {
   padding: 6px 16px 6px 24px;
 }
@@ -343,12 +376,33 @@ html, body, #app, #app > div {
   cursor: ew-resize;
 }
 
+#splitter:hover {
+  background: rgba(163, 163, 163, 0.7333333333) !important;
+}
+
 #splitter2 {
   flex: 0 0 5px;
   cursor: ns-resize;
   border-top: 1px solid;
   z-index: 1;
   width: calc(100% - 14px);
+}
+
+#splitter2:hover {
+  background: rgba(163, 163, 163, 0.7333333333) !important;
+}
+
+#splitter3 {
+  flex: 0 0 5px;
+  margin-left: -5px;
+  cursor: ew-resize;
+  display: block;
+  z-index: 8;
+  margin-top: -5px;
+}
+
+#splitter3:hover {
+  background: rgba(163, 163, 163, 0.7333333333) !important;
 }
 
 .columns.is-tracking .column, .columns.is-tracking .column * {
@@ -876,56 +930,6 @@ input[type=text].input, input[type=number].input {
 }
 .context-menu-container .context-menu hr {
   border-top: 1px solid;
-}
-
-/**
- * ----------------------------------------------------------------------------
- * Image Viewer
- * ----------------------------------------------------------------------------
- **/
-.image-viewer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  scrollbar-gutter: stable both-edges;
-  overflow-y: scroll;
-  overflow-x: auto;
-  padding: 30px;
-}
-
-/**
- * ----------------------------------------------------------------------------
- * Sprite Map Editor
- * ----------------------------------------------------------------------------
- **/
-.sprite-map-editor {
-  height: calc(100% - 90px);
-}
-.sprite-map-editor .sprite-map-viewport {
-  position: relative;
-}
-.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  scrollbar-gutter: stable both-edges;
-  overflow-y: scroll;
-  overflow-x: auto;
-  padding: 30px;
-}
-.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner div {
-  display: inline-block;
-}
-.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner span {
-  position: absolute;
-  border: 1px solid rgba(110, 110, 110, 0.3490196078);
-}
-.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner span.is-active {
-  border: 1px solid rgba(0, 255, 6, 0.4901960784);
 }
 
 /**

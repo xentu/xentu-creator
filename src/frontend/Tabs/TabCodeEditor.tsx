@@ -4,6 +4,7 @@ import { SettingsContext } from '../Context/SettingsManager';
 import TabToolbar from '../Components/TabToolbar';
 import Button from '../Components/Button';
 import { classList } from '../helpers';
+import './TabCodeEditor.css';
 
 
 type TabCodeEditorProps = {

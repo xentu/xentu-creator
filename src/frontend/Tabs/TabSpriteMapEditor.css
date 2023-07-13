@@ -1,3 +1,18 @@
+.sprite-map-editor {	height: calc(100% - 90px); }
+.sprite-map-editor .sprite-map-viewport {	position: relative; }
+
+.sprite-map-editor .sprite-map-viewport-inner {
+	position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+	scrollbar-gutter: stable both-edges;
+	overflow-y: scroll; overflow-x: auto; padding: 30px;
+	
+}
+.sprite-map-viewport-inner div { display: inline-block; }
+.sprite-map-viewport-inner span { position: absolute;	border: 1px solid #6e6e6e59; }
+.sprite-map-viewport-inner span.is-active { border: 1px solid #00ff067d; } 
+
+
+
 .sprite-map-editor {
 	height: calc(100% - 30px);
 	display: flex;
