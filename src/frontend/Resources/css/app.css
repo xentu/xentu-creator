@@ -203,6 +203,7 @@ html, body, #app, #app > div {
   display: block;
   height: 30px;
   user-select: none;
+  flex-shrink: 0;
   white-space: nowrap;
   overflow: auto;
   overflow-y: hidden;
@@ -883,7 +884,12 @@ input[type=text].input, input[type=number].input {
  * ----------------------------------------------------------------------------
  **/
 .image-viewer {
-  height: calc(100% - 30px);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  scrollbar-gutter: stable both-edges;
   overflow-y: scroll;
   overflow-x: auto;
   padding: 30px;
@@ -897,12 +903,22 @@ input[type=text].input, input[type=number].input {
 .sprite-map-editor {
   height: calc(100% - 90px);
 }
+.sprite-map-editor .sprite-map-viewport {
+  position: relative;
+}
 .sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner {
-  height: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  scrollbar-gutter: stable both-edges;
   overflow-y: scroll;
   overflow-x: auto;
   padding: 30px;
-  position: relative;
+}
+.sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner div {
+  display: inline-block;
 }
 .sprite-map-editor .sprite-map-viewport .sprite-map-viewport-inner span {
   position: absolute;

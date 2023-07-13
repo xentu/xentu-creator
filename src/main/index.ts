@@ -88,9 +88,11 @@ class XentuCreatorApp {
 		ipcMain.on('set-title', this.handleSetTitle);
 		ipcMain.on('show-alert', this.handleShowAlert);
 		ipcMain.handle('show-confirm', this.handleShowConfirm);
+		ipcMain.handle('show-prompt', this.handleShowPrompt);
 		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
 		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
 		ipcMain.handle('list-files', this.handleListFiles);
+		ipcMain.handle('list-images', this.handleListImages);
 		ipcMain.handle('open-file', this.handleOpenFile);
 		ipcMain.handle('create-game', this.handleCreateGame);
 		ipcMain.handle('create-file', this.handleCreateFile);
@@ -111,6 +113,7 @@ class XentuCreatorApp {
 		ipcMain.handle('import-theme', this.handleImportTheme);
 		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
 		ipcMain.handle('navigate-to', this.handleNavigateTo);
+		ipcMain.handle('pick-image', this.handlePickImage);
 	}
 
 
@@ -125,8 +128,8 @@ class XentuCreatorApp {
 	createWindow(): void {
 		// Create the browser window.
 		this.mainWindow = new BrowserWindow({
-			height: 680,
-			width: 1000,
+			height: 720,
+			width: 1100,
 			minWidth: 620,
 			minHeight: 430,
 			icon: path.join(__dirname, '/../renderer/images/xentu-icon.ico'),
@@ -253,13 +256,17 @@ class XentuCreatorApp {
 
 	async handleShowConfirm(event: any, message:string) {
 		myCreator.triggerAction('confirm', message);
-		/* const webContents = event.sender;
-		const win = BrowserWindow.fromWebContents(webContents);
-		const res = await dialog.showMessageBox(win, {
-			message: message,
-			buttons: ['OK', 'Cancel']
-		});
-		return res.response == 0; */
+	}
+
+
+	async handleShowPrompt(event: any, message:string, defaultValue:string) {
+		const data = JSON.stringify({ message:message, defaultValue:defaultValue });
+		myCreator.triggerAction('prompt', data);
+	}
+
+
+	async handlePickImage(event: any) {
+		myCreator.triggerAction('pick-image');
 	}
 
 
@@ -277,6 +284,35 @@ class XentuCreatorApp {
 					size: Number( fileStats.size / 1000 ).toFixed( 1 ), // kb
 			  };
 		});
+	}
+
+
+	handleListImages(event:any) {
+		return myCreator.scanForImages(myCreator.projectPath);
+	}
+
+
+	scanForImages(dir:string) {
+		var result = Array<string>();
+		const files = fs.readdirSync(dir);
+		for (const filename of files) {
+			const filePath = path.resolve( dir, filename );
+			const fileStats = fs.statSync( filePath );
+			if (fileStats.isDirectory()) {
+				for (const fileSub of myCreator.scanForImages(filePath)) {
+					result.push(fileSub);
+				}
+			}
+			else {
+				const ext = filename.split('.').pop().toLowerCase();
+				if (['jpg', 'png', 'gif'].includes(ext)) {
+					let p = filePath.substring(myCreator.projectPath.length);
+					p = (String.raw`${p}`).replace(/\\/g, "/");
+					result.push(p);
+				}
+			}
+		}
+		return result;
 	}
 
 

@@ -85,7 +85,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	.column {
 		display: flex; flex-direction: column; height: 100%;
 		.column-head {
-			display: block; height: 30px; user-select: none;
+			display: block; height: 30px; user-select: none; flex-shrink: 0;
 			white-space: nowrap; overflow: auto; overflow-y: hidden;
 
 			strong { font-size: 14px; }
@@ -468,7 +468,9 @@ input[type='text'].input, input[type='number'].input {
 
 
 .image-viewer {
-	height: calc(100% - 30px); overflow-y: scroll; overflow-x: auto; padding: 30px;
+	position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+	scrollbar-gutter: stable both-edges;
+	overflow-y: scroll; overflow-x: auto; padding: 30px;
 }
 
 
@@ -482,9 +484,12 @@ input[type='text'].input, input[type='number'].input {
 .sprite-map-editor {
 	height: calc(100% - 90px); 
 	.sprite-map-viewport {
+		position: relative;
 		.sprite-map-viewport-inner {
-			height: 100%; overflow-y: scroll; overflow-x: auto; padding: 30px;
-			position: relative;
+			position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+			scrollbar-gutter: stable both-edges;
+			overflow-y: scroll; overflow-x: auto; padding: 30px;
+			div { display: inline-block; }
 			span {
 				position: absolute;
 				border: 1px solid #6e6e6e59;

@@ -58,7 +58,9 @@ export default function TabCodeEditor(props: TabImageViewerProps) {
 					</div>
 				</TabToolbar>
 				<div className='image-viewer'>
-					<img src={data} style={imageStyle} />
+					<div>
+						<img src={data} style={imageStyle} />
+					</div>
 				</div>
 			</div>
 		</div>

@@ -31,6 +31,7 @@ import "./i18n";
 import PickImageDialog from './Dialogs/PickImageDialog';
 import AlertDialog from './Dialogs/AlertDialog';
 import ConfirmDialog from './Dialogs/ConfirmDialog';
+import PromptDialog from './Dialogs/PromptDialog';
 
 
 require('./window');
@@ -245,6 +246,13 @@ function App(props: appProps) {
 				break;
 			case 'confirm':
 				dispatchAppState({ type:'dialog2', value:'confirm', data:data });
+				break;
+			case 'prompt':
+				const pd = JSON.parse(data);
+				dispatchAppState({ type:'prompt', message:pd.message, defaultValue:pd.defaultValue });
+				break;
+			case 'pick-image':
+				dispatchAppState({ type:'pick-image', value:null });
 				break;
 		}	
 
@@ -806,11 +814,16 @@ function App(props: appProps) {
 		const result = [];
 		switch (appState.dialog2) {
 			case 'alert':
-				result.push(<AlertDialog key={'alert'} message={appState.dialog2data} onClose={() => dispatchAppState({ type:'dialog2', value:'' })} />);
+				result.push(<AlertDialog key={'alert'} message={appState.dialog2message} onClose={() => dispatchAppState({ type:'alert-finished', value:'' })} />);
 				break;
 			case 'confirm':
-				result.push(<ConfirmDialog key={'confirm'} message={appState.dialog2data} onClose={(r:any) => {
-					dispatchAppState({ type:'dialog2-finished', value:r });
+				result.push(<ConfirmDialog key={'confirm'} message={appState.dialog2message} onClose={(r:any) => {
+					dispatchAppState({ type:'confirm-finished', value:r });
+				}} />);
+				break;
+			case 'prompt':
+				result.push(<PromptDialog key={'prompt'} message={appState.dialog2message} defaultText={appState.dialog2default} onClose={(r:any) => {
+					dispatchAppState({ type:'prompt-finished', value:r });
 				}} />);
 				break;
 		}

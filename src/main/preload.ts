@@ -3,12 +3,15 @@
 
 
 const { contextBridge, ipcRenderer } = require('electron');
-var confirmCallback:Function = null;
+
+
+var dynamicCallback:Function = null;
 
 
 contextBridge.exposeInMainWorld('api', {
     setTitle: (title: string) => ipcRenderer.send('set-title', title),
     listFiles: (scanPath: string) => ipcRenderer.invoke('list-files', scanPath),
+    listImages: () => ipcRenderer.invoke('list-images'),
     openFile: (filePath: string) => ipcRenderer.invoke('open-file', filePath),
     createGame: (jsonConfig: string) => ipcRenderer.invoke('create-game', jsonConfig),
     createFile: (filePath: string, extension?:string) => ipcRenderer.invoke('create-file', filePath, extension),
@@ -30,7 +33,6 @@ contextBridge.exposeInMainWorld('api', {
     getDefaultThemeDark: () => ipcRenderer.invoke('get-default-theme-dark'),
     getDefaultThemeLight: () => ipcRenderer.invoke('get-default-theme-light'),
     navigateTo: (url:string) => ipcRenderer.invoke('navigate-to', url),
-
     exportTheme: () => ipcRenderer.invoke('export-theme'),
     importTheme: () => ipcRenderer.invoke('import-theme'),
 
@@ -97,19 +99,51 @@ contextBridge.exposeInMainWorld('api', {
     },
 
 
+    /* -- pick image functionality ----------------------------------------- */
+
+
+    pickImage: (cb:Function) => {
+        dynamicCallback = cb;
+        ipcRenderer.invoke('pick-image');
+    },
+
+
+    finishPickImage: (result:string) => {
+        if (dynamicCallback != null) {
+            dynamicCallback(result);
+            dynamicCallback = null;
+        }
+    },
+
+
     /* -- confirm functionality -------------------------------------------- */
 
 
     showConfirm: (message:string, cb:Function) => {
-        confirmCallback = cb;
+        dynamicCallback = cb;
         ipcRenderer.invoke('show-confirm', message);
     },
 
     finishConfirm: (result:boolean) => {
-        if (confirmCallback != null) {
-            confirmCallback(result);
-            confirmCallback = null;
+        if (dynamicCallback != null) {
+            dynamicCallback(result);
+            dynamicCallback = null;
         }
-    }
+    },
+
+
+    /* -- prompt functionality --------------------------------------------- */
+
+    showPrompt: (message:string, defaultValue:string, cb:Function) => {
+        dynamicCallback = cb;
+        ipcRenderer.invoke('show-prompt', message, defaultValue);
+    },
+
+    finishPrompt: (result:string) => {
+        if (dynamicCallback != null) {
+            dynamicCallback(result);
+            dynamicCallback = null;
+        }
+    },
     
 });

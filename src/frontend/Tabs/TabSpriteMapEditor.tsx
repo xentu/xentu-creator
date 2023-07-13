@@ -35,6 +35,21 @@ type FrameType = {
 };
 
 
+const animationTemplate = () => {
+	return {
+		name: 'Untitled',
+		frames: [
+			{
+				coords: '0,0,0,0',
+				delay: '100',
+				flip_x: false,
+				flip_y: false
+			} as FrameType
+		]
+	} as AnimationType;
+}
+
+
 export default function TabSpriteMapEditor(props: ComponentProps) {
 	const [data, setData] = useState(null as SpriteMapType); // the loaded sprite map data.
 	const [imageData, setImageData] = useState(''); // image data for the main display.
@@ -44,11 +59,14 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 	const [groupIndex, setGroupIndex] = useState(-1); // the array index of the selected group.
 	const [frames, setFrames] = useState([]); // list of frame labels to display.
 	const [frame, setFrame] = useState(''); // the selected frame label.
-	const [frameObj, setFrameObj] = useState({ delay:'', coords:'', flip_x:false, flip_y:false } as FrameType); // info about the selected frame.
+	const [frameObj, setFrameObj] = useState(null); // info about the selected frame.
+	const [frameObjEnabled, setFrameObjEnabled] = useState(false); // set to false to disable.
 	const [aniObj, setAniObj] = useState(null as AnimationType); // info about the selected group/animation.
 	const [preview, setPreview] = useState(false); // weather or not to show the preview screen.
 	const [zoom, setZoom] = useState(1); // the zoom factor.
 	const [playing, setPlaying] = useState(false);
+	const [frameWidth, setFrameWidth] = useState('25');
+	const [frameHeight, setFrameHeight] = useState('25');
 	const settings = useContext(SettingsContext); // app settings context.
 	const image = useRef(null);
 	const previewCanvas = useRef(null);
@@ -63,20 +81,15 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 		const fetchData = async(thePath:string) => {
 			const theJSON = await window.api.openFile(thePath);
 			const theResponse = JSON.parse(theJSON);
-			const data = JSON.parse(theResponse.data);
+			let data = theResponse.data == '' ? '' : JSON.parse(theResponse.data);
+
+			// make sure the format is correct from the start.
+			if (typeof data !== 'object') data = { image:'', animations: [] };
+			if (!data.hasOwnProperty('image')) data.image = null;
+			if (!data.hasOwnProperty('animations')) data.animations = [];
+
 			setData(data);
-			if (data.animations[0]) {
-				// build the group list.
-				if (data && data.animations != null) {
-					const _groups = new Array<string>();
-					data.animations.forEach((t:any) => {
-						_groups.push(t.name);
-					});
-					setGroups(_groups);
-				}
-				// finally choose the first group.
-				setGroup(data.animations[0].name);
-			}
+			
 			props.labelChanged(theResponse.label);
 			props.onSetData(theResponse.data, false);
 		};
@@ -87,6 +100,21 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 	useEffect(() => {
 		if (data) {
 			loadImage();
+			if (data.animations[0]) {
+				// build the group list.
+				if (data && data.animations != null) {
+					const _groups = new Array<string>();
+					data.animations.forEach((t:any) => {
+						_groups.push(t.name);
+					});
+					setGroups(_groups);
+				}
+				// finally choose the first group.
+				//setGroup(data.animations[0].name);
+			}
+			else {
+				setGroups([]);
+			}
 		}
 	}, [data]);
 
@@ -104,8 +132,8 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 			setAniObj(_group);
 			setGroupIndex(_groupIndex);
 			setFrames(_frames);
-			setFrame('Frame 2');
-			setTimeout(() => setFrame('Frame 1'), 1);
+			setFrame('');
+			//setTimeout(() => setFrame('Frame 1'), 1);
 		}
 	}, [group]);
 
@@ -116,16 +144,27 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 			const _group = findGroup(group);
 			if (_group && _group.frames) {
 				const _frame = _group.frames[frameIndex];
-				setFrameObj({
-					coords: _frame.coords,
-					delay: _frame.delay,
-					flip_x: _frame.flip_x,
-					flip_y: _frame.flip_y
-				});
+				if (_frame) {
+					setFrameObj({
+						coords: _frame.coords,
+						delay: _frame.delay,
+						flip_x: _frame.flip_x,
+						flip_y: _frame.flip_y
+					});
+					setFrameObjEnabled(true);
+
+					const p = (_frame.coords ?? '0,0,0,0').split(',');
+					if (p.length > 3) {
+						setFrameWidth(p[2].trim());
+						setFrameHeight(p[3].trim());
+					}
+
+				}
 			}
 		}
 		else {
 			setFrameObj({ coords:'', delay:'', flip_x:false, flip_y:false });
+			setFrameObjEnabled(false);
 		}
 	}, [frame]);
 
@@ -137,6 +176,7 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 
 	useEffect(() => {
 		if (playing == true) {
+			if (frame == '' && frames.length > 0) setFrame('Frame 1');
 			nextPreviewFrame();
 		}
 	}, [playing]);
@@ -148,6 +188,7 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 
 
 	const loadImage = async () => {
+		if (data.image.length == 0) return;
 		const theJSON = await window.api.openImage(data.image, true);
 		const theResponse = JSON.parse(theJSON);
 		setImageData(theResponse.data);
@@ -176,6 +217,8 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 		setData(newData);
 		props.onSetData(JSON.stringify(newData, null, 2), true);
 		setFrameObj(newFrame);
+		setFrameObjEnabled(true);
+		setAniObj(newData.animations[groupIndex]);
 	}
 
 
@@ -224,14 +267,122 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 
 
 	const pickImage = async () => {
-		props.onPickImage((res:any) => {
+		window.api.pickImage((res:any) => {
 			if (res !== null) {
-				const newData = JSON.parse(JSON.stringify(data)) as SpriteMapType;
-				newData.image = res;
-				setData(newData);
-				props.onSetData(JSON.stringify(newData, null, 2), true);
+				// timeout fixes a bad set state error for occurring.
+				setTimeout(() => {
+					const newData = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+					newData.image = res;
+					setData(newData);
+					props.onSetData(JSON.stringify(newData, null, 2), true);
+				}, 30);
 			}
 		});
+	}
+
+
+	const addAnimation = () => {
+		const clone = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+		const _ani = animationTemplate();
+		_ani.name = `Animation_${data.animations.length}`;
+		clone.animations.push(_ani);
+		setData(clone);
+	}
+
+
+	const cloneAnimation = () => {
+		const clone = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+		const aniClone = JSON.parse(JSON.stringify(clone.animations[groupIndex])) as AnimationType;
+		let _name_c = data.animations.length;
+		let _name = `Animation_${_name_c}`;
+
+		while (findGroup(_name) !== null) {
+			_name_c++;
+			_name = `Animation_${_name_c}`;
+		}
+
+		aniClone.name = _name;
+		clone.animations.push(aniClone);
+
+		setData(clone);
+		setGroup('');
+		setFrame('');
+		//setTimeout(() => setGroup(data.animations.at(-1).name), 100);
+	};
+
+
+	const renameAnimation = () => {
+		const oldName = data.animations[groupIndex].name;
+		window.api.showPrompt('Choose a new group name', oldName, async (result:string) => {
+			if (result !== null) {
+				const clone = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+				clone.animations[groupIndex].name = result;
+				setTimeout(() => {
+					setData(clone);
+					setGroup(result);
+				}, 10);
+			}
+		});
+	};
+
+
+	const removeAnimation = () => {
+		const clone = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+		if (clone.animations.length == 1) {
+			clone.animations = [];
+		}
+		else if (clone.animations.length > 1) {
+			clone.animations.splice(groupIndex, 1);
+		}
+
+		setData(clone);
+		setGroup('');
+		setFrames([]);
+		setFrame('');
+	};
+
+
+	const addFrame = () => {
+		const _clone = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+		const _frame = {
+			coords: '0,0,0,0',
+			delay: '100',
+			flip_x: false,
+			flip_y: false
+		} as FrameType;
+		_clone.animations[groupIndex].frames.push(_frame);
+		setData(_clone);
+		refreshFrames(_clone.animations[groupIndex]);
+	};
+
+
+	const removeFrame = () => {
+		const _clone = JSON.parse(JSON.stringify(data)) as SpriteMapType;
+		const _frameIndex = frames.indexOf(frame);
+		const _len = _clone.animations[groupIndex].frames.length;
+
+		if (_len == 1) {
+			_clone.animations[groupIndex].frames = [];
+		}
+		else if (_len > 1) {
+			_clone.animations[groupIndex].frames.splice(_frameIndex, 1);
+		}
+		
+		setData(_clone);
+		refreshFrames(_clone.animations[groupIndex]);
+		setFrame('');
+	};
+
+
+	const refreshFrames = (grp:AnimationType) => {
+		const _frames = new Array<string>();
+		if (grp) {
+			for (var i=0; i<grp.frames.length; i++) {
+				_frames.push(`Frame ${i+1}`);
+			}
+		}
+		setFrames(_frames);
+		setAniObj(grp);
 	}
 
 
@@ -241,7 +392,8 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 
 
 	const imageStyle = {} as CSSProperties;
-	imageStyle.transform = `translate(-30px, -30px) scale(${zoom})`;
+	imageStyle.transform = `translate(-40px, -30px) scale(${zoom})`;
+	imageStyle.marginBottom = '30px';
 	imageStyle.transformOrigin = 'top left';
 	imageStyle.imageRendering = 'pixelated';
 
@@ -297,8 +449,8 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 						</div>
 						
 						<div className='sprite-map-viewport-inner' style={{display:preview?'block':'none'}}>
-							<div style={imageStyle}>
-								<canvas ref={previewCanvas} width={25} height={25} />
+							<div>
+								<canvas ref={previewCanvas} style={imageStyle} width={frameWidth} height={frameHeight} />
 							</div>
 						</div>
 
@@ -307,17 +459,17 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 						<GroupBox header='Sprite Groups'>
 							<ListBox items={groups} value={group} onSelect={setGroup} />
 							<div className="buttons">
-								<Button className='button'>New</Button>
-								<Button className='button'>Copy</Button>
-								<Button className='button'>Rename</Button>
-								<Button className='button'><i className="icon-cancel" /></Button>
+								<Button className='button' onClick={() => addAnimation()}>New</Button>
+								<Button className='button' onClick={() => cloneAnimation()}>Copy</Button>
+								<Button className='button' onClick={() => renameAnimation()}>Rename</Button>
+								<Button className='button' onClick={() => removeAnimation()}><i className="icon-cancel" /></Button>
 							</div>
 						</GroupBox>
 						<GroupBox header='Frames'>
 							<ListBox items={frames} value={frame} onSelect={setFrame} />
 							<div className="buttons">
-								<Button className='button'>New</Button>
-								<Button className='button'><i className="icon-cancel" /></Button>
+								<Button className='button' onClick={() => addFrame()}>New</Button>
+								<Button className='button' onClick={() => removeFrame()}><i className="icon-cancel" /></Button>
 								<span className="button-spacer" />
 								<Button className={classList(['button', playing ? '':'is-disabled'])} onClick={() => setPlaying(false)}><i className="icon-stop" /></Button>
 								<Button className={classList(['button', playing ? 'is-disabled':''])} onClick={() => setPlaying(true)}><i className="icon-play" /></Button>
@@ -328,24 +480,24 @@ export default function TabSpriteMapEditor(props: ComponentProps) {
 								<div className='sprite-map-option'>
 									<span>Coords (x,y,w,h)</span>
 									<div>
-										<input className="input" type="text" value={frameObj.coords} onChange={(e:any) => updateFrame({ coords:e.target.value, delay:frameObj.delay, flip_x:frameObj.flip_x, flip_y:frameObj.flip_y })} />
+										<input disabled={!frameObjEnabled} className="input" type="text" value={frameObj?.coords??''} onChange={(e:any) => updateFrame({ coords:e.target.value, delay:frameObj.delay, flip_x:frameObj.flip_x, flip_y:frameObj.flip_y })} />
 									</div>
 								</div>
 								<div className='sprite-map-option'>
 									<span>Frame Time (ms)</span>
 									<div>
-										<input className="input" type="number" value={frameObj.delay} min={10} max={9999} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:e.target.value, flip_x:frameObj.flip_x, flip_y:frameObj.flip_y })} />
+										<input disabled={!frameObjEnabled} className="input" type="number" value={frameObj?.delay??''} min={10} max={9999} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:e.target.value, flip_x:frameObj.flip_x, flip_y:frameObj.flip_y })} />
 									</div>
 								</div>
 								<div className='sprite-map-option'>
 									<span>Features</span>
 									<div>
 										<label>
-											<input type="checkbox" checked={frameObj?.flip_x ?? false} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:e.target.checked, flip_y:frameObj.flip_y })} />
+											<input disabled={!frameObjEnabled} type="checkbox" checked={frameObj?.flip_x ?? false} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:e.target.checked, flip_y:frameObj.flip_y })} />
 											<span>Flip X</span>
 										</label>
 										<label>
-										<input type="checkbox" checked={frameObj?.flip_y ?? false} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:frameObj.flip_x, flip_y:e.target.checked })} />
+										<input disabled={!frameObjEnabled} type="checkbox" checked={frameObj?.flip_y ?? false} onChange={(e:any) => updateFrame({ coords:frameObj.coords, delay:frameObj.delay, flip_x:frameObj.flip_x, flip_y:e.target.checked })} />
 											<span>Flip Y</span>
 										</label>
 									</div>

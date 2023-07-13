@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Dictionary from '../../main/classes/Dictionary';
 import SettingButtons from '../Components/Settings/SettingButtons';
 import { useTranslation } from "react-i18next";
@@ -11,12 +11,22 @@ type ComponentProps = {
 
 
 export default function PickImageDialog(props: ComponentProps) {
-	const [file, setFile] = useState('/assets/ZOMBIE_1.png');
+	const [files, setFiles] = useState([]);
+	const [file, setFile] = useState('');
 	const { i18n, t } = useTranslation();
 
-	const possibles = new Array<string>();
-	possibles.push('/assets/ZOMBIE_1.png');
-	possibles.push('/assets/ZOMBIE_2.png');
+	useEffect(() => {
+		const fetchFiles = async (cb:Function) => {
+			const images = await window.api.listImages();
+			cb(images);
+		};
+		fetchFiles((images:any) => {
+			setFiles(images);
+			if (images && images.length > 0) {
+				setTimeout(() => setFile(images[0]), 50);
+			}
+		});
+	}, []);
 
 	const onSubmit = () => {
 		props.onClose(file);
@@ -30,7 +40,7 @@ export default function PickImageDialog(props: ComponentProps) {
 						
 						<h2>Pick Image Source</h2>
 
-						<ListBox items={possibles} value={file} onSelect={setFile} />
+						<ListBox items={files} value={file} onSelect={setFile} />
 
 						<SettingButtons onSubmit={onSubmit} onCancel={() => props.onClose(null)} />
 

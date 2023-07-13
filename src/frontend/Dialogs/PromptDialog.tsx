@@ -4,24 +4,26 @@ import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
 	message: string,
+	defaultText: string,
 	onClose: Function
 }
 
 
-export default function ConfirmDialog(props: ComponentProps) {
+export default function PromptDialog(props: ComponentProps) {
+	const [data, setData] = useState(props.defaultText);
 	const { i18n, t } = useTranslation();
-
-	const onSubmit = () => {
-		props.onClose(true);
-	};
 	
 	return (
-		<div className={'dialog pick-image-dialog'}>
+		<div className={'dialog pick-image-dialog prompt-dialog'}>
 			<div className={`settings-dialog`} style={{width:'400px'}}>
 				<div className="dialog-main">
 					<div className="dialog-page" style={{display:'block', height:'100%'}}>
 						
-						<div style={{padding: '20px 0'}}>{props.message}</div>
+						<div style={{padding: '0 0 20px 0'}}>{props.message}</div>
+
+						<input className="input" type="text" value={data}
+								 style={{margin: '20px 0',	width: 'calc(100% - 40px)'}}
+								 onChange={(e:any) => setData(e.target.value)} />
 
 						<div className="setting setting-buttons">
 							<div className="setting-left">
@@ -30,8 +32,8 @@ export default function ConfirmDialog(props: ComponentProps) {
 							</div>
 							<div className="setting-right">
 								<div className="buttons">
-									<a className="button primary" onClick={() => props.onClose(true)}>OK</a>
-									<a className="button" onClick={() => props.onClose(false)}>Cancel</a>
+									<a className="button primary" onClick={() => props.onClose(data)}>OK</a>
+									<a className="button" onClick={() => props.onClose(null)}>Cancel</a>
 								</div>
 							</div>
 						</div>

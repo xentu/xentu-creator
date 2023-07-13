@@ -2,8 +2,6 @@ type DialogContextType = {
 	callback?: Function
 };
 
-const dialogContext = { callback: null } as DialogContextType;
-
 
 function _handleStateReducerField(clone:any, action:any) {
 	switch (action.type) {
@@ -28,18 +26,29 @@ function _handleStateReducerField(clone:any, action:any) {
 
 		case 'pick-image': 
 			clone.dialog = 'pick-image';
-			dialogContext.callback = action.value;
+			//dialogContext.callback = action.value;
 			return true;
 		case 'pick-image-finished':
 			clone.dialog = '';
-			dialogContext.callback(action.value);
-			dialogContext.callback = null;
+			window.api.finishPickImage(action.value);
+			//dialogContext.callback(action.value);
+			//dialogContext.callback = null;
 			return true;
+
 		case 'dialog2':
 			clone.dialog2 = action.value;
-			clone.dialog2data = action?.data;
+			clone.dialog2message = action?.data;
 			return true;
-		case 'dialog2-finished':
+
+		case 'prompt':
+			clone.dialog2 = 'prompt';
+			clone.dialog2message = action?.message;
+			clone.dialog2default = action?.defaultValue;
+			return true;
+			
+		case 'alert-finished':
+		case 'confirm-finished':
+		case 'prompt-finished':
 			clone.dialog2 = '';
 			window.api.finishConfirm(action.value);
 			return true;
@@ -78,7 +87,8 @@ export const appStateDefault = {
 	sidebarWidth: 240,		// the width of the left sidebar.
 	dialog: '',					// the key of the dialog to show.
 	dialog2: '',				// the key of the 2nd level dialog to show.
-	dialog2data: '',			// an argument passed to the 2nd level dialog.
+	dialog2message: '',		// an argument passed to the 2nd level dialog.
+	dialog2default: '',		// default prompt value for 2nd level dialog.
 	focusPath: '',    		// the path highlighted when a context menu appears.
 	selectedPath: '',			// the path of the selected file or directory.
 	projectPath: '',			// the project path.
