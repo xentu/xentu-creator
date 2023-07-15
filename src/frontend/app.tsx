@@ -936,9 +936,9 @@ function App(props: appProps) {
 										{renderTabBodies()}
 									</div>
 									<div id="splitter2" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter2' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
-									<div id="console" style={{ flexBasis: appState.consoleHeight + 'px', display: appState.showConsole ? 'block' : 'none' }}>
+									<div id="console" style={{ flexBasis: appState.consoleHeight + 'px', display: appState.showConsole ? 'block' : 'none', overflow: 'hidden' }}>
 										<XTerm ref={xtermRef} options={{ 
-											rows: 8, 
+											rows: appState.terminalRows,
 											allowTransparency: true,
 											fontFamily: 'Consolas, "Courier New", monospace',
 											fontSize: settings?.editor?.fontSize ?? 14

@@ -15,7 +15,11 @@ function _handleStateReducerField(clone:any, action:any) {
 		case 'is-debugging': clone.isDebugging = action.value; return true;
 		case 'can-save': clone.canSave = action.value; return true;
 
-		case 'console-height': clone.consoleHeight = action.value; return true;
+		case 'console-height': 
+			clone.consoleHeight = action.value;
+			clone.terminalRows = Math.round(action.value / 15) - 2;
+			window.xterm.resize(window.xterm.cols, clone.terminalRows);
+			return true;
 		case 'sidebar-width': clone.sidebarWidth = action.value; return true;
 		case 'dialog': clone.dialog = action.value; return true;
 		case 'focus-path': clone.focusPath = action.value; return true;
@@ -84,6 +88,7 @@ export const appStateDefault = {
 	isDebugging: false,		// true when the game is running.
 	canSave: false,			// weather or not a file can be saved.
 	consoleHeight: 150,		// the height of the terminal.
+	terminalRows: 8,        // the height of the terminal in rows (usually height / 20)
 	sidebarWidth: 240,		// the width of the left sidebar.
 	dialog: '',					// the key of the dialog to show.
 	dialog2: '',				// the key of the 2nd level dialog to show.

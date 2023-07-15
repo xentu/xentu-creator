@@ -45,11 +45,11 @@ export default function NewFileDialog(props: ComponentProps) {
 	codeTypes.add('code_py', `${codeLabel} (Python)`);
 	codeTypes.add('code_lua', `${codeLabel} (Lua)`);
 	codeTypes.add('conversation', t('_filetype_label_conversation'));
-	codeTypes.add('layout', t('_filetype_label_layout'));
-	codeTypes.add('graphic', t('_filetype_label_graphic'));
+	//codeTypes.add('layout', t('_filetype_label_layout'));
+	//codeTypes.add('graphic', t('_filetype_label_graphic'));
 	codeTypes.add('sprite_map', t('_filetype_label_sprite_map'));
-	codeTypes.add('sprite_font', t('_filetype_label_sprite_font'));
-	codeTypes.add('database', t('_filetype_label_database'));
+	//codeTypes.add('sprite_font', t('_filetype_label_sprite_font'));
+	//codeTypes.add('database', t('_filetype_label_database'));
 	codeTypes.add('folder', t('folder'));
 	
 	var rootLabel = props.selectedFolder == props.projectFolder ? '/' : props.selectedFolder.substring(props.projectFolder.length);
