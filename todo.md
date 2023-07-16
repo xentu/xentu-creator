@@ -6,7 +6,7 @@
 - [routine] Make toolbar buttons work for the editors that exist. (done)
 - [feature] Add auto-complete and code hints for the xentu API, so that its easier to write code. (done)
 - [routine] Make the help and resources links go somewhere. (done)
-- [feature] Create sprite map editor. (in progress)
+- [feature] Create sprite map editor. (done)
 
 
 # Later Date
