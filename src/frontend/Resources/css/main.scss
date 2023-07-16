@@ -233,7 +233,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	
    /* border-radius: 4px; */
 	& + div { margin-top: 31px; }
-	& + section { margin-top: 31px; max-height: calc(100% - 31px)!important; position: absolute!important; }
+	& + section { margin-top: 30px; max-height: calc(100% - 30px)!important; position: absolute!important; }
 	&, & * { user-select: none; }
 	.toolbar-fill { flex-grow: 1;	}
 	.toolbar-end { padding-right: 5px; }

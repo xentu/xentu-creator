@@ -463,8 +463,8 @@ html, body, #app, #app > div {
   margin-top: 31px;
 }
 .toolbar + section {
-  margin-top: 31px;
-  max-height: calc(100% - 31px) !important;
+  margin-top: 30px;
+  max-height: calc(100% - 30px) !important;
   position: absolute !important;
 }
 .toolbar, .toolbar * {
