@@ -11,7 +11,7 @@
 
 # Later Date
 
-- [feature] Create the Conversation Editor (like Sutori Studio, make more streamline).
+- [feature] Create the Conversation Editor (like Sutori Studio, make more streamline) (pending...).
 - [feature] Create the Layout Editor (basic scene graph, selection tool, property editor etc...).
 - [feature] Create the graphic file editor.
 - [feature] Create the sprite font file editor (See https://kodaloid.com/tools/sprite-font-generator/)
