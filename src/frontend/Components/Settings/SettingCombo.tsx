@@ -13,7 +13,8 @@ type ComponentProps = {
 	options: Dictionary<string>,
 	stack?: boolean,
 	collapsible?: boolean,
-	width?: string
+	width?: string,
+	disabled?: boolean
 }
 
 
@@ -42,7 +43,7 @@ export default function SettingCombo(props: ComponentProps) {
 				<small>{props.description}</small>
 			</div>
 			<div className="setting-right">
-				<select style={style} key={props.slug} onChange={(e:any) => { props.setValue(e.target.value) }} value={props.value} title={props.tooltip}>
+				<select style={style} key={props.slug} disabled={props.disabled??false} onChange={(e:any) => { props.setValue(e.target.value) }} value={props.value} title={props.tooltip}>
 					{renderOptions()}
 				</select>
 			</div>

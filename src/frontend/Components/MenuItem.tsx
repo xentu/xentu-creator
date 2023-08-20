@@ -2,6 +2,7 @@ type MenuItemProps = {
 	label: string,
 	disabled?: boolean,
 	active: boolean,
+	hoverIndex?: number,
 	click?: Function,
 	children?: string | JSX.Element | JSX.Element[]
 }
@@ -21,7 +22,7 @@ export default function MenuItem(props: MenuItemProps) {
 	const c_active = props.active && !props.disabled ? 'is-active' : '';
 	const c_disabled = props.disabled ? 'is-disabled' : '';
 	return (
-		<div className={["menu-item", c_active, c_disabled].join(' ')}>
+		<div className={["menu-item", c_active, c_disabled].join(' ').trim()} data-index={props.hoverIndex ?? -1}>
 			<a className="menu-label" onClick={(e) => props.click(e)}>{props.label}</a>
 			<div className="menu-sub">{props.children}</div>
 		</div>

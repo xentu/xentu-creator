@@ -14,9 +14,9 @@ type NewGameDialogProps = {
 
 
 const codeLanguages = new Dictionary<string>();
-codeLanguages.add('js', 'JavaScript');
 codeLanguages.add('lua', 'Lua');
 codeLanguages.add('py', 'Python');
+codeLanguages.add('js', 'JavaScript');
 
 
 
@@ -24,7 +24,7 @@ codeLanguages.add('py', 'Python');
 
 class ConfPreset {
 	title: string = "Untitled";
-	language: string = "js";
+	language: string = "lua";
 	template: string = '';
 	vp_width: number = 800;
 	vp_height: number = 600;
@@ -119,7 +119,7 @@ export default function NewGameDialog(props: NewGameDialogProps) {
 										setValue={(v:string) => {updateSetting('language', v)}} />
 
 						<SettingCombo slug='gameTemplate' key={'gameTemplate'} title={t('game_template')}
-										description={t('_new_game_template_desc')}
+										description={t('_new_game_template_desc')} disabled={true}
 										options={gameTemplates} value={conf.template}
 										setValue={(v:string) => {updateSetting('template', v)}} />
 

@@ -118,10 +118,10 @@ html, body, #app, #app > div {
 #main-menu .menu-item:not(.is-disabled) .menu-label:hover {
   cursor: pointer;
 }
-#main-menu .menu-item.is-active {
+#main-menu .menu-item.is-active:not(.is-disabled) {
   position: relative;
 }
-#main-menu .menu-item.is-active > .menu-sub {
+#main-menu .menu-item.is-active:not(.is-disabled) > .menu-sub {
   position: absolute;
   display: flex;
   min-width: 210px;
@@ -130,7 +130,7 @@ html, body, #app, #app > div {
   border-radius: 0 0 5px 5px;
   padding: 5px 0;
 }
-#main-menu .menu-item.is-active .menu-sub hr {
+#main-menu .menu-item .menu-sub hr {
   height: 1px;
   border: 0;
   width: 100%;
@@ -665,8 +665,7 @@ html, body, #app, #app > div {
   border-radius: 5px;
 }
 .dialog-container .dialog > div .dialog-main .dialog-page {
-  padding: 20px 0 0 20px;
-  height: calc(100% - 20px);
+  padding: 20px 0 0 20px; /* height: calc(100% - 20px); */
   overflow-y: auto;
 }
 .dialog-container .dialog > div .dialog-main .dialog-page > .setting:first-of-type {

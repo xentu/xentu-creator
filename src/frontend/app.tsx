@@ -4,7 +4,7 @@ import ContextMenu from './Components/ContextMenu';
 import DialogContainer from "./Components/DialogContainer";
 import FileExplorer from "./Components/Sidebar/FileExplorer";
 import GamePropertiesDialog from './Dialogs/GamePropertiesDialog';
-import MainMenu from './Components/MainMenu';
+import NewMainMenu from './Components/NewMainMenu';
 import NewGameDialog from './Dialogs/NewGameDialog';
 import NewFileDialog from './Dialogs/NewFileDialog';
 import OpenTab, { OpenTabType } from "./Classes/OpenTab";
@@ -894,7 +894,7 @@ function App(props: appProps) {
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
 
-					<MainMenu enabled={!appState.isWelcomeVisible} canSave={appState.canSave} showSidebar={appState.showSidebar} 
+					<NewMainMenu enabled={!appState.isWelcomeVisible} canSave={appState.canSave} showSidebar={appState.showSidebar} 
 								 showStatus={appState.showStatusBar} showConsole={appState.showConsole} showThemeEditor={appState.showThemeEditor}
 								 debugging={appState.isDebugging} />
 

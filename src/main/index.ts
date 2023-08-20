@@ -143,7 +143,7 @@ class XentuCreatorApp {
 		this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 		
 		//setMenuDisabled(true);
-		//this.mainWindow.webContents.openDevTools();
+		this.mainWindow.webContents.openDevTools();
 	}
 
 
