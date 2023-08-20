@@ -55,8 +55,14 @@ html, body, #app, #app > div { color: var(--mainText); }
 		.menu-label { background-color: var(--mainBackground); color: var(--mainText); }
 	}
 }
-.menu-entry:not(.is-disabled):hover { background: var(--activeBackground); }
+//.menu-entry:not(.is-disabled):hover { background: var(--activeBackground); }
 
+%hoverDark { background: var(--activeBackground); }
+@for $i from 0 through 20 {
+	.menu-item[data-index="#{$i}"] > .menu-sub > .menu-entry:nth-of-type(#{$i+1}) {
+		@extend %hoverDark;
+	}
+}
 
 
 .columns .column .column-head {
@@ -192,7 +198,18 @@ input[type='text'].input:focus, input[type='number'].input:focus, select:focus {
 .theme-is-light #main-menu .menu-item:not(.is-disabled) .menu-label:hover { cursor:pointer; background: var(--mainBackgroundSemiDark); }
 .theme-is-light #main-menu .menu-item.is-active > .menu-label { background: var(--mainBackgroundDark); }
 .theme-is-light #main-menu .menu-item.is-active > .menu-sub { background: var(--menu-light-sub-bg); color: var(--menu-light-text); box-shadow: 1px 1px 5px #8f8f8f30; }
-.theme-is-light .menu-entry:hover { background: var(--accent); color: var(--menu-light-item-hover); }
+
+
+/* here */
+/* .theme-is-light .menu-entry:hover { background: var(--accent); color: var(--menu-light-item-hover); } */
+%hoverLite { background: var(--accent); color: var(--menu-light-item-hover); }
+@for $i from 0 through 20 {
+	.theme-is-light .menu-item[data-index="#{$i}"] > .menu-sub > .menu-entry:nth-of-type(#{$i+1}) {
+		@extend %hoverLite;
+	}
+}
+
+
 .theme-is-light #main-menu .menu-item.is-active .menu-sub hr { border-top: 1px solid #8f8f8f59; }
 .theme-is-light .style-editor { background: var(--mainBackground); border-color: var(--mainBackgroundSemiDark); color: var(--mainText) }
 .theme-is-light .style-editor h4 { background: var(--mainBackground); }

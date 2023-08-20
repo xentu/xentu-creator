@@ -1056,7 +1056,7 @@ html, body, #app, #app > div {
   color: var(--mainText);
 }
 
-.menu-entry:not(.is-disabled):hover {
+.menu-item[data-index="20"] > .menu-sub > .menu-entry:nth-of-type(21), .menu-item[data-index="19"] > .menu-sub > .menu-entry:nth-of-type(20), .menu-item[data-index="18"] > .menu-sub > .menu-entry:nth-of-type(19), .menu-item[data-index="17"] > .menu-sub > .menu-entry:nth-of-type(18), .menu-item[data-index="16"] > .menu-sub > .menu-entry:nth-of-type(17), .menu-item[data-index="15"] > .menu-sub > .menu-entry:nth-of-type(16), .menu-item[data-index="14"] > .menu-sub > .menu-entry:nth-of-type(15), .menu-item[data-index="13"] > .menu-sub > .menu-entry:nth-of-type(14), .menu-item[data-index="12"] > .menu-sub > .menu-entry:nth-of-type(13), .menu-item[data-index="11"] > .menu-sub > .menu-entry:nth-of-type(12), .menu-item[data-index="10"] > .menu-sub > .menu-entry:nth-of-type(11), .menu-item[data-index="9"] > .menu-sub > .menu-entry:nth-of-type(10), .menu-item[data-index="8"] > .menu-sub > .menu-entry:nth-of-type(9), .menu-item[data-index="7"] > .menu-sub > .menu-entry:nth-of-type(8), .menu-item[data-index="6"] > .menu-sub > .menu-entry:nth-of-type(7), .menu-item[data-index="5"] > .menu-sub > .menu-entry:nth-of-type(6), .menu-item[data-index="4"] > .menu-sub > .menu-entry:nth-of-type(5), .menu-item[data-index="3"] > .menu-sub > .menu-entry:nth-of-type(4), .menu-item[data-index="2"] > .menu-sub > .menu-entry:nth-of-type(3), .menu-item[data-index="1"] > .menu-sub > .menu-entry:nth-of-type(2), .menu-item[data-index="0"] > .menu-sub > .menu-entry:nth-of-type(1) {
   background: var(--activeBackground);
 }
 
@@ -1319,7 +1319,9 @@ input[type=text].input:focus, input[type=number].input:focus, select:focus {
   box-shadow: 1px 1px 5px rgba(143, 143, 143, 0.1882352941);
 }
 
-.theme-is-light .menu-entry:hover {
+/* here */
+/* .theme-is-light .menu-entry:hover { background: var(--accent); color: var(--menu-light-item-hover); } */
+.theme-is-light .menu-item[data-index="20"] > .menu-sub > .menu-entry:nth-of-type(21), .theme-is-light .menu-item[data-index="19"] > .menu-sub > .menu-entry:nth-of-type(20), .theme-is-light .menu-item[data-index="18"] > .menu-sub > .menu-entry:nth-of-type(19), .theme-is-light .menu-item[data-index="17"] > .menu-sub > .menu-entry:nth-of-type(18), .theme-is-light .menu-item[data-index="16"] > .menu-sub > .menu-entry:nth-of-type(17), .theme-is-light .menu-item[data-index="15"] > .menu-sub > .menu-entry:nth-of-type(16), .theme-is-light .menu-item[data-index="14"] > .menu-sub > .menu-entry:nth-of-type(15), .theme-is-light .menu-item[data-index="13"] > .menu-sub > .menu-entry:nth-of-type(14), .theme-is-light .menu-item[data-index="12"] > .menu-sub > .menu-entry:nth-of-type(13), .theme-is-light .menu-item[data-index="11"] > .menu-sub > .menu-entry:nth-of-type(12), .theme-is-light .menu-item[data-index="10"] > .menu-sub > .menu-entry:nth-of-type(11), .theme-is-light .menu-item[data-index="9"] > .menu-sub > .menu-entry:nth-of-type(10), .theme-is-light .menu-item[data-index="8"] > .menu-sub > .menu-entry:nth-of-type(9), .theme-is-light .menu-item[data-index="7"] > .menu-sub > .menu-entry:nth-of-type(8), .theme-is-light .menu-item[data-index="6"] > .menu-sub > .menu-entry:nth-of-type(7), .theme-is-light .menu-item[data-index="5"] > .menu-sub > .menu-entry:nth-of-type(6), .theme-is-light .menu-item[data-index="4"] > .menu-sub > .menu-entry:nth-of-type(5), .theme-is-light .menu-item[data-index="3"] > .menu-sub > .menu-entry:nth-of-type(4), .theme-is-light .menu-item[data-index="2"] > .menu-sub > .menu-entry:nth-of-type(3), .theme-is-light .menu-item[data-index="1"] > .menu-sub > .menu-entry:nth-of-type(2), .theme-is-light .menu-item[data-index="0"] > .menu-sub > .menu-entry:nth-of-type(1) {
   background: var(--accent);
   color: var(--menu-light-item-hover);
 }

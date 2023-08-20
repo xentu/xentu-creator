@@ -85,6 +85,12 @@ export default function NewMainMenu(props: MainMenuProps) {
 		}
 	};
 
+	const onMenuItemHover = (e:any, menuName:string) => {
+		if (selected !== '' && selected !== menuName) {
+			setSelected(menuName);
+		}
+	}
+
 	const deselect = (e: any) => {
 		if (selected == '') return;
 		setSelected('');
@@ -161,7 +167,6 @@ export default function NewMainMenu(props: MainMenuProps) {
 
 	useEffect(() => {
 		window.onkeyup = (e:KeyboardEvent) => {
-			console.log(e);
 			if (e.altKey) {
 				const menu = findMnemonicMenu(e.key.toLowerCase());
 				if (menu) {
@@ -172,15 +177,32 @@ export default function NewMainMenu(props: MainMenuProps) {
 			if (e.key == 'Escape') {
 				deselect(e);
 			}
+			if (e.key == 'Enter') {
+				const menu = document.querySelector("#main-menu > .menu-item.is-active") as HTMLElement;
+				const index = menu.dataset['index'];
+				const items = [].slice.call(menu.querySelectorAll(":scope > .menu-sub > .menu-entry"));
+				items[index].click();
+			}
 		};
 	}, []);
+
+	useEffect(() => {
+		switch (selected) {
+			case 'file': setFileIndex(0); break;
+			case 'edit': setEditIndex(0); break;
+			case 'run': setRunIndex(0); break;
+			case 'view': setViewIndex(0); break;
+			case 'tools': setToolsIndex(0); break;
+			case 'help': setHelpIndex(0); break;
+		}
+	}, [selected]);
 
 	return (
 		<>
 			<div id="menu-back-target" style={{ display:selected!=''?'block':'none' }}></div>
 			<div id="main-menu" tabIndex={0} onBlur={deselect} onClick={deselect} onKeyUp={onKeyUp} onKeyDown={onKeyDown}>
 
-				<NewMenuItem name="file" click={onDropDown} active={selected} hoverIndex={fileIndex} disabled={false}>
+				<NewMenuItem name="file" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={fileIndex} disabled={false}>
 					<NewMenuEntry click={onItemClick} name="new_game" hotKey='Ctrl+N' />
 					<NewMenuEntry click={onItemClick} name="open_game" hotKey='Ctrl+O' />
 					<hr />
@@ -196,7 +218,7 @@ export default function NewMainMenu(props: MainMenuProps) {
 					<NewMenuEntry click={onItemClick} name="exit" hotKey='Alt+F4' />
 				</NewMenuItem>
 
-				<NewMenuItem name="edit" click={onDropDown} active={selected} hoverIndex={editIndex} disabled={!props.enabled}>
+				<NewMenuItem name="edit" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={editIndex} disabled={!props.enabled}>
 					<NewMenuEntry click={onItemClick} name="undo" hotKey='Ctrl+Z' />
 					<NewMenuEntry click={onItemClick} name="redo" />
 					<NewMenuEntry click={onItemClick} name="cut" hotKey='Ctrl+X' />
@@ -207,13 +229,13 @@ export default function NewMainMenu(props: MainMenuProps) {
 					<NewMenuEntry click={onItemClick} name="select_all" hotKey='Ctrl+A' />
 				</NewMenuItem>
 
-				<NewMenuItem name="run" click={onDropDown} disabled={!props.enabled} active={selected} hoverIndex={runIndex}>
+				<NewMenuItem name="run" click={onDropDown} mouseOver={onMenuItemHover} disabled={!props.enabled} active={selected} hoverIndex={runIndex}>
 					<NewMenuEntry click={onItemClick} name="start_game" disabled={props.debugging} hotKey='F5' />
 					<NewMenuEntry click={onItemClick} name="start_without_debugging" disabled={props.debugging} hotKey='F6' />
 					<NewMenuEntry click={onItemClick} name="stop" disabled={!props.debugging} />
 				</NewMenuItem>
 
-				<NewMenuItem name="view" click={onDropDown} active={selected} hoverIndex={viewIndex}>
+				<NewMenuItem name="view" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={viewIndex}>
 					<NewMenuEntry click={onItemClick} name="sidebar" hotKey='Ctrl+B' checked={props.showSidebar} disabled={!props.enabled} />
 					<NewMenuEntry click={onItemClick} name="status_bar" hotKey='Ctrl+Shift+B' checked={props.showStatus} disabled={!props.enabled} />
 					<NewMenuEntry click={onItemClick} name="console" hotKey='Ctrl+Shift+C' checked={props.showConsole} disabled={!props.enabled} />
@@ -227,12 +249,12 @@ export default function NewMainMenu(props: MainMenuProps) {
 					<NewMenuEntry click={onItemClick} name="toggle_fullscreen" hotKey='F11' />
 				</NewMenuItem>
 
-				<NewMenuItem name="tools" click={onDropDown} active={selected} hoverIndex={toolsIndex}>
+				<NewMenuItem name="tools" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={toolsIndex}>
 					<NewMenuEntry click={onItemClick} name="options" hotKey='F8' />
 					<NewMenuEntry click={onItemClick} name="clear_console" disabled={!props.enabled} />
 				</NewMenuItem>
 
-				<NewMenuItem name="help" click={onDropDown} active={selected} hoverIndex={helpIndex}>
+				<NewMenuItem name="help" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={helpIndex}>
 					<NewMenuEntry click={onItemClick} name="learn_more" hotKey='F1' />
 				</NewMenuItem>
 
