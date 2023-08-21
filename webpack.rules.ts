@@ -33,8 +33,8 @@ export const rules: Required<ModuleOptions>['rules'] = [
 	{
 	  test: /\.(svg|png|jpg|gif|ico|js|lua|py)$/,
 	  include: [
-		 path.resolve(__dirname, "resources/images"),
-		 path.resolve(__dirname, "resources/templates"),
+		 path.resolve(__dirname, "Resources/images"),
+		 path.resolve(__dirname, "Resources/templates"),
 	  ],
 	  type: "asset/inline"
 	}

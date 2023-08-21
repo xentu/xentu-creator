@@ -23,7 +23,7 @@ import WelcomePanel from './Components/WelcomePanel';
 import { MenuEntry } from './Components/MenuItem';
 import { ProjectContext, ProjectSchema } from './Context/ProjectManager';
 import { SettingsContext } from './Context/SettingsManager';
-import { XTerm } from 'xterm-for-react';
+import NewXterm from './Components/NewXterm';
 import { appStateReducer, appStateDefault } from './state'
 import { classList } from './helpers';
 import { useTranslation } from "react-i18next";
@@ -937,7 +937,7 @@ function App(props: appProps) {
 									</div>
 									<div id="splitter2" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter2' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
 									<div id="console" style={{ flexBasis: appState.consoleHeight + 'px', display: appState.showConsole ? 'block' : 'none', overflow: 'hidden' }}>
-										<XTerm ref={xtermRef} options={{ 
+										<NewXterm ref={xtermRef} options={{ 
 											rows: appState.terminalRows,
 											allowTransparency: true,
 											fontFamily: 'Consolas, "Courier New", monospace',
