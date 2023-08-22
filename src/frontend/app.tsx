@@ -282,10 +282,15 @@ function App(props: appProps) {
 	};
 
 
+	const replaceAll = function(target:string, search:string, replacement:string) {
+		return target.replace(new RegExp(search, 'g'), replacement);
+	};
+
+
 	handleConsole.current = (data:string) => {
 		const term = xtermRef.current.terminal;
-		term.write(data);
-		//console.log(data);
+		term.write(replaceAll(data, '\n', '\r\n'));
+		console.log(data);
 	};
 
 

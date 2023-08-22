@@ -179,9 +179,11 @@ export default function NewMainMenu(props: MainMenuProps) {
 			}
 			if (e.key == 'Enter') {
 				const menu = document.querySelector("#main-menu > .menu-item.is-active") as HTMLElement;
-				const index = menu.dataset['index'];
-				const items = [].slice.call(menu.querySelectorAll(":scope > .menu-sub > .menu-entry"));
-				items[index].click();
+				if (menu) {
+					const index = menu.dataset && menu.dataset['index'] ? menu.dataset['index'] : -1;
+					const items = [].slice.call(menu.querySelectorAll(":scope > .menu-sub > .menu-entry"));
+					items[index].click();
+				}
 			}
 		};
 	}, []);
