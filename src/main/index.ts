@@ -317,7 +317,11 @@ class XentuCreatorApp {
 
 
 	handleGetAccentColor() {
+<<<<<<< HEAD
 		let res = '#ffff00';
+=======
+		let res = '#444444';
+>>>>>>> 9f373d9fc16bbde68f4959728c40f10859f60c6f
 		try {
 			res = systemPreferences.getAccentColor();
 		}
