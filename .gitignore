@@ -88,6 +88,7 @@ dev
 
 # Webpack
 .webpack/
+.sass-cache/
 
 # Electron-Forge
 out/
