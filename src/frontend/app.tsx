@@ -956,7 +956,7 @@ function App(props: appProps) {
 
 					<div id='status-bar'>{t('idle')}</div>
 					<WelcomePanel visible={appState.isWelcomeVisible} removeRecent={handleRemoveRecent} />
-					<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} />
+					{/*<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} /> */}
 					<DialogContainer key='dialog1' visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>
 						{renderDialog()}
 					</DialogContainer>

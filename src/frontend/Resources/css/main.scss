@@ -516,3 +516,43 @@ input[type='text'].input, input[type='number'].input {
 	text-align: center;
 	margin-top: 4em;
 }
+
+
+
+.conversation-viewer {
+	padding: 1px;
+}
+.conversation-entry {
+	padding: 10px;
+	margin: 10px;
+	margin-bottom: 0;
+	background: #11111159;
+	border-radius: 3px;
+	&:focus {
+		outline: 2px solid var(--activeBackground);
+	}
+
+	&:not([data-label='']) {
+		margin-top: 30px;
+		position: relative;
+		&:before {
+			content: attr(data-label);
+			position: absolute;
+			top: -20px;
+			opacity: 0.5;
+		}
+	}
+}
+.theme-is-light .conversation-entry {
+	background-color: var(--sidebarBackground);
+}
+
+.moment-list {
+	padding: 1px;
+   height: calc(100vh - 126px);
+   overflow: scroll;
+   overflow-x: unset;
+	.conversation-entry:last-of-type {
+		margin-bottom:10px;
+	}
+}
