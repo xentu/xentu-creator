@@ -16,7 +16,10 @@ type ComponentProps = {
 
 type MomentEntry = {
 	content: string,
-	label: string
+	actor: string,
+	id: string,
+	goto: string,
+	clear: boolean
 }
 
 
@@ -24,7 +27,10 @@ const defaultEntries = [] as Array<MomentEntry>;
 for (var i=0; i<10; i++) {
 	defaultEntries.push({
 		content: "test test test",
-		label: i == 5 ? "Dave" : ""
+		actor: i == 5 ? "Dave" : "",
+		id: '',
+		goto: '',
+		clear: false
 	});
 }
 
@@ -78,19 +84,40 @@ export default function TabConversationEditor(props: ComponentProps) {
 	};
 
 
-	const setEntryLabel = (index:number, newLabel:string) => {
-		setEntries((en:Array<MomentEntry>) => {
-			en[index].label = newLabel;
-			return en;
-		});
+	const setEntryActor = (index:number, newActor:string) => {
+		const newEntries = [...entries];
+		entries[index].actor = newActor;
+		setEntries(newEntries);
 	};
+
+
+	const setEntryId = (index:number, newValue:string) => {
+		const newEntries = [...entries];
+		entries[index].id = newValue;
+		setEntries(newEntries);
+	};
+
+	const setEntryGoto = (index:number, newValue:string) => {
+		const newEntries = [...entries];
+		entries[index].goto = newValue;
+		setEntries(newEntries);
+	};
+
+	
+	const setEntryClear = (index:number, newValue:boolean) => {
+		const newEntries = [...entries];
+		entries[index].clear = newValue;
+		setEntries(newEntries);
+	};
+
+	
 
 
 	const listMoments = () => {
 		const result = [];
 		for (var i=0; i<entries.length; i++) {
 			result.push(<ConversationMoment key={'entry'+i} index={i} 
-								label={entries[i].label}
+								label={entries[i].actor}
 								content={entries[i].content}
 								setContent={setEntryContent}
 								setFocus={setSelectedIndex}
@@ -103,7 +130,10 @@ export default function TabConversationEditor(props: ComponentProps) {
 	const addEntry = () => {
 		entries.push({
 			content: "content goes here",
-			label: i == 5 ? "Dave" : ""
+			actor: "",
+			id: '',
+			goto: '',
+			clear: false
 		});
 		setEntries([...entries]);
 	};
@@ -132,7 +162,34 @@ export default function TabConversationEditor(props: ComponentProps) {
 				<span id="splitter3" onMouseDown={e => setIsTrackingMouse(true)} onMouseUp={e => setIsTrackingMouse(false)} />
 
 				<aside data-title="" style={{width:rightBarWidth+'px'}}>
-					<i>Focus: {selectedIndex}</i>
+					{selectedIndex >= 0 && <>
+						<i>Focus: {selectedIndex}</i>
+
+						<div className="conversation-property">
+							<label>Actor:</label>
+							<input className="input" type="text" value={entries[selectedIndex].actor} onChange={(e:any) => setEntryActor(selectedIndex, e.target.value)} />
+						</div>
+
+						<div className="conversation-property">
+							<label>ID:</label>
+							<input className="input" type="text" value={entries[selectedIndex].id} onChange={(e:any) => setEntryId(selectedIndex, e.target.value)} />
+						</div>
+
+						<div className="conversation-property">
+							<label>Goto:</label>
+							<input className="input" type="text" value={entries[selectedIndex].goto} onChange={(e:any) => setEntryGoto(selectedIndex, e.target.value)} />
+						</div>
+
+						<div className="conversation-property">
+							<label>Clear:</label>
+							<span className={`toggle-button ${entries[selectedIndex].clear?'is-toggled':''}`} onClick={(e:any) => {
+								const c = entries[selectedIndex].clear;
+								setEntryClear(selectedIndex, !c);
+							}}></span>
+						</div>
+
+					</>}
+					&nbsp;					
 				</aside>
 
 

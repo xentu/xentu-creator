@@ -543,6 +543,19 @@ input[type='text'].input, input[type='number'].input {
 		}
 	}
 }
+
+.conversation-property {
+	margin-top: 10px;
+	label {
+		display: block;
+		font-weight: bold;
+		margin-bottom: 5px;
+	}
+	input {
+		width: calc(100% - 20px);
+	}
+}
+
 .theme-is-light .conversation-entry {
 	background-color: var(--sidebarBackground);
 }

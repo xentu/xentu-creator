@@ -995,6 +995,18 @@ input[type=text].input, input[type=number].input {
   opacity: 0.5;
 }
 
+.conversation-property {
+  margin-top: 10px;
+}
+.conversation-property label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.conversation-property input {
+  width: calc(100% - 20px);
+}
+
 .theme-is-light .conversation-entry {
   background-color: var(--sidebarBackground);
 }
