@@ -241,7 +241,7 @@ export default function NewMainMenu(props: MainMenuProps) {
 					<NewMenuEntry click={onItemClick} name="sidebar" hotKey='Ctrl+B' checked={props.showSidebar} disabled={!props.enabled} />
 					<NewMenuEntry click={onItemClick} name="status_bar" hotKey='Ctrl+Shift+B' checked={props.showStatus} disabled={!props.enabled} />
 					<NewMenuEntry click={onItemClick} name="console" hotKey='Ctrl+Shift+C' checked={props.showConsole} disabled={!props.enabled} />
-					<NewMenuEntry click={onItemClick} name="theme_editor" hotKey='Ctrl+Shift+D' checked={props.showThemeEditor} />
+					{/*<NewMenuEntry click={onItemClick} name="theme_editor" hotKey='Ctrl+Shift+D' checked={props.showThemeEditor} />*/}
 					<hr />
 					<NewMenuEntry click={onItemClick} name="actual_size" />
 					<NewMenuEntry click={onItemClick} name="zoom_in" />

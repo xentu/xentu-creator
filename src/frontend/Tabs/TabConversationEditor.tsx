@@ -5,6 +5,7 @@ import Button from '../Components/Button';
 import ConversationMoment from '../Components/ConversationMoment';
 import './TabConversationEditor.css';
 
+
 type ComponentProps = {
 	guid: string,
 	filePath:string,
@@ -13,6 +14,7 @@ type ComponentProps = {
 	labelChanged: Function, 
 	onSetData: Function
 };
+
 
 type MomentEntry = {
 	content: string,
@@ -97,6 +99,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 		setEntries(newEntries);
 	};
 
+
 	const setEntryGoto = (index:number, newValue:string) => {
 		const newEntries = [...entries];
 		entries[index].goto = newValue;
@@ -110,13 +113,12 @@ export default function TabConversationEditor(props: ComponentProps) {
 		setEntries(newEntries);
 	};
 
-	
-
 
 	const listMoments = () => {
 		const result = [];
 		for (var i=0; i<entries.length; i++) {
 			result.push(<ConversationMoment key={'entry'+i} index={i} 
+								selected={i==selectedIndex}
 								label={entries[i].actor}
 								content={entries[i].content}
 								setContent={setEntryContent}
@@ -139,6 +141,14 @@ export default function TabConversationEditor(props: ComponentProps) {
 	};
 
 
+	const removeEntry = () => {
+		if (entries.length > 0) {
+			entries.splice(selectedIndex, 1);
+			setEntries([...entries]);
+		}
+	};
+
+
 	return (
 		<div className={[props.active?'tab-active':'tab-inactive'].join(' ')}>
 			<div className='right-bar-container' ref={containerRef}
@@ -149,7 +159,8 @@ export default function TabConversationEditor(props: ComponentProps) {
 					<TabToolbar>
 						<div className="toolbar-group">
 							<Button className='toolbar-button' disabled={!props.changed} onClick={() => window.api.menuSave()}><i className='icon-floppy'></i></Button>
-							<Button className='toolbar-button' disabled={false} onClick={addEntry}><i className="icon-duh">+</i></Button>
+							<Button className='toolbar-button' style={{ width: '28px', textAlign: 'center'}} disabled={false} onClick={addEntry}><i className="icon-duh">+</i></Button>
+							<Button className='toolbar-button' style={{ width: '28px', textAlign: 'center'}} disabled={false} onClick={removeEntry}><i className="icon-duh">-</i></Button>
 						</div>
 					</TabToolbar>
 					<div className='conversation-viewer'>
@@ -163,7 +174,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 				<aside data-title="" style={{width:rightBarWidth+'px'}}>
 					{selectedIndex >= 0 && <>
-						<i>Focus: {selectedIndex}</i>
+						<i>Selected Moment: #{selectedIndex}</i>
 
 						<div className="conversation-property">
 							<label>Actor:</label>
@@ -182,7 +193,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 						<div className="conversation-property">
 							<label>Clear:</label>
-							<span className={`toggle-button ${entries[selectedIndex].clear?'is-toggled':''}`} onClick={(e:any) => {
+							<span className={`toggle-button ${entries[selectedIndex].clear?'is-toggled':''}`} style={{margin:'5px 0 0 0'}} onClick={(e:any) => {
 								const c = entries[selectedIndex].clear;
 								setEntryClear(selectedIndex, !c);
 							}}></span>
@@ -191,8 +202,6 @@ export default function TabConversationEditor(props: ComponentProps) {
 					</>}
 					&nbsp;					
 				</aside>
-
-
 			</div>
 		</div>
 	);

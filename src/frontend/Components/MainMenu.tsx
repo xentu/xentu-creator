@@ -92,7 +92,7 @@ export default function MainMenu(props: MainMenuProps) {
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('sidebar')} hotKey='Ctrl+B' click={() => window.api.menuSidebar()} checked={props.showSidebar} disabled={!props.enabled} />
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('status_bar')} hotKey='Ctrl+Shift+B' click={() => window.api.menuStatusBar()} checked={props.showStatus} disabled={!props.enabled} />
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('console')} hotKey='Ctrl+Shift+C' click={() => window.api.menuConsole()} checked={props.showConsole} disabled={!props.enabled} />
-					<MenuEntry click2={(e:any) => deselect(e)} label={t('theme_editor')} hotKey='Ctrl+Shift+D' click={() => window.api.menuThemeEditor()} checked={props.showThemeEditor} />
+					{/*<MenuEntry click2={(e:any) => deselect(e)} label={t('theme_editor')} hotKey='Ctrl+Shift+D' click={() => window.api.menuThemeEditor()} checked={props.showThemeEditor} />*/}
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('actual_size')} click={() => window.api.menuActualSize()} />
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('zoom_in')} click={() => window.api.menuZoomIn()} />

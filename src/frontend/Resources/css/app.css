@@ -981,6 +981,9 @@ input[type=text].input, input[type=number].input {
   background: rgba(17, 17, 17, 0.3490196078);
   border-radius: 3px;
 }
+.conversation-entry.selected {
+  outline: 2px solid #555;
+}
 .conversation-entry:focus {
   outline: 2px solid var(--activeBackground);
 }
@@ -1014,7 +1017,7 @@ input[type=text].input, input[type=number].input {
 .moment-list {
   padding: 1px;
   height: calc(100vh - 126px);
-  overflow: scroll;
+  overflow: auto;
   overflow-x: unset;
 }
 .moment-list .conversation-entry:last-of-type {

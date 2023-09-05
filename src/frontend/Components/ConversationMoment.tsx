@@ -1,10 +1,12 @@
 import React, { PropsWithChildren, useState, useCallback } from 'react'
+import { classList } from '../helpers';
 
 
 type ConversationMomentProps = {
 	index: number,
 	label: string,
 	content: string,
+	selected: boolean,
 	setContent: Function,
 	setFocus: Function
 }
@@ -22,7 +24,8 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 	};
 
 	return (
-		<div className={`conversation-entry`} data-label={props.label} tabIndex={0} contentEditable={true}
+		<div className={classList(['conversation-entry', props.selected  ? 'selected' : ''])} 
+			  data-label={props.label} tabIndex={0} contentEditable={true}
 			  onBlur={onContentBlur} onFocus={onFocus} dangerouslySetInnerHTML={{__html: props.content}} />
 	);
 }
