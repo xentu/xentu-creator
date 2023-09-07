@@ -531,8 +531,9 @@ input[type='text'].input, input[type='number'].input {
 	&.selected {
 		outline: 2px solid #555;
 	}
-	&:focus {
+	&:focus-within {
 		outline: 2px solid var(--activeBackground);
+		.moment-text { outline:none; }
 	}
 
 	&:not([data-label='']) {
@@ -570,5 +571,13 @@ input[type='text'].input, input[type='number'].input {
    overflow-x: unset;
 	.conversation-entry:last-of-type {
 		margin-bottom:10px;
+	}
+
+	.moment-options {
+		&:not(:empty) { margin-top: 10px; }
+		.moment-option {
+			line-height: 2em;
+			padding-left: 5px;
+		}
 	}
 }

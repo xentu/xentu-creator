@@ -21,7 +21,8 @@ type MomentEntry = {
 	actor: string,
 	id: string,
 	goto: string,
-	clear: boolean
+	clear: boolean,
+	options: Array<string>
 }
 
 
@@ -32,7 +33,8 @@ for (var i=0; i<10; i++) {
 		actor: i == 5 ? "Dave" : "",
 		id: '',
 		goto: '',
-		clear: false
+		clear: false,
+		options: []
 	});
 }
 
@@ -88,14 +90,14 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 	const setEntryActor = (index:number, newActor:string) => {
 		const newEntries = [...entries];
-		entries[index].actor = newActor;
+		newEntries[index].actor = newActor;
 		setEntries(newEntries);
 	};
 
 
 	const setEntryId = (index:number, newValue:string) => {
 		const newEntries = [...entries];
-		entries[index].id = newValue;
+		newEntries[index].id = newValue;
 		setEntries(newEntries);
 	};
 
@@ -114,6 +116,14 @@ export default function TabConversationEditor(props: ComponentProps) {
 	};
 
 
+	const addEntryOption = (index:number) => {
+		const newEntries = [...entries];
+		const newText = `Option Text`;
+		newEntries[index].options.push(newText);
+		setEntries(newEntries);
+	};
+
+
 	const listMoments = () => {
 		const result = [];
 		for (var i=0; i<entries.length; i++) {
@@ -121,6 +131,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 								selected={i==selectedIndex}
 								label={entries[i].actor}
 								content={entries[i].content}
+								options={entries[i].options}
 								setContent={setEntryContent}
 								setFocus={setSelectedIndex}
 								/>);
@@ -135,7 +146,8 @@ export default function TabConversationEditor(props: ComponentProps) {
 			actor: "",
 			id: '',
 			goto: '',
-			clear: false
+			clear: false,
+			options: []
 		});
 		setEntries([...entries]);
 	};
@@ -145,6 +157,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 		if (entries.length > 0) {
 			entries.splice(selectedIndex, 1);
 			setEntries([...entries]);
+			setSelectedIndex(-1);
 		}
 	};
 
@@ -197,6 +210,13 @@ export default function TabConversationEditor(props: ComponentProps) {
 								const c = entries[selectedIndex].clear;
 								setEntryClear(selectedIndex, !c);
 							}}></span>
+						</div>
+
+						<div className="conversation-property">
+							<label>&nbsp;</label>
+							<div className="buttons" style={{margin: '6px 0 6px 0'}}>
+								<a className="button" onClick={() => addEntryOption(selectedIndex)}>Add Option</a>
+							</div>
 						</div>
 
 					</>}

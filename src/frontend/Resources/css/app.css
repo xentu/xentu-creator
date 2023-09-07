@@ -984,8 +984,11 @@ input[type=text].input, input[type=number].input {
 .conversation-entry.selected {
   outline: 2px solid #555;
 }
-.conversation-entry:focus {
+.conversation-entry:focus-within {
   outline: 2px solid var(--activeBackground);
+}
+.conversation-entry:focus-within .moment-text {
+  outline: none;
 }
 .conversation-entry:not([data-label=""]) {
   margin-top: 30px;
@@ -1022,6 +1025,13 @@ input[type=text].input, input[type=number].input {
 }
 .moment-list .conversation-entry:last-of-type {
   margin-bottom: 10px;
+}
+.moment-list .moment-options:not(:empty) {
+  margin-top: 10px;
+}
+.moment-list .moment-options .moment-option {
+  line-height: 2em;
+  padding-left: 5px;
 }
 
 :root {
