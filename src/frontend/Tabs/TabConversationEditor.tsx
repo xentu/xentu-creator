@@ -29,7 +29,7 @@ type MomentEntry = {
 
 
 const defaultEntries = [] as Array<MomentEntry>;
-for (var i=0; i<10; i++) {
+/* for (var i=0; i<10; i++) {
 	defaultEntries.push({
 		content: "test test test",
 		actor: i == 5 ? "Dave" : "",
@@ -39,7 +39,7 @@ for (var i=0; i<10; i++) {
 		options: [],
 		properties: []
 	});
-}
+} */
 
 const dataTest = new Array<KeyValuePair>();
 dataTest.push({ key: 'george', value: '52' });
@@ -48,11 +48,11 @@ dataTest.push({ key: 'rachel', value: '27' });
 
 
 export default function TabConversationEditor(props: ComponentProps) {
-	const [data, setData] = useState('');
 	const [entries, setEntries] = useState([...defaultEntries]);
 	const [rightBarWidth, setRightBarWidth] = useState(300);
 	const [isTrackingMouse, setIsTrackingMouse] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState(-1);
+	const [loaded, setLoaded] = useState(false);
 	const settings = useContext(SettingsContext);
 	const containerRef = useRef(null);
 
@@ -66,14 +66,25 @@ export default function TabConversationEditor(props: ComponentProps) {
 		const fetchData = async(thePath:string) => {
 			const theJSON = await window.api.openFile(thePath);
 			const theResponse = JSON.parse(theJSON);
-			let data = theResponse.data == '' ? '' : JSON.parse(theResponse.data);
-
-			setData(data);
+			let data = theResponse.data == '' ? [...defaultEntries] : JSON.parse(theResponse.data);
+			setEntries(data);
 			props.labelChanged(theResponse.label);
-			props.onSetData(theResponse.data, false);
+			await props.onSetData(theResponse.data, false);
+			setTimeout(() => setLoaded(true), 100);
 		};
 		fetchData(props.filePath);
 	}, []);
+
+
+	/**
+	 * Propagate new data to save when entries change.
+	 */
+	useEffect(() => {
+		if (loaded) {
+			console.log('yo');
+			props.onSetData(JSON.stringify(entries, null, 2), true);
+		}
+	}, [entries]);
 
 
 	/**
@@ -89,31 +100,38 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 
 	const setEntryContent = (index:number, newContent:string) => {
-		setEntries((en:Array<MomentEntry>) => {
-			en[index].content = newContent;
-			return en;
-		});
+		const newEntries = [...entries];
+		if (newEntries[index].content != newContent) {
+			newEntries[index].content = newContent;
+			setEntries(newEntries);
+		}
 	};
 
 
 	const setEntryActor = (index:number, newActor:string) => {
 		const newEntries = [...entries];
-		newEntries[index].actor = newActor;
-		setEntries(newEntries);
+		if (newEntries[index].actor != newActor) {
+			newEntries[index].actor = newActor;
+			setEntries(newEntries);
+		}
 	};
 
 
 	const setEntryId = (index:number, newValue:string) => {
 		const newEntries = [...entries];
-		newEntries[index].id = newValue;
-		setEntries(newEntries);
+		if (newEntries[index].id != newValue) {
+			newEntries[index].id = newValue;
+			setEntries(newEntries);
+		}
 	};
 
 
 	const setEntryGoto = (index:number, newValue:string) => {
 		const newEntries = [...entries];
-		entries[index].goto = newValue;
-		setEntries(newEntries);
+		if (entries[index].goto != newValue) {
+			entries[index].goto = newValue;
+			setEntries(newEntries);
+		}
 	};
 
 	
@@ -171,7 +189,8 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 
 	const addEntry = () => {
-		entries.push({
+		const newEntries = [...entries];
+		const newMoment = {
 			content: "content goes here",
 			actor: "",
 			id: '',
@@ -179,8 +198,16 @@ export default function TabConversationEditor(props: ComponentProps) {
 			clear: false,
 			options: [],
 			properties: []
-		});
-		setEntries([...entries]);
+		} as MomentEntry;
+
+		if (selectedIndex >= 0 && selectedIndex < newEntries.length - 1) {
+			newEntries.splice(selectedIndex + 1, 0, newMoment);
+		}
+		else {
+			newEntries.push(newMoment);
+		}
+
+		setEntries(newEntries);
 	};
 
 
