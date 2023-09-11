@@ -172,8 +172,8 @@ export default function TabConversationEditor(props: ComponentProps) {
 					<TabToolbar>
 						<div className="toolbar-group">
 							<Button className='toolbar-button' disabled={!props.changed} onClick={() => window.api.menuSave()}><i className='icon-floppy'></i></Button>
-							<Button className='toolbar-button' style={{ width: '28px', textAlign: 'center'}} disabled={false} onClick={addEntry}><i className="icon-duh">+</i></Button>
-							<Button className='toolbar-button' style={{ width: '28px', textAlign: 'center'}} disabled={false} onClick={removeEntry}><i className="icon-duh">-</i></Button>
+							<Button className='toolbar-button' disabled={false} onClick={addEntry}><i className="icon-plus-squared"></i></Button>
+							<Button className='toolbar-button' disabled={false} onClick={removeEntry}><i className="icon-minus-squared"></i></Button>
 						</div>
 					</TabToolbar>
 					<div className='conversation-viewer'>
@@ -187,9 +187,9 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 				<aside data-title="" style={{width:rightBarWidth+'px'}}>
 					{selectedIndex >= 0 && <>
-						<i>Selected Moment: #{selectedIndex}</i>
+						{/*<i>Selected Moment: #{selectedIndex}</i>*/}
 
-						<div className="conversation-property">
+						<div className="conversation-property" style={{marginTop: '0'}}>
 							<label>Actor:</label>
 							<input className="input" type="text" value={entries[selectedIndex].actor} onChange={(e:any) => setEntryActor(selectedIndex, e.target.value)} />
 						</div>
@@ -213,7 +213,6 @@ export default function TabConversationEditor(props: ComponentProps) {
 						</div>
 
 						<div className="conversation-property">
-							<label>&nbsp;</label>
 							<div className="buttons" style={{margin: '6px 0 6px 0'}}>
 								<a className="button" onClick={() => addEntryOption(selectedIndex)}>Add Option</a>
 							</div>

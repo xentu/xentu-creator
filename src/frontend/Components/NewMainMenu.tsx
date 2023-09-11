@@ -26,7 +26,6 @@ type MainMenuProps = {
 
 export default function NewMainMenu(props: MainMenuProps) {
 	const [selected, setSelected] = useState('');
-	const c_active = props.enabled ? '' : ' is-disabled';
 	const { i18n, t } = useTranslation();
 	const [fileIndex, setFileIndex] = useState(-1);
 	const [editIndex, setEditIndex] = useState(-1);
@@ -34,7 +33,6 @@ export default function NewMainMenu(props: MainMenuProps) {
 	const [viewIndex, setViewIndex] = useState(-1);
 	const [toolsIndex, setToolsIndex] = useState(-1);
 	const [helpIndex, setHelpIndex] = useState(-1);
-	//const settings = useContext(SettingsContext);
 	const menuIDs = [
 		'file', 'edit', 'run', 'view', 'tools', 'help'
 	];
@@ -89,6 +87,7 @@ export default function NewMainMenu(props: MainMenuProps) {
 		if (selected !== '' && selected !== menuName) {
 			setSelected(menuName);
 		}
+		e.preventDefault();
 	}
 
 	const deselect = (e: any) => {
