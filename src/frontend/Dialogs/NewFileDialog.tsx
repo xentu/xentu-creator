@@ -8,6 +8,9 @@ import SettingInput from '../Components/Settings/SettingInput';
 import { useTranslation } from "react-i18next";
 
 
+require('../window');
+
+
 type ComponentProps = {
 	folderFirst: boolean,
 	selectedFolder: string,
@@ -44,6 +47,7 @@ export default function NewFileDialog(props: ComponentProps) {
 	codeTypes.add('code_js', `${codeLabel} (JavaScript)`);
 	codeTypes.add('code_py', `${codeLabel} (Python)`);
 	codeTypes.add('code_lua', `${codeLabel} (Lua)`);
+	codeTypes.add('code_other', `${codeLabel} (Other)`);
 	codeTypes.add('conversation', t('_filetype_label_conversation'));
 	//codeTypes.add('layout', t('_filetype_label_layout'));
 	//codeTypes.add('graphic', t('_filetype_label_graphic'));
@@ -85,6 +89,13 @@ export default function NewFileDialog(props: ComponentProps) {
 			case 'code_js': ext = '.js'; break;
 			case 'code_py': ext = '.py'; break;
 			case 'code_lua': ext = '.lua'; break;
+			case 'code_other': 
+				if (!path.includes('.')) {
+					await window.api.showAlert(t('other_missing_extensions'));
+					return;
+				}
+				ext = '';
+				break;
 			case 'conversation': ext = '.xcf'; break;
 			case 'layout': ext = '.xlf'; break;
 			case 'graphic': ext = '.xgf'; break;

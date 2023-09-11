@@ -177,5 +177,8 @@ export default {
 	_filetype_label_graphic: "Graphic",
 	_filetype_label_sprite_map: "Sprite Map",
 	_filetype_label_sprite_font: "Sprite Font",
-	_filetype_label_database: "Database"
+	_filetype_label_database: "Database",
+
+
+	other_missing_extensions: "Please make sure to include a file extension if you pick other.",
  };

@@ -136,7 +136,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 
 	const doUpdateBinaries = async (overwrite:boolean) => {
 		const result = await window.api.refreshBinaries(overwrite);
-		alert(result.message);
+		await window.api.showAlert(result.message);
 		if (result.updated) {
 			const rawReport = await window.api.listBinaries();
 			setBinaryReport(JSON.stringify(rawReport, null, "\t"));
