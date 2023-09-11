@@ -68,12 +68,14 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
    display: flex; height: 100%;
    div { flex: 1; }
    aside {
-		width: 300px;
+		width: 300px; 
 		background-color: var(--sidebarBackground);
 		color: var(--sidebarText);
 		margin-top: -5px;
 		padding: 15px;
 		position: relative;
+		overflow-y: auto;
+		max-height: calc(100vh - 88px);
 		&:not([data-title='']):before {
 			content: attr(data-title);	position: absolute; display: inline-block;
 			background-color: var(--sidebarBackground); left: 0; top: -30px;
@@ -575,9 +577,30 @@ input[type='text'].input, input[type='number'].input {
 
 	.moment-options {
 		&:not(:empty) { margin-top: 10px; }
+		.moment-option-wrap {
+			display: flex;
+    		align-items: center;	
+			a { cursor: pointer; }
+			&:has(a:hover) { opacity: 0.7; }
+		}
 		.moment-option {
 			line-height: 2em;
 			padding-left: 5px;
 		}
 	}
 }
+
+
+
+.property-table { 
+	.property-table-head,
+	.property-table-item {
+		display:flex; gap:5px; margin-top: 6px;
+		& > div { width: calc(50% - 16px); }
+		& > div:last-of-type {
+			display: flex; align-items: center;
+			a:hover { cursor: pointer; opacity: 0.6; }
+		}
+		input { width: 100%; box-sizing: border-box; min-width: 0!important; }
+	}
+ }

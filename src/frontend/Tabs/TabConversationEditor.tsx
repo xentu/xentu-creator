@@ -4,6 +4,7 @@ import TabToolbar from '../Components/TabToolbar';
 import Button from '../Components/Button';
 import ConversationMoment from '../Components/ConversationMoment';
 import './TabConversationEditor.css';
+import PropertyTable, { KeyValuePair } from '../Components/PropertyTable';
 
 
 type ComponentProps = {
@@ -22,7 +23,8 @@ type MomentEntry = {
 	id: string,
 	goto: string,
 	clear: boolean,
-	options: Array<string>
+	options: Array<string>,
+	properties: Array<KeyValuePair>
 }
 
 
@@ -34,9 +36,15 @@ for (var i=0; i<10; i++) {
 		id: '',
 		goto: '',
 		clear: false,
-		options: []
+		options: [],
+		properties: []
 	});
 }
+
+const dataTest = new Array<KeyValuePair>();
+dataTest.push({ key: 'george', value: '52' });
+dataTest.push({ key: 'andrew', value: '32' });
+dataTest.push({ key: 'rachel', value: '27' });
 
 
 export default function TabConversationEditor(props: ComponentProps) {
@@ -116,10 +124,31 @@ export default function TabConversationEditor(props: ComponentProps) {
 	};
 
 
+	const setEntryProps = (index:number, newProps:Array<KeyValuePair>) => {
+		const newEntries = [...entries];
+		entries[index].properties = newProps;
+		setEntries(newEntries);
+	};
+
+
 	const addEntryOption = (index:number) => {
 		const newEntries = [...entries];
 		const newText = `Option Text`;
 		newEntries[index].options.push(newText);
+		setEntries(newEntries);
+	};
+
+
+	const addEntryProperty = (index:number) => {
+		const newEntries = [...entries];
+		newEntries[index].properties.push({ key: "untitled", value: "" });
+		setEntries(newEntries);
+	};
+
+
+	const doRemoveOption = (momentIndex:number, optionIndex:number) => {
+		const newEntries = [...entries];
+		newEntries[momentIndex].options.splice(optionIndex, 1);
 		setEntries(newEntries);
 	};
 
@@ -134,6 +163,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 								options={entries[i].options}
 								setContent={setEntryContent}
 								setFocus={setSelectedIndex}
+								doRemoveOption={doRemoveOption}
 								/>);
 		}
 		return result;
@@ -147,7 +177,8 @@ export default function TabConversationEditor(props: ComponentProps) {
 			id: '',
 			goto: '',
 			clear: false,
-			options: []
+			options: [],
+			properties: []
 		});
 		setEntries([...entries]);
 	};
@@ -212,10 +243,16 @@ export default function TabConversationEditor(props: ComponentProps) {
 							}}></span>
 						</div>
 
-						<div className="conversation-property">
+						<div className="conversation-property" style={{marginBottom:'10px'}}>
 							<div className="buttons" style={{margin: '6px 0 6px 0'}}>
 								<a className="button" onClick={() => addEntryOption(selectedIndex)}>Add Option</a>
+								<a className="button" onClick={() => addEntryProperty(selectedIndex)}>Add Property</a>
 							</div>
+						</div>
+
+						<div className="conversation-property">
+							<label>Properties:</label>
+							<PropertyTable table={entries[selectedIndex].properties} setTable={(newData:Array<KeyValuePair>) => setEntryProps(selectedIndex, newData)} />
 						</div>
 
 					</>}

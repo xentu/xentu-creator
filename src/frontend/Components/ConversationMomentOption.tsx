@@ -7,6 +7,7 @@ type ConversationMomentOptionProps = {
 	content: string,
 	setContent: Function,
 	setFocus: Function
+	doRemove: Function
 }
 
 
@@ -21,10 +22,22 @@ export default function ConversationMomentOption(props:PropsWithChildren<Convers
 		props.setFocus(props.index);
 	};
 
+	const deleteClick = (evt:any) => {
+		const element = evt.target as HTMLElement;
+		if (element.tagName.toLowerCase() === 'span') {
+			props.doRemove(props.index);
+		}
+	};
+
 	return (
-		<div className={classList(['moment-option', ''])} 
-			  tabIndex={0} contentEditable={true}
-			  onBlur={onContentBlur} onFocus={onFocus} dangerouslySetInnerHTML={{__html: props.content}}
-			   />
+		<div className="moment-option-wrap">
+			<div className={classList(['moment-option', ''])} 
+				  tabIndex={0} contentEditable={true}
+				  onBlur={onContentBlur} onFocus={onFocus} dangerouslySetInnerHTML={{__html: props.content}}
+					/>
+			<a onClick={deleteClick}>
+				<span className="icon-cancel" style={{userSelect:'none'}} />
+			</a>
+		</div>
 	);
 }

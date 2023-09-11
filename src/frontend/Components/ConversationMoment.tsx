@@ -10,7 +10,8 @@ type ConversationMomentProps = {
 	selected: boolean,
 	options: Array<string>,
 	setContent: Function,
-	setFocus: Function
+	setFocus: Function,
+	doRemoveOption: Function
 }
 
 
@@ -25,6 +26,10 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 		props.setFocus(props.index);
 	};
 
+	const doRemoveOption = (optionIndex:any) => {
+		props.doRemoveOption(props.index, optionIndex);
+	};
+
 	const listOptions = () => {
 		const result = [];
 		var i=0;
@@ -34,6 +39,7 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 					key={`moment-${props.index}-${i}`} index={i} content={option}
 					setContent={() => {}}
 					setFocus={() => {}}
+					doRemove={doRemoveOption}
 				/>
 			</>);
 			i++;
