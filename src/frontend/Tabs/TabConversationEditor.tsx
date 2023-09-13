@@ -230,69 +230,71 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 	return (
 		<div className={[props.active?'tab-active':'tab-inactive'].join(' ')}>
-			<div className='right-bar-container' ref={containerRef}
-				  onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
-				  onMouseLeave={e => setIsTrackingMouse(false)}>
+			<div className="toolbar-container">
+				<div className='right-bar-container' ref={containerRef}
+					onMouseMove={e => handleMouseMove(e.clientX, e.clientY)}
+					onMouseLeave={e => setIsTrackingMouse(false)}>
 
-				<div className='toolbar-container'>
-					<TabToolbar>
-						<div className="toolbar-group">
-							<Button className='toolbar-button' disabled={!props.changed} onClick={() => window.api.menuSave()}><i className='icon-floppy'></i></Button>
-							<Button className='toolbar-button' disabled={false} onClick={addEntry}><i className="icon-plus-squared"></i></Button>
-							<Button className='toolbar-button' disabled={false} onClick={removeEntry}><i className="icon-minus-squared"></i></Button>
-						</div>
-					</TabToolbar>
-					<div className='conversation-viewer'>
-						<div className='moment-list'>
-							{listMoments()}
-						</div>
-					</div>
-				</div>
-
-				<span id="splitter3" onMouseDown={e => setIsTrackingMouse(true)} onMouseUp={e => setIsTrackingMouse(false)} />
-
-				<aside data-title="" style={{width:rightBarWidth+'px'}}>
-					{selectedIndex >= 0 && <>
-						{/*<i>Selected Moment: #{selectedIndex}</i>*/}
-
-						<div className="conversation-property" style={{marginTop: '0'}}>
-							<label>Actor:</label>
-							<input className="input" type="text" value={entries[selectedIndex].actor} onChange={(e:any) => setEntryActor(selectedIndex, e.target.value)} />
-						</div>
-
-						<div className="conversation-property">
-							<label>ID:</label>
-							<input className="input" type="text" value={entries[selectedIndex].id} onChange={(e:any) => setEntryId(selectedIndex, e.target.value)} />
-						</div>
-
-						<div className="conversation-property">
-							<label>Goto:</label>
-							<input className="input" type="text" value={entries[selectedIndex].goto} onChange={(e:any) => setEntryGoto(selectedIndex, e.target.value)} />
-						</div>
-
-						<div className="conversation-property">
-							<label>Clear:</label>
-							<span className={`toggle-button ${entries[selectedIndex].clear?'is-toggled':''}`} style={{margin:'5px 0 0 0'}} onClick={(e:any) => {
-								const c = entries[selectedIndex].clear;
-								setEntryClear(selectedIndex, !c);
-							}}></span>
-						</div>
-
-						<div className="conversation-property" style={{marginBottom:'10px'}}>
-							<div className="buttons" style={{margin: '6px 0 6px 0'}}>
-								<a className="button" onClick={() => addEntryOption(selectedIndex)}>Add Option</a>
-								<a className="button" onClick={() => addEntryProperty(selectedIndex)}>Add Property</a>
+					<div className='toolbar-container'>
+						<TabToolbar>
+							<div className="toolbar-group">
+								<Button className='toolbar-button' disabled={!props.changed} onClick={() => window.api.menuSave()}><i className='icon-floppy'></i></Button>
+								<Button className='toolbar-button' disabled={false} onClick={addEntry}><i className="icon-plus-squared"></i></Button>
+								<Button className='toolbar-button' disabled={false} onClick={removeEntry}><i className="icon-minus-squared"></i></Button>
 							</div>
-						</div>
+						</TabToolbar>
+						<section className='conversation-viewer'>
+							<div className='moment-list'>
+								{listMoments()}
+							</div>
+						</section>
+					</div>
 
-						<div className="conversation-property">
-							<label>Properties:</label>
-							<PropertyTable table={entries[selectedIndex].properties} setTable={(newData:Array<KeyValuePair>) => setEntryProps(selectedIndex, newData)} />
-						</div>
+					<span id="splitter3" onMouseDown={e => setIsTrackingMouse(true)} onMouseUp={e => setIsTrackingMouse(false)} />
 
-					</>}
-					&nbsp;					
-				</aside>
+					<aside data-title="" style={{width:rightBarWidth+'px'}}>
+						{selectedIndex >= 0 && <>
+							{/*<i>Selected Moment: #{selectedIndex}</i>*/}
+
+							<div className="conversation-property" style={{marginTop: '0'}}>
+								<label>Actor:</label>
+								<input className="input" type="text" value={entries[selectedIndex].actor ?? ""} onChange={(e:any) => setEntryActor(selectedIndex, e.target.value)} />
+							</div>
+
+							<div className="conversation-property">
+								<label>ID:</label>
+								<input className="input" type="text" value={entries[selectedIndex].id ?? ""} onChange={(e:any) => setEntryId(selectedIndex, e.target.value)} />
+							</div>
+
+							<div className="conversation-property">
+								<label>Goto:</label>
+								<input className="input" type="text" value={entries[selectedIndex].goto ?? ""} onChange={(e:any) => setEntryGoto(selectedIndex, e.target.value)} />
+							</div>
+
+							<div className="conversation-property">
+								<label>Clear:</label>
+								<span className={`toggle-button ${entries[selectedIndex].clear?'is-toggled':''}`} style={{margin:'5px 0 0 0'}} onClick={(e:any) => {
+									const c = entries[selectedIndex].clear;
+									setEntryClear(selectedIndex, !c);
+								}}></span>
+							</div>
+
+							<div className="conversation-property" style={{marginBottom:'10px'}}>
+								<div className="buttons" style={{margin: '6px 0 6px 0'}}>
+									<a className="button" onClick={() => addEntryOption(selectedIndex)}>Add Option</a>
+									<a className="button" onClick={() => addEntryProperty(selectedIndex)}>Add Property</a>
+								</div>
+							</div>
+
+							<div className="conversation-property">
+								<label>Properties:</label>
+								<PropertyTable table={entries[selectedIndex].properties} setTable={(newData:Array<KeyValuePair>) => setEntryProps(selectedIndex, newData)} />
+							</div>
+
+						</>}
+						&nbsp;					
+					</aside>
+				</div>
 			</div>
 		</div>
 	);

@@ -529,7 +529,7 @@ function App(props: appProps) {
 		let newTab = null;
 
 		// load the desired tab.
-		if (['lua', 'js', 'json', 'toml', 'txt', 'xml', 'py'].includes(ext)) {
+		if (['lua', 'js', 'json', 'toml', 'txt', 'xml', 'py', 'md', 'sh', 'bat'].includes(ext)) {
 			newTab = new OpenTab(t('_tab_loading'), filePath, OpenTabType.CodeEditor);
 		}
 		else if (['jpg', 'png'].includes(ext)) {

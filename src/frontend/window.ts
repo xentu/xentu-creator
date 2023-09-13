@@ -13,6 +13,7 @@ declare global {
 	  changeThemeColors: Function,
 	  hexToHsl: Function,
 	  hexToHs: Function,
+	  adjustMomentHeight: Function,
 	  xterm: any
 	}
 }

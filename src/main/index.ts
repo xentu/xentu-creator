@@ -396,11 +396,13 @@ class XentuCreatorApp {
 	
 		switch (ext) {
 			case 'js': lang = 'javascript'; break;
-			case 'json': lang = 'text'; break;
+			case 'json': lang = 'json'; break;
 			case 'toml': lang = 'toml'; break;
 			case 'lua': lang = 'lua'; break;
 			case 'py': lang = 'python'; break;
 			case 'xml': lang = 'xml'; break;
+			case 'sh': lang = 'shell'; break;
+			case 'md': lang = 'markdown'; break;
 		}
 	
 		return JSON.stringify({

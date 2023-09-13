@@ -524,6 +524,9 @@ input[type='text'].input, input[type='number'].input {
 
 .conversation-viewer {
 	padding: 1px;
+	overflow: auto;
+   overflow-x: unset;
+	width: 100%;
 }
 .conversation-entry {
 	padding: 10px;
@@ -569,9 +572,7 @@ input[type='text'].input, input[type='number'].input {
 
 .moment-list {
 	padding: 1px;
-   height: calc(100vh - 126px);
-   overflow: auto;
-   overflow-x: unset;
+   /* height: calc(100vh - 126px); */
 	.conversation-entry:last-of-type {
 		margin-bottom:10px;
 	}
