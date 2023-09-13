@@ -88,10 +88,21 @@ function App(props: appProps) {
 					break;
 				case '\r': case '\n': // Enter
 					var clear = false;
+
 					switch (term.v ?? '') {
 						case 'clear': term.reset(); clear = true; break;
-						default:	term.write("\r\n" + t('_terminal_cmd_not_recognised')); break;
+						default:
+							try {
+								//const cmd = term.v.substring(5).trim();
+								window.api.execCmd(term.v);
+							}
+							catch (e:any) {
+								//term.write("\r\n" + t('_terminal_cmd_not_recognised'));
+								term.write("\r\nError " + e);
+							}
+							break;
 					}
+
 					term.v = '';
 					term.write(clear ? '$ ' : "\r\n$ ");
 					break;

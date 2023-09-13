@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, Menu, dialog, ipcMain, systemPreferences } from 'electron';
-import { spawn } from "node:child_process";
+import { spawn, SpawnOptionsWithoutStdio } from "node:child_process";
 import XentuCreatorMenu from './menu';
 import XentuDefaults from './defaults';
 
@@ -114,6 +114,7 @@ class XentuCreatorApp {
 		ipcMain.handle('new-game', (e:any) => { this.handleNewGame(e) });
 		ipcMain.handle('navigate-to', this.handleNavigateTo);
 		ipcMain.handle('pick-image', this.handlePickImage);
+		ipcMain.handle('exec-cmd', (e:any, cmd:string) => this.handleExecCmd(cmd));
 	}
 
 
@@ -739,6 +740,39 @@ class XentuCreatorApp {
 			myCreator.childProcess.kill('SIGINT');
 			myCreator.childProcess = null;
 		}
+	}
+
+
+	async handleExecCmd(cmd:string) {
+		const window = BrowserWindow.getAllWindows()[0];
+		const workingDir = this.projectPath;
+
+		const firstSpace = cmd.indexOf(' ');
+		let first = cmd;
+		let args = [] as Array<string>;
+
+		if (firstSpace > 0) {
+			first = cmd.substring(0, firstSpace);
+			args = cmd.substring(firstSpace).split(' ');
+		}
+
+		this.childProcess = spawn(first, args, {	cwd: workingDir, shell: true });
+			
+		this.childProcess.stdout.on('data', (data:any) => {
+			window.webContents.send('consoleData', data.toString());
+		});
+			
+		this.childProcess.stderr.on('data', (data:any) => {
+			window.webContents.send('consoleData', data.toString());
+		});
+			
+		this.childProcess.on('error', (data:any) => {
+			window.webContents.send('consoleData', data.toString());
+		});
+	
+		this.childProcess.on('exit', (code:any) => {
+			window.webContents.send('consoleData', "\r\n$ ");
+		});
 	}
 
 

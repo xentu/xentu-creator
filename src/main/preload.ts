@@ -35,6 +35,7 @@ contextBridge.exposeInMainWorld('api', {
     navigateTo: (url:string) => ipcRenderer.invoke('navigate-to', url),
     exportTheme: () => ipcRenderer.invoke('export-theme'),
     importTheme: () => ipcRenderer.invoke('import-theme'),
+    execCmd: (cmd:string) => ipcRenderer.invoke('exec-cmd', cmd),
 
 
     /* menu ipc */
