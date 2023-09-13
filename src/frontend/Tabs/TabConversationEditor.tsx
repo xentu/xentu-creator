@@ -19,9 +19,9 @@ type ComponentProps = {
 
 type MomentEntry = {
 	content: string,
-	actor: string,
-	id: string,
-	goto: string,
+	actor?: string,
+	id?: string,
+	goto?: string,
 	clear: boolean,
 	options: Array<string>,
 	properties: Array<KeyValuePair>
@@ -82,7 +82,18 @@ export default function TabConversationEditor(props: ComponentProps) {
 	useEffect(() => {
 		if (loaded) {
 			console.log('yo');
-			props.onSetData(JSON.stringify(entries, null, 2), true);
+			const saveEntries = [...entries];
+
+			/* strip out empty id, actor, goto */
+			for (var i=0; i<saveEntries.length; i++) {
+				if (saveEntries[i].id == '') saveEntries[i].id = null;
+				if (saveEntries[i].actor == '') saveEntries[i].actor = null;
+				if (saveEntries[i].goto == '') saveEntries[i].goto = null;
+			}
+
+			let replacer = (key:any, value:any) => value === null ? undefined : value;
+			let data = JSON.stringify(saveEntries, replacer, 2);
+			props.onSetData(data, true);
 		}
 	}, [entries]);
 
@@ -192,9 +203,6 @@ export default function TabConversationEditor(props: ComponentProps) {
 		const newEntries = [...entries];
 		const newMoment = {
 			content: "content goes here",
-			actor: "",
-			id: '',
-			goto: '',
 			clear: false,
 			options: [],
 			properties: []

@@ -995,11 +995,11 @@ input[type=text].input, input[type=number].input {
 .conversation-entry:focus-within .moment-text {
   outline: none;
 }
-.conversation-entry:not([data-label=""]) {
+.conversation-entry[data-label]:not([data-label=""]) {
   margin-top: 30px;
   position: relative;
 }
-.conversation-entry:not([data-label=""]):before {
+.conversation-entry[data-label]:not([data-label=""]):before {
   content: attr(data-label);
   position: absolute;
   top: -20px;
