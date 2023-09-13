@@ -83,11 +83,25 @@ export default function NewMainMenu(props: MainMenuProps) {
 		}
 	};
 
-	const onMenuItemHover = (e:any, menuName:string) => {
-		if (selected !== '' && selected !== menuName) {
-			setSelected(menuName);
+	const onMenuItemHover = async (e:React.MouseEvent<HTMLElement>, menuName:string) => {
+		/* if (selected !== '' && selected !== menuName) {
+		} */
+		if (selected !== '') {
+			await setSelected(menuName);
 		}
-		e.preventDefault();
+		//e.preventDefault();
+		//e.stopPropagation();
+	}
+
+	const onMenuEntryHover = async (e:React.MouseEvent<HTMLElement>, parent:string, menuIndex:number) => {
+		switch (parent) {
+			case 'file': setFileIndex(menuIndex); break;
+			case 'edit': setEditIndex(menuIndex); break;
+			case 'run': setRunIndex(menuIndex); break;
+			case 'view': setViewIndex(menuIndex); break;
+			case 'tools': setToolsIndex(menuIndex); break;
+			case 'help': setHelpIndex(menuIndex); break;
+		}
 	}
 
 	const deselect = (e: any) => {
@@ -204,59 +218,59 @@ export default function NewMainMenu(props: MainMenuProps) {
 			<div id="main-menu" tabIndex={0} onBlur={deselect} onClick={deselect} onKeyUp={onKeyUp} onKeyDown={onKeyDown}>
 
 				<NewMenuItem name="file" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={fileIndex} disabled={false}>
-					<NewMenuEntry click={onItemClick} name="new_game" hotKey='Ctrl+N' />
-					<NewMenuEntry click={onItemClick} name="open_game" hotKey='Ctrl+O' />
+					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="new_game" hotKey='Ctrl+N' />
+					<NewMenuEntry index={1} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="open_game" hotKey='Ctrl+O' />
 					<hr />
-					<NewMenuEntry click={onItemClick} name="close_game" disabled={!props.enabled} />
-					<NewMenuEntry click={onItemClick} name="save" hotKey='Ctrl+S' disabled={!props.enabled || !props.canSave} />
-					<NewMenuEntry click={onItemClick} name="save_copy" hotKey='Ctrl+Shift+A' disabled={!props.enabled || !props.canSave} />
-					<NewMenuEntry click={onItemClick} name="save_all" hotKey='Ctrl+Shift+S' disabled={!props.enabled || !props.canSave} />
+					<NewMenuEntry index={2} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="close_game" disabled={!props.enabled} />
+					<NewMenuEntry index={3} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="save" hotKey='Ctrl+S' disabled={!props.enabled || !props.canSave} />
+					<NewMenuEntry index={4} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="save_copy" hotKey='Ctrl+Shift+A' disabled={!props.enabled || !props.canSave} />
+					<NewMenuEntry index={5} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="save_all" hotKey='Ctrl+Shift+S' disabled={!props.enabled || !props.canSave} />
 					<hr />
-					<NewMenuEntry click={onItemClick} name="game_properties" disabled={!props.enabled} />
-					<NewMenuEntry click={onItemClick} name="reveal_in_explorer" disabled={!props.enabled} />
-					<NewMenuEntry click={onItemClick} name="export" disabled={!props.enabled} />
+					<NewMenuEntry index={6} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="game_properties" disabled={!props.enabled} />
+					<NewMenuEntry index={7} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="reveal_in_explorer" disabled={!props.enabled} />
+					<NewMenuEntry index={8} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="export" disabled={!props.enabled} />
 					<hr />
-					<NewMenuEntry click={onItemClick} name="exit" hotKey='Alt+F4' />
+					<NewMenuEntry index={9} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="exit" hotKey='Alt+F4' />
 				</NewMenuItem>
 
 				<NewMenuItem name="edit" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={editIndex} disabled={!props.enabled}>
-					<NewMenuEntry click={onItemClick} name="undo" hotKey='Ctrl+Z' />
-					<NewMenuEntry click={onItemClick} name="redo" />
-					<NewMenuEntry click={onItemClick} name="cut" hotKey='Ctrl+X' />
-					<NewMenuEntry click={onItemClick} name="copy" hotKey='Ctrl+C' />
-					<NewMenuEntry click={onItemClick} name="paste" hotKey='Ctrl+V' />
+					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="undo" hotKey='Ctrl+Z' />
+					<NewMenuEntry index={1} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="redo" />
+					<NewMenuEntry index={2} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="cut" hotKey='Ctrl+X' />
+					<NewMenuEntry index={3} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="copy" hotKey='Ctrl+C' />
+					<NewMenuEntry index={4} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="paste" hotKey='Ctrl+V' />
 					<hr />
-					<NewMenuEntry click={onItemClick} name="delete" hotKey='Del' />
-					<NewMenuEntry click={onItemClick} name="select_all" hotKey='Ctrl+A' />
+					<NewMenuEntry index={5} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="delete" hotKey='Del' />
+					<NewMenuEntry index={6} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="select_all" hotKey='Ctrl+A' />
 				</NewMenuItem>
 
 				<NewMenuItem name="run" click={onDropDown} mouseOver={onMenuItemHover} disabled={!props.enabled} active={selected} hoverIndex={runIndex}>
-					<NewMenuEntry click={onItemClick} name="start_game" disabled={props.debugging} hotKey='F5' />
-					<NewMenuEntry click={onItemClick} name="start_without_debugging" disabled={props.debugging} hotKey='F6' />
-					<NewMenuEntry click={onItemClick} name="stop" disabled={!props.debugging} />
+					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="run" name="start_game" disabled={props.debugging} hotKey='F5' />
+					<NewMenuEntry index={1} click={onItemClick} mouseOver={onMenuEntryHover} parent="run" name="start_without_debugging" disabled={props.debugging} hotKey='F6' />
+					<NewMenuEntry index={2} click={onItemClick} mouseOver={onMenuEntryHover} parent="run" name="stop" disabled={!props.debugging} />
 				</NewMenuItem>
 
 				<NewMenuItem name="view" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={viewIndex}>
-					<NewMenuEntry click={onItemClick} name="sidebar" hotKey='Ctrl+B' checked={props.showSidebar} disabled={!props.enabled} />
-					<NewMenuEntry click={onItemClick} name="status_bar" hotKey='Ctrl+Shift+B' checked={props.showStatus} disabled={!props.enabled} />
-					<NewMenuEntry click={onItemClick} name="console" hotKey='Ctrl+Shift+C' checked={props.showConsole} disabled={!props.enabled} />
+					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="sidebar" hotKey='Ctrl+B' checked={props.showSidebar} disabled={!props.enabled} />
+					<NewMenuEntry index={1} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="status_bar" hotKey='Ctrl+Shift+B' checked={props.showStatus} disabled={!props.enabled} />
+					<NewMenuEntry index={2} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="console" hotKey='Ctrl+Shift+C' checked={props.showConsole} disabled={!props.enabled} />
 					{/*<NewMenuEntry click={onItemClick} name="theme_editor" hotKey='Ctrl+Shift+D' checked={props.showThemeEditor} />*/}
 					<hr />
-					<NewMenuEntry click={onItemClick} name="actual_size" />
-					<NewMenuEntry click={onItemClick} name="zoom_in" />
-					<NewMenuEntry click={onItemClick} name="zoom_out" />
+					<NewMenuEntry index={3} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="actual_size" />
+					<NewMenuEntry index={4} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="zoom_in" />
+					<NewMenuEntry index={5} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="zoom_out" />
 					<hr />
-					<NewMenuEntry click={onItemClick} name="show_devtools" />
-					<NewMenuEntry click={onItemClick} name="toggle_fullscreen" hotKey='F11' />
+					<NewMenuEntry index={6} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="show_devtools" />
+					<NewMenuEntry index={7} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="toggle_fullscreen" hotKey='F11' />
 				</NewMenuItem>
 
 				<NewMenuItem name="tools" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={toolsIndex}>
-					<NewMenuEntry click={onItemClick} name="options" hotKey='F8' />
-					<NewMenuEntry click={onItemClick} name="clear_console" disabled={!props.enabled} />
+					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="tools" name="options" hotKey='F8' />
+					<NewMenuEntry index={1} click={onItemClick} mouseOver={onMenuEntryHover} parent="tools" name="clear_console" disabled={!props.enabled} />
 				</NewMenuItem>
 
 				<NewMenuItem name="help" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={helpIndex}>
-					<NewMenuEntry click={onItemClick} name="learn_more" hotKey='F1' />
+					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="help" name="learn_more" hotKey='F1' />
 				</NewMenuItem>
 
 

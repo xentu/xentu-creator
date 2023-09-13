@@ -85,7 +85,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 				</div>
 				<div className="dialog-main">
 					
-					<div className="dialog-page" style={{display:page==0?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==0?'block':'none'}}>
 						<h2>{t('general')}</h2>
 						<p>{t('_tab_general_desc')}</p>
 
@@ -111,7 +111,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 
 					</div>
 
-					<div className="dialog-page" style={{display:page==1?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==1?'block':'none'}}>
 						<h2>{t('graphics')}</h2>
 						<p>{t('_tab_graphics_desc')}</p>
 
@@ -152,7 +152,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 
 					</div>
 
-					<div className="dialog-page" style={{display:page==2?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==2?'block':'none'}}>
 						<h2>{t('sound')}</h2>
 						<p>{t('_tab_sound_desc')}</p>
 						
@@ -173,7 +173,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 						
 					</div>
 
-					<div className="dialog-page" style={{display:page==3?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==3?'block':'none'}}>
 						
 						<h2>{t('dependencies')}</h2>
 						<p>{t('_tab_dependencies_desc')}</p>

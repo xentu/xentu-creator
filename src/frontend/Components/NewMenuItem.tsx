@@ -14,10 +14,13 @@ type NewMenuItemProps = {
 
 type NewMenuEntryProps = {
 	name: string,
+	parent: string, /* the name of the parent menu */
+	index: number, /* index of the entry within the parent */
 	hotKey?: string,
 	disabled?: boolean,
 	checked?: boolean,
-	click?: Function
+	click?: Function,
+	mouseOver?: Function
 }
 
 
@@ -39,8 +42,8 @@ export default function NewMenuItem(props: NewMenuItemProps) {
 	}
 
 	return (
-		<div className={["menu-item", c_active, c_disabled].join(' ').trim()} data-name={props.name} data-index={props.hoverIndex ?? -1} onMouseEnter={triggerHover}>
-			<a className="menu-label" onClick={triggerMenu}>
+		<div className={["menu-item", c_active, c_disabled].join(' ').trim()} data-name={props.name} data-index={props.hoverIndex ?? -1} onMouseOver={triggerHover}>
+			<a className="menu-label" onClick={triggerMenu} onMouseOver={triggerHover}>
 				<span className="nemonic">{mnemonic}</span>
 				<span>{label2}</span>
 			</a>
@@ -62,12 +65,12 @@ export function NewMenuEntry(props: NewMenuEntryProps) {
 	}
 
 	const hoverMenu = (e:any) => {
-		const subElement = e.target.parentElement;
-		const menuElement = subElement.parentElement;
-		const items = [].slice.call(subElement.querySelectorAll(':scope > .menu-entry'));
-		const index = items.indexOf(e.target);
-		menuElement.setAttribute('data-index', index);
-		//props.mouseOver(e, props.name);
+		//const subElement = e.target.parentElement;
+		//const menuElement = subElement.parentElement;
+		//const items = [].slice.call(subElement.querySelectorAll(':scope > .menu-entry'));
+		//const index = items.indexOf(e.target);
+		//menuElement.setAttribute('data-index', index);
+		props.mouseOver(e, props.parent, props.index);
 	}
 
 	return (

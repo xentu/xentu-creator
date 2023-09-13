@@ -194,7 +194,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 				<div className="dialog-main">
 
 
-					<div className="dialog-page" style={{display:page==0?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==0?'block':'none'}}>
 						<h2>{t('general')}</h2>
 						<p>{t('_tab_settings_general_desc')}</p>
 
@@ -216,7 +216,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 					</div>
 
 
-					<div className="dialog-page" style={{display:page==1?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==1?'block':'none'}}>
 						<h2>{t('code_editor')}</h2>
 						<p>{t('_tab_code_editor_desc')}</p>
 
@@ -243,7 +243,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 					</div>
 
 
-					<div className="dialog-page" style={{display:page==2?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==2?'block':'none'}}>
 						<h2>{t('theme')}</h2>
 						<p>{t('_tab_theme_desc')}</p>
 
@@ -258,7 +258,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 						{renderSettings()}
 					</div>
 					
-					<div className="dialog-page" style={{display:page==3?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==3?'block':'none'}}>
 						<h2>{t('tools')}</h2>
 						<p>{t('_tab_tools_desc')}</p>
 
@@ -271,7 +271,7 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 
 					</div>
 
-					<div className="dialog-page" style={{display:page==4?'block':'none'}}>
+					<div className="dialog-page scrollable" style={{display:page==4?'block':'none'}}>
 						<h2>{t('binaries')}</h2>
 						<p>{t('_tab_binaries_desc')}</p>
 

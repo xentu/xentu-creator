@@ -349,10 +349,11 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 			.dialog-main { 
 				overflow: hidden;width: 100%;border-radius: 5px;
 				.dialog-page {
-					padding: 20px 0 0 20px; /* height: calc(100% - 20px); */ overflow-y: auto;
+					padding: 20px 0 0 20px; overflow-y: auto;
 					& > .setting:first-of-type { border-top:0; }
 					h2 {font-size: 26px;margin: 5px 0 5px;}
 					h2 + p { margin-bottom:20px; font-size: 14px; line-height: 19px; }
+					&.scrollable { height: calc(100% - 20px); }
 				}
 			}
 		}
