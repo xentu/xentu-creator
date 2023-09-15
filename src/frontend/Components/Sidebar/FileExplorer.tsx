@@ -68,6 +68,7 @@ export default function FileExplorer(props: ComponentProps) {
 	const listEntries = () => {
 		const result = new Array<any>();
 		entries.map((file: any) => {
+			if (file.name == '.git') return;
 			if (file.ext == 'folder') {
 				result.push(<FileExplorerEntry key={file.path} label={file.name}
 														 path={file.path} directory={file.directory}

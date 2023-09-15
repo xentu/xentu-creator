@@ -78,7 +78,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 							<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>{t('general')}</li>
 							<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>{t('graphics')}</li>
 							<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>{t('sound')}</li>
-							<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>{t('dependencies')}</li>
+							{/*<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>{t('dependencies')}</li>*/}
 						</ul>
 					</div>
 						

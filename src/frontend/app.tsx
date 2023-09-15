@@ -32,6 +32,8 @@ import PickImageDialog from './Dialogs/PickImageDialog';
 import AlertDialog from './Dialogs/AlertDialog';
 import ConfirmDialog from './Dialogs/ConfirmDialog';
 import PromptDialog from './Dialogs/PromptDialog';
+import ExportDialog from './Dialogs/ExportDialog';
+import RenameDialog from './Dialogs/RenameDialog';
 
 
 require('./window');
@@ -201,6 +203,9 @@ function App(props: appProps) {
 				break;
 			case 'show-new-game':
 				dispatchAppState({ type: 'dialog', value: 'new-game' });
+				break;
+			case 'show-export-game':
+				dispatchAppState({ type: 'dialog', value: 'export-game' });
 				break;
 			case 'show-settings':
 				dispatchAppState({ type: 'dialog', value: 'settings' });
@@ -732,6 +737,10 @@ function App(props: appProps) {
 					});
 				}
 				break;
+			case 'rename':
+				dispatchAppState({ type:'selected-path', value: contextMenu.path });
+				dispatchAppState({ type:'dialog', value:'rename' });
+				break;
 		}
 	}
 
@@ -817,8 +826,10 @@ function App(props: appProps) {
 		switch (appState.dialog) {
 			case 'settings': result.push(<SettingsDialog key={'settings-dialog'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onSettingsChanged={(s:any) => setSettings(s)} />); break;
 			case 'new-game': result.push(<NewGameDialog key={'new-game'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} />); break;
+			case 'export-game': result.push(<ExportDialog key={'export-game'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} />); break;
 			case 'new-file': result.push(<NewFileDialog key={'new-file'} folderFirst={false} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
 			case 'new-folder': result.push(<NewFileDialog key={'new-file'} folderFirst={true} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
+			case 'rename': result.push(<RenameDialog key={'rename'} onClose={(e:any) => dispatchAppState({ type:'rename-finished', value:e })} oldPath={appState.selectedPath} />); break;
 			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onPropertiesChanged={(s:any) => setProject(s)} />); break;
 			case 'pick-image': result.push(<PickImageDialog key={'pick-image'} onClose={(e:any) => dispatchAppState({ type:'pick-image-finished', value:e })} />); break;
 		}
@@ -871,14 +882,14 @@ function App(props: appProps) {
 						<MenuEntry key="new-file-code" disabled={false} label={t('new_file')} click={() => doContextMenuAction('new-file', true)} />
 						<MenuEntry key="new-folder" label={t('new_folder')} click={() => doContextMenuAction('new-folder', true)} />
 						<hr />
-						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => doContextMenuAction('rename', true)} />
+						<MenuEntry key="rename" label={t('rename')} disabled={false} click={() => doContextMenuAction('rename', true)} />
 						<MenuEntry key="delete" label={t('delete')} click={() => doContextMenuAction('delete', true)} />
 					</div>);
 			}
 			else if (info.name == 'file-explorer-item') {
 				result.push(
 					<div key="context-menu" className="context-menu" onBlur={() => {doHideContextMenu()}} style={style}>
-						<MenuEntry key="rename" label={t('rename')} disabled={true} click={() => doContextMenuAction('rename')} />
+						<MenuEntry key="rename" label={t('rename')} disabled={false} click={() => doContextMenuAction('rename')} />
 						<MenuEntry key="delete" label={t('delete')} click={() => doContextMenuAction('delete')} />
 					</div>);
 			}

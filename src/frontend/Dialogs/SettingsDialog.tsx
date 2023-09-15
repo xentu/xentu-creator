@@ -48,11 +48,11 @@ export default function SettingsDialog(props: SettingsDialogProps) {
 
 	const uiLanguages = new Dictionary<string>();
 	uiLanguages.add('en', 'EN - English (International)');
-	uiLanguages.add('fr', 'FR - Français (France)');
+	/* uiLanguages.add('fr', 'FR - Français (France)');
 	uiLanguages.add('it', 'IT - Italiano (Italy)')
 	uiLanguages.add('de', 'DE - German (Germany)');
 	uiLanguages.add('de', 'NL - Dutch (Netherlands)');
-	uiLanguages.add('jp', 'JP - 日本語 (Japan)');
+	uiLanguages.add('jp', 'JP - 日本語 (Japan)'); */
 
 
 	useEffect(() => {

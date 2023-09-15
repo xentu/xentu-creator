@@ -55,11 +55,31 @@ const ProjectTemplate = () => {
 };
 
 
+const BuildTemplate = () => {
+	return {
+		"exe_name": "untitled", /* the executable name */
+		"icon": "", /* the icon to embed (win) */
+		"pre_build_commands": [] as Array<string>, /* any commands to run before build (tsc etc..) */
+		"assets": {
+			"pack": false, /* pack assets into game.dat? */
+			/* list of file/folder ignore rules for assets, eg "*.json" */
+			"ignores": [
+				".git",
+				".gitignore",
+				"build.json",
+				"game.json"
+			]
+		}
+	}
+};
+
+
 class XentuCreatorApp {
 	mainMenu: XentuCreatorMenu;
 	mainWindow: BrowserWindow;
 	theSettings: any = {};
 	theProject: any = {}; //: XentuProject;
+	theBuild: any = {}; //: XentuBuild;
 	projectPath: string = "";
 	childProcess?: any;
 	fileWatcher?: any;
@@ -96,6 +116,7 @@ class XentuCreatorApp {
 		ipcMain.handle('open-file', this.handleOpenFile);
 		ipcMain.handle('create-game', this.handleCreateGame);
 		ipcMain.handle('create-file', this.handleCreateFile);
+		ipcMain.handle('rename-file', this.handleRenameFile);
 		ipcMain.handle('create-folder', this.handleCreateFolder);
 		ipcMain.handle('delete', this.handleDeleteFileOrFolder);
 		ipcMain.handle('open-image', this.handleOpenImage);
@@ -201,6 +222,8 @@ class XentuCreatorApp {
 	async saveProject() {
 		const projectFile = path.join(this.projectPath, 'game.json');
 		await fs.writeJson(projectFile, this.theProject, { spaces: '\t' });
+		const buildFile = path.join(this.projectPath, 'build.json');
+		await fs.writeJson(buildFile, this.theBuild, { spaces: '\t' });
 	}
 
 
@@ -455,6 +478,8 @@ class XentuCreatorApp {
 		const cfgFileExists = await fs.pathExists(cfgFile);
 		const cfgSrc = JSON.parse(jsonConfig);
 		const cfgData = ProjectTemplate();
+		const bldFile = path.join(cfgDir, 'build.json');
+		const bldData = BuildTemplate();
 
 		if (cfgFileExists) {
 			return JSON.stringify({ 'success': false, 'message': 'Project already exists at this location, please choose another.' });
@@ -475,6 +500,7 @@ class XentuCreatorApp {
 		await fs.ensureDir(cfgDir);
 		await fs.ensureDir(path.join(cfgDir, 'assets'));
 		await fs.writeJson(cfgFile, cfgData, { spaces: '\t' });
+		await fs.writeJson(bldFile, bldData, { spaces: '\t' });
 
 		// generate the initial code.
 		myCreator.generateTemplateFiles(cfgDir, cfgSrc.language, cfgSrc.template);
@@ -499,6 +525,12 @@ class XentuCreatorApp {
 	
 		await fs.outputFile(_filePath, '', 'utf-8');
 		return `file created (${_filePath}).`;
+	}
+
+
+	async handleRenameFile(event:any, oldFile:string, newFile:string) {
+		await fs.rename(oldFile, newFile);
+		return `file renamed!`;
 	}
 
 	
@@ -565,6 +597,11 @@ class XentuCreatorApp {
 		// read the project file if one exists.
 		const projectFile = path.join(thePath, 'game.json');
 		const projectFileExists = await fs.pathExists(projectFile);
+
+		// read the build file if one exists.
+		const buildFile = path.join(thePath, 'build.json');
+		const buildFileExists = await fs.pathExists(buildFile);
+
 		const self = myCreator;
 
 		// close old folder if needed.
@@ -576,6 +613,14 @@ class XentuCreatorApp {
 			self.theProject = await fs.readJson(projectFile); // await XentuProject.Load(projectFile);
 			const gameName = self.theProject?.game?.title ?? 'Untitled';
 			window.setTitle(gameName + " - Xentu Creator");
+
+			if (buildFileExists) {
+				self.theBuild = await fs.readJson(buildFile);
+			}
+			else {
+				self.theBuild = BuildTemplate();
+				await fs.writeJson(buildFile, self.theBuild, { spaces: '\t' });
+			}
 		}
 		else {
 			dialog.showMessageBox(window, {

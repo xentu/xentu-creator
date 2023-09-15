@@ -1,3 +1,5 @@
+import { getFileNameInfo } from './helpers';
+
 type DialogContextType = {
 	callback?: Function
 };
@@ -37,6 +39,24 @@ function _handleStateReducerField(clone:any, action:any) {
 			window.api.finishPickImage(action.value);
 			//dialogContext.callback(action.value);
 			//dialogContext.callback = null;
+			return true;
+		
+		case 'rename-finished':
+			const file = getFileNameInfo(clone.selectedPath);
+			const target = file.path + action.value;
+
+			if (file.full != target) {
+				window.api.renameFile(file.full, target);
+				console.log("file renamed", {
+					'from': file.full,
+					'to': target
+				});
+			}
+			else {
+				console.log('no need to rename file');
+			}
+
+			clone.dialog = '';
 			return true;
 
 		case 'dialog2':

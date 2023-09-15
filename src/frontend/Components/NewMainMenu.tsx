@@ -233,7 +233,7 @@ export default function NewMainMenu(props: MainMenuProps) {
 					<NewMenuEntry index={9} click={onItemClick} mouseOver={onMenuEntryHover} parent="file" name="exit" hotKey='Alt+F4' />
 				</NewMenuItem>
 
-				<NewMenuItem name="edit" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={editIndex} disabled={!props.enabled}>
+				<NewMenuItem name="edit" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={editIndex} disabled={!props.enabled || !props.canSave}>
 					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="undo" hotKey='Ctrl+Z' />
 					<NewMenuEntry index={1} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="redo" />
 					<NewMenuEntry index={2} click={onItemClick} mouseOver={onMenuEntryHover} parent="edit" name="cut" hotKey='Ctrl+X' />
