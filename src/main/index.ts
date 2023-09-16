@@ -78,8 +78,7 @@ const BuildTemplate = () => {
 			"ignores": [
 				".git",
 				".gitignore",
-				"editor.json",
-				"game.json"
+				"editor.json"
 			]
 		}
 	}

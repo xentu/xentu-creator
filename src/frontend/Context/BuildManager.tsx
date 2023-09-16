@@ -18,6 +18,6 @@ export const BuildContext : React.Context<BuildSchema> = createContext({
 	pre_build_commands: [], /* any commands to run before build (tsc etc..) */
 	assets: {
 		pack: false, /* pack assets into game.dat? */
-		ignores: [".git", ".gitignore", "editor.json", "game.json" ] /* list of file/folder ignore rules for assets, eg "*.json" */
+		ignores: [".git", ".gitignore", "editor.json" ] /* list of file/folder ignore rules for assets, eg "*.json" */
 	}
 });
