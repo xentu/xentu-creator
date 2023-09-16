@@ -1,6 +1,7 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
+import { MakerDMG, MakerDMGConfig } from '@electron-forge/maker-dmg';
 import { MakerDeb, MakerDebConfig } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
@@ -21,6 +22,11 @@ const debConfig:MakerDebConfig = {
 }
 
 
+const macConfig:MakerDMGConfig = {
+	icon: 'images/xentu-icon.icns'
+}
+
+
 const config: ForgeConfig = {
 	rebuildConfig: {},
 	packagerConfig: {
@@ -29,8 +35,9 @@ const config: ForgeConfig = {
 	},
 	makers: [
 		new MakerSquirrel({}),
-		new MakerZIP({},['darwin']),
-		/*new MakerRpm({}), */
+		new MakerDMG(macConfig, ['darwin']),
+		/* new MakerZIP({},['darwin']), */
+		/* new MakerRpm({}), */
 		new MakerDeb(debConfig, ['linux'])
 	],
 	plugins: [
