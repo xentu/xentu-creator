@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Dictionary from '../../main/classes/Dictionary';
 import SettingButtons from '../Components/Settings/SettingButtons';
 import SettingCombo from '../Components/Settings/SettingCombo';
+import SettingBool from '../Components/Settings/SettingBoolean';
 import { useTranslation } from "react-i18next";
 
 
@@ -19,10 +20,11 @@ platforms.add('linux', 'Linux (x86-64)');
 export default function ExportDialog(props: ExportDialogProps) {
 	const { i18n, t } = useTranslation();
 	const [platform, setPlatform] = useState('windows');
+	const [openFolder, setOpenFolder] = useState(true);
 
 
 	const onSubmit = async () => {
-		const file_r = await window.api.exportGame(platform);
+		await window.api.exportGame(platform, openFolder);
 		props.onCancel();
 	};
 
@@ -40,6 +42,11 @@ export default function ExportDialog(props: ExportDialogProps) {
 										description={t('_export_game_platform_desc')}
 										options={platforms} value={platform}
 										setValue={(v:string) => {setPlatform(v)}} />
+
+						<SettingBool slug='openFolder' key={'openFolder'} title={t('open_folder')}
+											description={t('_export_game_open_folder_desc')}
+											checked={openFolder}
+											setChecked={(v:boolean) => {setOpenFolder(v)}} />
 
 						<SettingButtons okText={'Export'} onSubmit={onSubmit} onCancel={props.onCancel} />
 

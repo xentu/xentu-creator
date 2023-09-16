@@ -38,7 +38,7 @@ contextBridge.exposeInMainWorld('api', {
     exportTheme: () => ipcRenderer.invoke('export-theme'),
     importTheme: () => ipcRenderer.invoke('import-theme'),
     execCmd: (cmd:string) => ipcRenderer.invoke('exec-cmd', cmd),
-    exportGame: (platform:string) => ipcRenderer.invoke('export-game', platform),
+    exportGame: (platform:string, openFolder:boolean) => ipcRenderer.invoke('export-game', platform, openFolder),
 
 
     /* menu ipc */

@@ -67,6 +67,7 @@ export default {
 	new_game: "New Game",
 	export_game: "Export Game",
 	open_game: "Open Game...",
+	open_folder: "Open Folder",
 	options: "Options",
 	pack_assets: "Pack Assets",
 	paste: "Paste",
@@ -169,6 +170,7 @@ export default {
 	_new_game_template_desc: "Choose a starter template.",
 
 	_export_game_platform_desc: 'Choose which platform to export',
+	_export_game_open_folder_desc: "Open export folder in file explorer on success",
 
 	_color_main_bg: "Main Background",
 	_color_main_text: "Main Text",

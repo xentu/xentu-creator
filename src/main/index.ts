@@ -149,7 +149,7 @@ class XentuCreatorApp {
 		ipcMain.handle('navigate-to', this.handleNavigateTo);
 		ipcMain.handle('pick-image', this.handlePickImage);
 		ipcMain.handle('exec-cmd', (e:any, cmd:string) => this.handleExecCmd(cmd));
-		ipcMain.handle('export-game', (e:any, platform:string) => this.handleExportGame(platform));
+		ipcMain.handle('export-game', (e:any, platform:string, openFolder:boolean) => this.handleExportGame(platform, openFolder));
 	}
 
 
@@ -877,7 +877,7 @@ class XentuCreatorApp {
 	};
 
 
-	async handleExportGame(platform:string) {
+	async handleExportGame(platform:string, openFolder:boolean) {
 		const window = BrowserWindow.getAllWindows()[0];
 		const release:any = await myCreator.handleListBinaries();
 		let chosenBinary:any = null;
@@ -913,6 +913,11 @@ class XentuCreatorApp {
 			const outputBinary = dlgResult.filePath;
 			const outputPath = path.dirname(outputBinary);
 
+			// delete old binary.
+			if (await fs.pathExists(outputBinary)) {
+				fs.delete(outputBinary);
+			}
+
 			// copy binary.
 			await fs.copy(inputBinary, outputBinary);
 			
@@ -930,10 +935,17 @@ class XentuCreatorApp {
 				}
 
 				const zipFile = path.join(outputPath, 'game.dat');
+
+				// delete old game.
+				if (await fs.pathExists(zipFile)) {
+					fs.delete(zipFile);
+				}
+
 				zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
   					.pipe(fs.createWriteStream(zipFile))
   					.on('finish', () => {
 						myCreator.triggerAction('alert', "Export complete!");
+						if (openFolder) shell.showItemInFolder(outputPath);
   					});
 			}
 			else {
@@ -944,6 +956,7 @@ class XentuCreatorApp {
 					await fs.copy(assetPath, destPath);
 				}
 				myCreator.triggerAction('alert', "Export complete!");
+				if (openFolder) shell.showItemInFolder(outputPath);
 			}
 
 			for (var i=0; i<assets.length; i++) {
