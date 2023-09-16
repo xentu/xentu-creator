@@ -133,15 +133,19 @@ export default function NewGameDialog(props: NewGameDialogProps) {
 										value={conf.target_fps} small={true} minimum={1} type={'number'} 
 										setValue={(s:string) => {updateSetting('target_fps', s)}} />
 
-						<SettingBool slug='vSync' key={'vSync'} title={t('enable_v_sync')}
-										description={t('_setting_game_enable_v_sync_desc')} half={true}
-										checked={conf.v_sync}
-										setChecked={(v:boolean) => {updateSetting('v_sync', v)}} />
+						<div style={{ display:'flex', gap:'20px'}}>
 
-						<SettingBool slug='fullScreen' key={'fullScreen'} title={t('start_fullscreen')}
-										description={t('_setting_game_start_fullscreen_desc')}
-										checked={conf.fullscreen}
-										setChecked={(v:boolean) => {updateSetting('fullscreen', v)}} />
+							<SettingBool slug='vSync' key={'vSync'} title={t('enable_v_sync')}
+											description={t('_setting_game_enable_v_sync_desc')} half={true}
+											checked={conf.v_sync}
+											setChecked={(v:boolean) => {updateSetting('v_sync', v)}} />
+
+							<SettingBool slug='fullScreen' key={'fullScreen'} title={t('start_fullscreen')}
+											description={t('_setting_game_start_fullscreen_desc')}
+											checked={conf.fullscreen}
+											setChecked={(v:boolean) => {updateSetting('fullscreen', v)}} />
+						
+						</div>
 
 						<SettingButtons onSubmit={onSubmit} onCancel={props.onCancel} />
 

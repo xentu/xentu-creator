@@ -94,9 +94,9 @@ export default function MainMenu(props: MainMenuProps) {
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('console')} hotKey='Ctrl+Shift+C' click={() => window.api.menuConsole()} checked={props.showConsole} disabled={!props.enabled} />
 					{/*<MenuEntry click2={(e:any) => deselect(e)} label={t('theme_editor')} hotKey='Ctrl+Shift+D' click={() => window.api.menuThemeEditor()} checked={props.showThemeEditor} />*/}
 					<hr />
-					<MenuEntry click2={(e:any) => deselect(e)} label={t('actual_size')} click={() => window.api.menuActualSize()} />
-					<MenuEntry click2={(e:any) => deselect(e)} label={t('zoom_in')} click={() => window.api.menuZoomIn()} />
-					<MenuEntry click2={(e:any) => deselect(e)} label={t('zoom_out')} click={() => window.api.menuZoomOut()} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('actual_size')} click={() => window.api.menuActualSize()} disabled={!props.enabled} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('zoom_in')} click={() => window.api.menuZoomIn()} disabled={!props.enabled} />
+					<MenuEntry click2={(e:any) => deselect(e)} label={t('zoom_out')} click={() => window.api.menuZoomOut()} disabled={!props.enabled} />
 					<hr />
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('show_devtools')} click={() => window.api.menuDevTools()} />
 					<MenuEntry click2={(e:any) => deselect(e)} label={t('toggle_fullscreen')} hotKey='F11' click={() => window.api.menuFullScreen()} />

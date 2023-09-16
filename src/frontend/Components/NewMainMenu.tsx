@@ -256,9 +256,9 @@ export default function NewMainMenu(props: MainMenuProps) {
 					<NewMenuEntry index={2} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="console" hotKey='Ctrl+Shift+C' checked={props.showConsole} disabled={!props.enabled} />
 					{/*<NewMenuEntry click={onItemClick} name="theme_editor" hotKey='Ctrl+Shift+D' checked={props.showThemeEditor} />*/}
 					<hr />
-					<NewMenuEntry index={3} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="actual_size" />
-					<NewMenuEntry index={4} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="zoom_in" />
-					<NewMenuEntry index={5} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="zoom_out" />
+					<NewMenuEntry index={3} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="actual_size" disabled={!props.enabled} />
+					<NewMenuEntry index={4} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="zoom_in" disabled={!props.enabled} />
+					<NewMenuEntry index={5} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="zoom_out" disabled={!props.enabled} />
 					<hr />
 					<NewMenuEntry index={6} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="show_devtools" />
 					<NewMenuEntry index={7} click={onItemClick} mouseOver={onMenuEntryHover} parent="view" name="toggle_fullscreen" hotKey='F11' />

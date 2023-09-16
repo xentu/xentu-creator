@@ -218,11 +218,6 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 											value={build.assets.ignores} full={true} rows={3} half={true}
 											setValue={(s:any) => { updateBuildSubProperty('assets', 'ignores', s); }} />
 						</div>
-
-						
-
-						
-
 					</div>
 
 					<div className="dialog-page scrollable" style={{display:page==4?'block':'none'}}>

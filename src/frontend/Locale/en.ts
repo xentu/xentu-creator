@@ -118,6 +118,7 @@ export default {
 	zoom_out: "Zoom Out",
 	_tab_dependencies_desc: "Configure which dependencies to use with your game.",
 	_tab_general_desc: "Configure basic info about your game.",
+	_tab_code_editor_desc: "Configure the code editor",
 	_tab_settings_general_desc: "General settings for Xentu Creator",
 	_tab_graphics_desc: "Configure the graphical settings for your game.",
 	_tab_sound_desc: "Configure the audio settings for your game.",

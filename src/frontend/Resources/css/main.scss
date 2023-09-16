@@ -331,7 +331,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	}
 
 	.dialog {
-		opacity: 1; border: 0px solid; border-radius: 5px; flex: 1; margin: auto; margin-top: 47px;
+		opacity: 1; border: 0px solid; border-radius: 5px; flex: 1; margin: auto; /* margin-top: 47px; */
 		position: relative; max-width: 900px; max-height: 100vh; /* min-height: 480px; */
 
 		&:has(.new-game-dialog) {	max-width:500px; }
