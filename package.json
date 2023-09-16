@@ -1,7 +1,7 @@
 {
 	"name": "xentu-creator-js",
 	"productName": "Xentu Creator",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "Build computer games in JavaScript, Lua or Python.",
 	"main": ".webpack/main",
 	"scripts": {
