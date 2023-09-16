@@ -66,7 +66,7 @@ const BuildTemplate = () => {
 			"ignores": [
 				".git",
 				".gitignore",
-				"build.json",
+				"editor.json",
 				"game.json"
 			]
 		}
@@ -111,6 +111,7 @@ class XentuCreatorApp {
 		ipcMain.handle('show-prompt', this.handleShowPrompt);
 		ipcMain.on('set-settings', (e:any, newSettings:any) => { this.handleSetSettings(e, newSettings) });
 		ipcMain.on('set-project', (e:any, newProject:any) => { this.handleSetProject(e, newProject) });
+		ipcMain.on('set-build', (e:any, newBuild:any) => { this.handleSetBuild(e, newBuild) });
 		ipcMain.handle('list-files', this.handleListFiles);
 		ipcMain.handle('list-images', this.handleListImages);
 		ipcMain.handle('open-file', this.handleOpenFile);
@@ -222,7 +223,11 @@ class XentuCreatorApp {
 	async saveProject() {
 		const projectFile = path.join(this.projectPath, 'game.json');
 		await fs.writeJson(projectFile, this.theProject, { spaces: '\t' });
-		const buildFile = path.join(this.projectPath, 'build.json');
+	}
+
+
+	async saveBuild() {
+		const buildFile = path.join(this.projectPath, 'editor.json');
 		await fs.writeJson(buildFile, this.theBuild, { spaces: '\t' });
 	}
 
@@ -403,12 +408,16 @@ class XentuCreatorApp {
 
 	async handleSetProject(event:any, newProject: any) {
 		this.theProject = newProject;
-
 		const window = BrowserWindow.getAllWindows()[0];
 		const gameName = this.theProject?.game?.title ?? 'Untitled';
 		window.setTitle(gameName + " - Xentu Creator");
-
 		await this.saveProject();
+	}
+
+
+	async handleSetBuild(event:any, newBuild:any) {
+		this.theBuild = newBuild;
+		await this.saveBuild();
 	}
 
 
@@ -478,7 +487,7 @@ class XentuCreatorApp {
 		const cfgFileExists = await fs.pathExists(cfgFile);
 		const cfgSrc = JSON.parse(jsonConfig);
 		const cfgData = ProjectTemplate();
-		const bldFile = path.join(cfgDir, 'build.json');
+		const bldFile = path.join(cfgDir, 'editor.json');
 		const bldData = BuildTemplate();
 
 		if (cfgFileExists) {
@@ -599,7 +608,7 @@ class XentuCreatorApp {
 		const projectFileExists = await fs.pathExists(projectFile);
 
 		// read the build file if one exists.
-		const buildFile = path.join(thePath, 'build.json');
+		const buildFile = path.join(thePath, 'editor.json');
 		const buildFileExists = await fs.pathExists(buildFile);
 
 		const self = myCreator;
@@ -645,6 +654,7 @@ class XentuCreatorApp {
 		self.projectPath = thePath;
 		window.webContents.send('projectPathChanged', thePath);
 		window.webContents.send('projectChanged', JSON.stringify(self.theProject));
+		window.webContents.send('buildChanged', JSON.stringify(self.theBuild));
 		window.webContents.send('triggerAction', 'hide-welcome', null );
 		return true;
 	}

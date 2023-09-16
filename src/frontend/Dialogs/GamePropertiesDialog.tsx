@@ -4,13 +4,16 @@ import SettingBool from '../Components/Settings/SettingBoolean';
 import SettingCombo from '../Components/Settings/SettingCombo';
 import SettingDualInput from '../Components/Settings/SettingDualInput';
 import SettingInput from '../Components/Settings/SettingInput';
+import SettingTextList from '../Components/Settings/SettingTextList';
 import { SettingsContext } from '../Context/SettingsManager';
 import { ProjectContext, ProjectSchema } from '../Context/ProjectManager';
+import { BuildContext, BuildSchema } from '../Context/BuildManager';
 import { useTranslation } from "react-i18next";
 
 
 type GamePropertiesDialogProps = {
 	onPropertiesChanged: Function,
+	onBuildChanged: Function,
 	onCancel: Function
 }
 
@@ -42,6 +45,7 @@ channelList.add('3', 'Quad Channel');
 export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 	const settings = useContext(SettingsContext);
 	const project = useContext(ProjectContext);
+	const build = useContext(BuildContext);
 	const { i18n, t } = useTranslation();
 	const [page, setPage] = useState(0);
 
@@ -67,6 +71,20 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 		await window.api.setProject(clone);
 	};
 
+	const updateBuildProperty = async (option:any, newValue:any) => {
+		const clone = JSON.parse(JSON.stringify(build));
+		clone[option] = newValue;
+		props.onBuildChanged(clone);
+		await window.api.setBuild(clone);
+	};
+
+	const updateBuildSubProperty = async (group:any, option:any, newValue:any) => {
+		const clone = JSON.parse(JSON.stringify(build));
+		clone[group][option] = newValue;
+		props.onBuildChanged(clone);
+		await window.api.setBuild(clone);
+	};
+
 	return (
 		<div className={'dialog stretch-height'}>
 			<div className={`settings-dialog`} style={{width:'900px',minHeight:'500px'}}>
@@ -78,7 +96,8 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 							<li data-index="0" onClick={() => setPage(0)} className={page==0?'is-active':''}>{t('general')}</li>
 							<li data-index="1" onClick={() => setPage(1)} className={page==1?'is-active':''}>{t('graphics')}</li>
 							<li data-index="2" onClick={() => setPage(2)} className={page==2?'is-active':''}>{t('sound')}</li>
-							{/*<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>{t('dependencies')}</li>*/}
+							<li data-index="3" onClick={() => setPage(3)} className={page==3?'is-active':''}>{t('build')}</li>
+							{/*<li data-index="3" onClick={() => setPage(4)} className={page==3?'is-active':''}>{t('dependencies')}</li>*/}
 						</ul>
 					</div>
 						
@@ -98,11 +117,6 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 										description={t('_setting_game_entry_point_desc')}
 										value={project.game.entry_point}
 										setValue={(s:string) => { updateProjectProperty('entry_point', s) }} />
-
-						<SettingInput slug='icon' key={'icon'} title={t('icon_file')}
-										description={t('_setting_game_icon_file_desc')}
-										value={project.game.icon}
-										setValue={(s:string) => { updateProjectProperty('icon', s) }}  />
 
 						<SettingInput slug='version' key={'version'} title={t('version')}
 										description={t('_setting_game_version_desc')}
@@ -174,6 +188,44 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 					</div>
 
 					<div className="dialog-page scrollable" style={{display:page==3?'block':'none'}}>
+
+						<h2>{t('build')}</h2>
+						<p>{t('_tab_build_desc')}</p>
+
+						<SettingInput slug='exeName' key={'exeName'} title={t('exe_name')}
+										description={t('_setting_game_exe_name_desc')}
+										value={build.exe_name}
+										setValue={(s:string) => { updateBuildProperty('exe_name', s) }} />
+
+						<SettingInput slug='exeIcon' key={'exeIcon'} title={t('icon_file')}
+										description={t('_setting_game_exe_icon_desc')}
+										value={build.icon}
+										setValue={(s:string) => { updateBuildProperty('icon', s) }} />
+						
+						<SettingBool slug='assetsPack' key={'assetsPack'} title={t('pack_assets')}
+										description={t('_setting_game_pack_assets_desc')}
+										checked={build.assets.pack}
+										setChecked={(v:boolean) => { updateBuildSubProperty('assets', 'pack', v) }} />
+
+						<div style={{ display:'flex', gap:'20px'}}>
+							<SettingTextList slug='preBuildCommands' key={'preBuildCommands'} title={t('pre_build_commands')}
+											description={t('_setting_game_pre_build_commands_desc')}
+											value={build.pre_build_commands} full={true} rows={3} half={true}
+											setValue={(s:any) => { updateBuildProperty('pre_build_commands', s); }} />
+
+							<SettingTextList slug='assetIgnores' key={'assetIgnores'} title={t('asset_ignores')}
+											description={t('_setting_game_asset_ignores_desc')}
+											value={build.assets.ignores} full={true} rows={3} half={true}
+											setValue={(s:any) => { updateBuildSubProperty('assets', 'ignores', s); }} />
+						</div>
+
+						
+
+						
+
+					</div>
+
+					<div className="dialog-page scrollable" style={{display:page==4?'block':'none'}}>
 						
 						<h2>{t('dependencies')}</h2>
 						<p>{t('_tab_dependencies_desc')}</p>

@@ -79,7 +79,11 @@ export default function FileExplorer(props: ComponentProps) {
 														 focusPath={props.focusPath} />);
 			}
 		});
+
+		const hiddenFiles = ['game.json', 'editor.json'];
+
 		entries.map((file: any) => {
+			if (hiddenFiles.includes(file.name)) return;
 			if (file.ext != 'folder') {
 				result.push(<FileExplorerEntry key={file.path} label={file.name} 
 													    path={file.path} directory={file.directory}

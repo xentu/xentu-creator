@@ -30,6 +30,6 @@ export const plugins = [
 		]
 	}),
 	new MonacoWebpackPlugin({
-		languages: ['javascript', 'typescript']
+		languages: ['javascript', 'typescript', 'json', 'xml']
 	})
 ];

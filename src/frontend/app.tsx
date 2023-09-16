@@ -22,6 +22,7 @@ import ThemeEditor from './Components/ThemeEditor';
 import WelcomePanel from './Components/WelcomePanel';
 import { MenuEntry } from './Components/MenuItem';
 import { ProjectContext, ProjectSchema } from './Context/ProjectManager';
+import { BuildContext, BuildSchema } from './Context/BuildManager';
 import { SettingsContext } from './Context/SettingsManager';
 import NewXterm from './Components/NewXterm';
 import { appStateReducer, appStateDefault } from './state'
@@ -49,6 +50,7 @@ function App(props: appProps) {
 	const [appState, dispatchAppState] = useReducer(appStateReducer, appStateDefault);
 	const [contextMenu, setContextMenu] = useState(null);
 	const [project, setProject] = useState({} as ProjectSchema);
+	const [build, setBuild] = useState({} as BuildSchema);
 	const [settings, setSettings] = useState(props.loadedSettings);
 	const [tabs, setTabs] = useState(new Array<OpenTab>());
 	const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -69,6 +71,10 @@ function App(props: appProps) {
 		window.api.onConsoleData((data:string) => { handleConsole.current(data); });
 		window.api.onProjectChanged((newProject:object) => {
 			setProject(newProject as ProjectSchema);
+		});
+		window.api.onBuildChanged((newBuild:object) => {
+			console.log("NewBuild", newBuild as BuildSchema);
+			setBuild(newBuild as BuildSchema);
 		});
 		window.api.getAccentColor().then((accentColor:string) => {
 			document.documentElement.style.setProperty('--accent','#' + accentColor.substring(0, 6));
@@ -233,6 +239,7 @@ function App(props: appProps) {
 			case 'close-all':
 				setTabs(new Array<OpenTab>());
 				setProject(null);
+				setBuild(null);
 				dispatchAppState([
 					{ type: 'dialog', value: '' },
 					{ type: 'is-welcome-visible', value: true }
@@ -830,7 +837,7 @@ function App(props: appProps) {
 			case 'new-file': result.push(<NewFileDialog key={'new-file'} folderFirst={false} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
 			case 'new-folder': result.push(<NewFileDialog key={'new-file'} folderFirst={true} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} selectedFolder={appState.selectedPath || appState.projectPath} projectFolder={appState.projectPath} />); break;
 			case 'rename': result.push(<RenameDialog key={'rename'} onClose={(e:any) => dispatchAppState({ type:'rename-finished', value:e })} oldPath={appState.selectedPath} />); break;
-			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onPropertiesChanged={(s:any) => setProject(s)} />); break;
+			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onPropertiesChanged={(s:any) => setProject(s)} onBuildChanged={(s:any) => setBuild(s)} />); break;
 			case 'pick-image': result.push(<PickImageDialog key={'pick-image'} onClose={(e:any) => dispatchAppState({ type:'pick-image-finished', value:e })} />); break;
 		}
 		return result;
@@ -920,75 +927,77 @@ function App(props: appProps) {
 		<div className={classList([c_light, c_roboto, c_welcome])}>
 			<SettingsContext.Provider value={settings}>
 				<ProjectContext.Provider value={project}>
+					<BuildContext.Provider value={build}>
 
-					<NewMainMenu enabled={!appState.isWelcomeVisible} canSave={appState.canSave} showSidebar={appState.showSidebar} 
-								 showStatus={appState.showStatusBar} showConsole={appState.showConsole} showThemeEditor={appState.showThemeEditor}
-								 debugging={appState.isDebugging} />
+						<NewMainMenu enabled={!appState.isWelcomeVisible} canSave={appState.canSave} showSidebar={appState.showSidebar} 
+									showStatus={appState.showStatusBar} showConsole={appState.showConsole} showThemeEditor={appState.showThemeEditor}
+									debugging={appState.isDebugging} />
 
-					<div className={classList(['columns', c_tracking, c_statusbar, c_console])} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })}>
+						<div className={classList(['columns', c_tracking, c_statusbar, c_console])} onMouseMove={e => handleMouseMove(e.clientX, e.clientY)} onMouseLeave={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })}>
 
-						<div id="sidebar" className="column" style={{flexBasis: appState.sidebarWidth + 'px', display: appState.showSidebar ? 'flex' : 'none' }}>
-							<div className="column-head tab-labels">
-								<div className='tab-label'>{t('files_and_folders')}</div>
+							<div id="sidebar" className="column" style={{flexBasis: appState.sidebarWidth + 'px', display: appState.showSidebar ? 'flex' : 'none' }}>
+								<div className="column-head tab-labels">
+									<div className='tab-label'>{t('files_and_folders')}</div>
 
-								<div className="buttons" style={{display:'none'}}>
-									<a className="menu-item" title="Config Game">
-										<span className="menu-label"><i className='icon-cog'></i></span>
-									</a>
+									<div className="buttons" style={{display:'none'}}>
+										<a className="menu-item" title="Config Game">
+											<span className="menu-label"><i className='icon-cog'></i></span>
+										</a>
+									</div>
+
 								</div>
-
+								<div className="column-body">
+									<FileExplorer path="d:/temp" 
+										onFileOpen={(filePath: string) => doLoadEditor(filePath)} 
+										onContextMenu={(name:string, x:number, y:number, path:string) => doShowContextMenu(name, x, y, path)} 
+										focusPath={appState.focusPath} eventPath={appState.eventPath}
+										setFocusPath={(p:string) => {
+											dispatchAppState({ type:'focus-path', value: p });
+											dispatchAppState({ type:'selected-path', value: p });
+										}}
+										/>
+								</div>
 							</div>
-							<div className="column-body">
-								<FileExplorer path="d:/temp" 
-									onFileOpen={(filePath: string) => doLoadEditor(filePath)} 
-									onContextMenu={(name:string, x:number, y:number, path:string) => doShowContextMenu(name, x, y, path)} 
-									focusPath={appState.focusPath} eventPath={appState.eventPath}
-									setFocusPath={(p:string) => {
-										dispatchAppState({ type:'focus-path', value: p });
-										dispatchAppState({ type:'selected-path', value: p });
-									}}
-									/>
+
+							<div id="splitter" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
+						
+							<div id="main" className="column">
+								<div className="column-head tab-labels">
+									{renderTabLabels()}
+								</div>
+								<div className="column-body" data-count={tabs.length}>
+									<div className="main-rows">
+										<div className="tab-bodies">
+											{renderTabBodies()}
+										</div>
+										<div id="splitter2" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter2' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
+										<div id="console" style={{ flexBasis: appState.consoleHeight + 'px', display: appState.showConsole ? 'block' : 'none', overflow: 'hidden' }}>
+											<NewXterm ref={xtermRef} options={{ 
+												rows: appState.terminalRows,
+												allowTransparency: true,
+												fontFamily: 'Consolas, "Courier New", monospace',
+												fontSize: settings?.editor?.fontSize ?? 14
+											}} />
+										</div>
+									</div>
+								</div>						
 							</div>
 						</div>
 
-						<div id="splitter" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
-					
-						<div id="main" className="column">
-							<div className="column-head tab-labels">
-								{renderTabLabels()}
-							</div>
-							<div className="column-body" data-count={tabs.length}>
-								<div className="main-rows">
-									<div className="tab-bodies">
-										{renderTabBodies()}
-									</div>
-									<div id="splitter2" onMouseDown={e => dispatchAppState({ type: 'is-tracking-mouse', value: 'splitter2' })} onMouseUp={e => dispatchAppState({ type: 'is-tracking-mouse', value: '' })} />
-									<div id="console" style={{ flexBasis: appState.consoleHeight + 'px', display: appState.showConsole ? 'block' : 'none', overflow: 'hidden' }}>
-										<NewXterm ref={xtermRef} options={{ 
-											rows: appState.terminalRows,
-											allowTransparency: true,
-											fontFamily: 'Consolas, "Courier New", monospace',
-											fontSize: settings?.editor?.fontSize ?? 14
-										}} />
-									</div>
-								</div>
-							</div>						
-						</div>
-					</div>
+						<div id='status-bar'>{t('idle')}</div>
+						<WelcomePanel visible={appState.isWelcomeVisible} removeRecent={handleRemoveRecent} />
+						{/*<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} /> */}
+						<DialogContainer key='dialog1' visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>
+							{renderDialog()}
+						</DialogContainer>
+						<DialogContainer key='dialog2' visible={appState.dialog2!==''} onClose={() => dispatchAppState({ type: 'dialog2', value: '' })}>
+							{renderDialog2()}
+						</DialogContainer>
+						<ContextMenu onBlur={() => doHideContextMenu()}> 
+							{renderContextMenu()}
+						</ContextMenu>
 
-					<div id='status-bar'>{t('idle')}</div>
-					<WelcomePanel visible={appState.isWelcomeVisible} removeRecent={handleRemoveRecent} />
-					{/*<ThemeEditor shown={appState.showThemeEditor} onClose={(e:any) => dispatchAppState({ type: 'toggle-theme-editor' })} onSettingsChanged={(s:any) => setSettings(s)} /> */}
-					<DialogContainer key='dialog1' visible={appState.dialog!==''} onClose={() => dispatchAppState({ type: 'dialog', value: '' })}>
-						{renderDialog()}
-					</DialogContainer>
-					<DialogContainer key='dialog2' visible={appState.dialog2!==''} onClose={() => dispatchAppState({ type: 'dialog2', value: '' })}>
-						{renderDialog2()}
-					</DialogContainer>
-					<ContextMenu onBlur={() => doHideContextMenu()}> 
-						{renderContextMenu()}
-					</ContextMenu>
-
+					</BuildContext.Provider>
 				</ProjectContext.Provider>
 			</SettingsContext.Provider>
 		</div>

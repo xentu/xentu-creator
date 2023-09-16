@@ -28,6 +28,7 @@ contextBridge.exposeInMainWorld('api', {
     getSettings: () => ipcRenderer.invoke('get-settings'),
     setSettings: (settings: any) => ipcRenderer.send('set-settings', settings),
     setProject: (project: any) => ipcRenderer.send('set-project', project),
+    setBuild: (build: any) => ipcRenderer.send('set-build', build),
     refreshBinaries: (overwrite:boolean) => ipcRenderer.invoke('refresh-binaries', overwrite),
     listBinaries: () => ipcRenderer.invoke('list-binaries'),
     showAlert: (message:string) => ipcRenderer.send('show-alert', message),
@@ -87,9 +88,11 @@ contextBridge.exposeInMainWorld('api', {
     },
 
     onProjectChanged: (cb: (customData: string) => void) => {
-        // Deliberately strip event as it includes `sender` (note: Not sure about that, I partly pasted it from somewhere)
-        // Note: The first argument is always event, but you can have as many arguments as you like, one is enough for me.
         ipcRenderer.on('projectChanged', (event, customData) => cb(JSON.parse(customData)));
+    },
+
+    onBuildChanged: (cb: (customData: string) => void) => {
+        ipcRenderer.on('buildChanged', (event, customData) => cb(JSON.parse(customData)));
     },
 
     onTriggerAction: (cb: (actionName: string, data:string) => void) => {

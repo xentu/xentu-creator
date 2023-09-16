@@ -70,17 +70,21 @@ export default function NewFileDialog(props: ComponentProps) {
 			case 'file_type': clone.file_type = newValue; break;
 		}
 		setInfo(clone);
-		console.log(clone);
 	};
 
 	const onSubmit = async () => {
+		const disallowed = ['game.json', 'editor.json'];
+
+		if (disallowed.includes(info.file_name)) {
+			await window.api.showAlert(t('file_name_not_allowed'));
+			return;
+		}
 
 		const path = `${props.selectedFolder}/${info.file_name}`;
 		let ext = '.js';
 
 		if (info.file_type == 'folder') {
 			const d_res = await window.api.createFolder(path);
-			console.log("FolderCreateResult", [path, d_res]);
 			props.onCancel();
 			return;
 		}
@@ -105,7 +109,6 @@ export default function NewFileDialog(props: ComponentProps) {
 		}
 
 		const file_r = await window.api.createFile(path, ext);
-		console.log("FileCreateResult", [path, file_r]);
 		props.onCancel();
 	};
 

@@ -316,6 +316,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
 	&.is-hidden { transition: visibility 300ms, opacity 300ms linear; visibility: hidden; opacity: 0; }
 	&.is-hidden { transition: opacity 100ms; opacity: 0; }
 	p, h2, .setting-left, .setting-left * { user-select: none; }
+	.setting-text-list.half-size.full { padding-right: 0 !important; }
 
 	.dialog-close {
 		position: absolute; top: 20px; right: 20px;
@@ -435,7 +436,7 @@ html, body, #app, #app > div { height: 100%; font-size: 12px; }
  */
 
 
-input[type='text'].input, input[type='number'].input { 
+textarea.input, input[type='text'].input, input[type='number'].input { 
 	min-width: 160px; border-radius: 5px; box-shadow: none; border: 1px solid; padding: 6px 8px;
 }
 
@@ -606,3 +607,6 @@ input[type='text'].input, input[type='number'].input {
 		input { width: 100%; box-sizing: border-box; min-width: 0!important; }
 	}
  }
+
+
+

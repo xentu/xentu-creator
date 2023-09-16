@@ -6,7 +6,6 @@ export type ProjectSchema = {
 		title: string,
 		entry_point: string,
 		version: string,
-		icon: string,
 		v_sync: boolean,
 		fullscreen: boolean,
 		resizable: boolean,
@@ -35,7 +34,6 @@ export const ProjectContext : React.Context<ProjectSchema> = createContext({
 	game: {
 		title: "Untitled",
 		entry_point: "/game.js",
-		icon: "",
 		version: "1.0.0",
 		v_sync: true,
 		fullscreen: false,

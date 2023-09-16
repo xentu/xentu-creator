@@ -602,6 +602,9 @@ html, body, #app, #app > div {
 .dialog-container p, .dialog-container h2, .dialog-container .setting-left, .dialog-container .setting-left * {
   user-select: none;
 }
+.dialog-container .setting-text-list.half-size.full {
+  padding-right: 0 !important;
+}
 .dialog-container .dialog-close {
   position: absolute;
   top: 20px;
@@ -805,7 +808,7 @@ html, body, #app, #app > div {
  * Input Styles
  * ----------------------------------------------------------------------------
  */
-input[type=text].input, input[type=number].input {
+textarea.input, input[type=text].input, input[type=number].input {
   min-width: 160px;
   border-radius: 5px;
   box-shadow: none;
@@ -1247,6 +1250,7 @@ html, body, #app, #app > div {
   border-color: #444;
 }
 
+textarea.input,
 input[type=text].input,
 input[type=number].input,
 select {
@@ -1316,7 +1320,7 @@ select {
   border-color: #999 !important;
 }
 
-input[type=text].input:focus, input[type=number].input:focus, select:focus {
+textarea.input:focus, input[type=text].input:focus, input[type=number].input:focus, select:focus {
   outline: 1px solid var(--activeBackground);
 }
 
@@ -1457,6 +1461,7 @@ input[type=text].input:focus, input[type=number].input:focus, select:focus {
   border-top-color: #8f8f8f;
 }
 
+.theme-is-light textarea.input,
 .theme-is-light input[type=text].input,
 .theme-is-light input[type=number].input,
 .theme-is-light select {
