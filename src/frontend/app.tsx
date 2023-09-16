@@ -73,7 +73,6 @@ function App(props: appProps) {
 			setProject(newProject as ProjectSchema);
 		});
 		window.api.onBuildChanged((newBuild:object) => {
-			console.log("NewBuild", newBuild as BuildSchema);
 			setBuild(newBuild as BuildSchema);
 		});
 		window.api.getAccentColor().then((accentColor:string) => {

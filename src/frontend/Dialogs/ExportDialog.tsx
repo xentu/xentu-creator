@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import Dictionary from '../../main/classes/Dictionary';
-import SettingBool from '../Components/Settings/SettingBoolean';
 import SettingButtons from '../Components/Settings/SettingButtons';
 import SettingCombo from '../Components/Settings/SettingCombo';
-import SettingDualInput from '../Components/Settings/SettingDualInput';
-import SettingInput from '../Components/Settings/SettingInput';
 import { useTranslation } from "react-i18next";
 
 
@@ -13,12 +10,20 @@ type ExportDialogProps = {
 }
 
 
+const platforms = new Dictionary<string>();
+platforms.add('windows', 'Windows (x86-64)');
+platforms.add('macos', 'MacOS (x86-64)');
+platforms.add('linux', 'Linux (x86-64)');
+
+
 export default function ExportDialog(props: ExportDialogProps) {
 	const { i18n, t } = useTranslation();
+	const [platform, setPlatform] = useState('windows');
 
 
 	const onSubmit = async () => {
-
+		const file_r = await window.api.exportGame(platform);
+		props.onCancel();
 	};
 
 	
@@ -31,8 +36,12 @@ export default function ExportDialog(props: ExportDialogProps) {
 						<h2>{t('export_game')}</h2>
 						{ /* <p>Configure basic info about your game.</p> */ }
 
+						<SettingCombo slug='platform' key={'platform'} title={t('platform')}
+										description={t('_export_game_platform_desc')}
+										options={platforms} value={platform}
+										setValue={(v:string) => {setPlatform(v)}} />
 
-						<SettingButtons onSubmit={onSubmit} onCancel={props.onCancel} />
+						<SettingButtons okText={'Export'} onSubmit={onSubmit} onCancel={props.onCancel} />
 
 					</div>
 

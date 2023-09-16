@@ -70,6 +70,7 @@ export default {
 	options: "Options",
 	pack_assets: "Pack Assets",
 	paste: "Paste",
+	platform: "Platform",
 	platformer: "Platformer",
 	pre_build_commands: "Pre-build Commands",
 	ui_font_family: "Font Family",
@@ -166,6 +167,8 @@ export default {
 	_new_game_vp_height_warning: "Please enter a viewport height larger than 128px",
 	_new_game_coding_language_desc: "Change the code language you would like to use.",
 	_new_game_template_desc: "Choose a starter template.",
+
+	_export_game_platform_desc: 'Choose which platform to export',
 
 	_color_main_bg: "Main Background",
 	_color_main_text: "Main Text",
