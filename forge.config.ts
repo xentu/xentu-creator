@@ -17,7 +17,8 @@ const debConfig:MakerDebConfig = {
 		section: 'editors',
 		categories: ['Development'],
 		homepage: 'https://xentu.net',
-		icon: 'images/xentu-icon.png'
+		icon: 'images/xentu-icon.png',
+		depends: ['libglew2.2']
 	}
 }
 
