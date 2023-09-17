@@ -7,7 +7,7 @@
 	"scripts": {
 		"start": "npm run sass && electron-forge start",
 		"package": "electron-forge package",
-		"make": "electron-forge make --icon=./xentu-icon.ico",
+		"make": "electron-forge make --icon=./images/xentu-icon.ico",
 		"publish": "electron-forge publish",
 		"lint": "eslint --ext .ts,.tsx .",
 		"sass": "sass ./src/frontend/Resources/css/app.scss ./src/frontend/Resources/css/app.css"

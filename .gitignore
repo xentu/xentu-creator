@@ -49,6 +49,7 @@ typings/
 
 # Optional eslint cache
 .eslintcache
+.eslintrc.json
 
 # Optional REPL history
 .node_repl_history
@@ -64,6 +65,7 @@ typings/
 dev
 .env
 .env.test
+.vscode
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
