@@ -54,7 +54,7 @@ export default function WelcomePanel(props: WelcomePanelProps) {
 					<div>
 						<Logo src="../images/xentu-logo.png" size={128} />
 						<h1>Xentu Creator</h1>
-						<span>{t('version')} 0.0.7</span>
+						<span>{t('version')} 0.0.8</span>
 					</div>
 					<div className="buttons">
 						<a className="button" onClick={() => window.api.newGame()}>{t('new_game')}</a>
