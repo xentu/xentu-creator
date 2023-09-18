@@ -891,6 +891,16 @@ class XentuCreatorApp {
 		let chosenBinary:any = null;
 		let assets:Array<string> = [];
 
+		// run pre-build commands, if there are any
+		const pbCommands = myCreator.theBuild.pre_build_commands;
+		if (pbCommands.length > 0) {
+			window.webContents.send('consoleData', 'Running pre-build commands...');
+			for (var i=0; i<pbCommands.length; i++) {
+				await myCreator.handleExecCmd(pbCommands[0]);
+			}
+			window.webContents.send('consoleData', 'Pre-build commands complete.');
+		}
+
 		// find the binary for the chosen export platform.
 		for (var i=0; i<release.binaries.length; i++) {
 			const binary = release.binaries[i];
@@ -986,9 +996,18 @@ class XentuCreatorApp {
 		const altBinPath = myCreator.theSettings.debugging.alternateBinaryPath ?? '';
 		let binFile = '';
 
-		if (altBinPath == '')
-		{
-			// find the appropriate binary path.
+		// run pre-build commands, if there are any
+		const pbCommands = myCreator.theBuild.pre_build_commands;
+		if (pbCommands.length > 0) {
+			window.webContents.send('consoleData', 'Running pre-build commands...\n');
+			for (var i=0; i<pbCommands.length; i++) {
+				await myCreator.handleExecCmd(pbCommands[0]);
+			}
+			window.webContents.send('consoleData', ' complete!\n');
+		}
+
+		// find the appropriate binary path.
+		if (altBinPath == '') {
 			if (release.binaries) {
 				for (var i=0; i<release.binaries.length; i++) {
 					var binary = release.binaries[i];

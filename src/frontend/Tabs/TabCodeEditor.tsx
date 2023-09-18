@@ -59,6 +59,7 @@ export default function TabCodeEditor(props: TabCodeEditorProps) {
 		fetchData(props.filePath);
 	}, []);
 
+
 	return (
 		<div className={classList([props.active?'tab-active':'tab-inactive'])}>
 			<div className='toolbar-container'>

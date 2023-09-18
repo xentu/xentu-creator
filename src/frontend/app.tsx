@@ -312,7 +312,7 @@ function App(props: appProps) {
 	handleConsole.current = (data:string) => {
 		const term = xtermRef.current.terminal;
 		term.write(replaceAll(data, '\n', '\r\n'));
-		console.log(data);
+		//console.log(data);
 	};
 
 
@@ -703,6 +703,7 @@ function App(props: appProps) {
 	 */
 	const doCloseTabByPath = (path: string) => {
 		const tab = findTab(path);
+		if (tab == null) return;
 		doCloseTab(tab);
 	};
 

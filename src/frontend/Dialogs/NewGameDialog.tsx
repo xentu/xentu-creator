@@ -25,7 +25,7 @@ codeLanguages.add('ts', 'TypeScript');
 
 class ConfPreset {
 	title: string = "Untitled";
-	language: string = "typescript";
+	language: string = "js";
 	template: string = '';
 	vp_width: number = 800;
 	vp_height: number = 600;
@@ -118,6 +118,10 @@ export default function NewGameDialog(props: NewGameDialogProps) {
 										description={t('_new_game_coding_language_desc')}
 										options={codeLanguages} value={conf.language}
 										setValue={(v:string) => {updateSetting('language', v)}} />
+
+						<aside style={{display: conf.language == 'ts'?'block':'none', margin: '-15px 0 15px 0'}}>
+							Make sure <a href="#" onClick={() => window.api.navigateTo('https://www.typescriptlang.org/download')}>typescript</a> is installed before using this option.
+						</aside>
 
 						<SettingCombo slug='gameTemplate' key={'gameTemplate'} title={t('game_template')}
 										description={t('_new_game_template_desc')} disabled={true}
