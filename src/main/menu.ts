@@ -39,7 +39,8 @@ class XentuCreatorMenu {
     ipcMain.on('menu-new-folder',     (e) => this.Owner.triggerAction('show-new-folder'));
     ipcMain.on('menu-options',        (e) => this.Owner.triggerAction('show-settings'));
     ipcMain.on('menu-clear-console',  (e) => this.Owner.triggerAction('clear-console'));
-    ipcMain.on('menu-help',     async (e) => await shell.openExternal('https://electronjs.org'));
+    ipcMain.on('menu-help',     async (e) => await shell.openExternal('https://xentu.net'));
+    ipcMain.on('menu-docs',     async (e) => await shell.openExternal('https://docs.xentu.net'));
 
     Menu.setApplicationMenu(null);
   }

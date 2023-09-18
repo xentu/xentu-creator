@@ -77,6 +77,7 @@ export default function NewMainMenu(props: MainMenuProps) {
 			case 'options': window.api.menuOptions(); break;
 			case 'clear_console': window.api.menuClearConsole(); break;
 			case 'learn_more': window.api.menuHelp(); break;
+			case 'documentation': window.api.menuDocs(); break;
 			default:
 				console.log([e, menuName]);
 				break;
@@ -271,6 +272,7 @@ export default function NewMainMenu(props: MainMenuProps) {
 
 				<NewMenuItem name="help" click={onDropDown} mouseOver={onMenuItemHover} active={selected} hoverIndex={helpIndex}>
 					<NewMenuEntry index={0} click={onItemClick} mouseOver={onMenuEntryHover} parent="help" name="learn_more" hotKey='F1' />
+					<NewMenuEntry index={1} click={onItemClick} mouseOver={onMenuEntryHover} parent="help" name="documentation" />
 				</NewMenuItem>
 
 

@@ -79,6 +79,7 @@ contextBridge.exposeInMainWorld('api', {
     menuOptions:         () => ipcRenderer.send('menu-options'),
     menuClearConsole:    () => ipcRenderer.send('menu-clear-console'),
     menuHelp:            () => ipcRenderer.send('menu-help'),
+    menuDocs:            () => ipcRenderer.send('menu-docs'),
     /* menu ipc */
     
 

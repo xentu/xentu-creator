@@ -67,19 +67,27 @@ const ProjectTemplate = () => {
 };
 
 
-const BuildTemplate = () => {
+const BuildTemplate = (isTypeScript:boolean = false) => {
+	const commands = [] as Array<string>;
+	const ignores = [
+		".git",
+		".gitignore",
+		"editor.json"
+	];
+
+	if (isTypeScript) {
+		commands.push('tsc');
+		ignores.push('tsconfig.json');
+	}
+
 	return {
 		"exe_name": "untitled", /* the executable name */
 		"icon": "", /* the icon to embed (win) */
-		"pre_build_commands": [] as Array<string>, /* any commands to run before build (tsc etc..) */
+		"pre_build_commands": commands, /* any commands to run before build (tsc etc..) */
 		"assets": {
 			"pack": false, /* pack assets into game.dat? */
 			/* list of file/folder ignore rules for assets, eg "*.json" */
-			"ignores": [
-				".git",
-				".gitignore",
-				"editor.json"
-			]
+			"ignores": ignores
 		}
 	}
 };
@@ -462,6 +470,7 @@ class XentuCreatorApp {
 	
 		switch (ext) {
 			case 'js': lang = 'javascript'; break;
+			case 'ts': lang = 'typescript'; break;
 			case 'json': lang = 'json'; break;
 			case 'toml': lang = 'toml'; break;
 			case 'lua': lang = 'lua'; break;
@@ -522,7 +531,7 @@ class XentuCreatorApp {
 		const cfgSrc = JSON.parse(jsonConfig);
 		const cfgData = ProjectTemplate();
 		const bldFile = path.join(cfgDir, 'editor.json');
-		const bldData = BuildTemplate();
+		const bldData = BuildTemplate(cfgSrc.language == 'ts');
 
 		if (cfgFileExists) {
 			return JSON.stringify({ 'success': false, 'message': 'Project already exists at this location, please choose another.' });
@@ -530,7 +539,7 @@ class XentuCreatorApp {
 
 		// apply out config data ready for writing.
 		cfgData.game.title = cfgSrc.title;
-		cfgData.game.entry_point = "/game." + cfgSrc.language;
+		cfgData.game.entry_point = "/game." + (cfgSrc.language == 'ts' ? 'js' : cfgSrc.language);
 		cfgData.game.window.width = cfgSrc.vp_width;
 		cfgData.game.window.height = cfgSrc.vp_height;
 		cfgData.game.viewport.width = cfgSrc.vp_width;
@@ -1079,6 +1088,22 @@ class XentuCreatorApp {
 		// write the code to the destination path.
 		const codeDstFile = path.join(dir, 'game.' + language);
 		await fs.writeFile(codeDstFile, codeSrcFileContents);
+
+		if (language == 'ts') {
+			const tsConfig = `
+			{
+				"compilerOptions": {
+					"target": "ES5",
+					"module": "AMD",
+					  "baseUrl": ".",
+					  "outFile": "game.js"
+				},
+				"include": ["./**/*"]
+			}
+			`;
+			const tsConfigFile = path.join(codeDir, 'tsconfig.json');
+			await fs.writeFile(tsConfigFile, tsConfig);
+		}
 
 		// copy other files.
 		await myCreator.copyTemplateFile(codeDir, dir, 'assets/xentu-logo.png');

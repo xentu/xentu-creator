@@ -17,6 +17,7 @@ const codeLanguages = new Dictionary<string>();
 codeLanguages.add('lua', 'Lua');
 codeLanguages.add('py', 'Python');
 codeLanguages.add('js', 'JavaScript');
+codeLanguages.add('ts', 'TypeScript');
 
 
 
@@ -24,7 +25,7 @@ codeLanguages.add('js', 'JavaScript');
 
 class ConfPreset {
 	title: string = "Untitled";
-	language: string = "lua";
+	language: string = "typescript";
 	template: string = '';
 	vp_width: number = 800;
 	vp_height: number = 600;
