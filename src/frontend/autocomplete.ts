@@ -203,3 +203,58 @@ monaco.languages.registerCompletionItemProvider('javascript', {
 	}
 
 });
+
+
+// Remove un-needed auto-complete.
+monaco.languages.typescript.javascriptDefaults.setCompilerOptions({ noLib: true, allowNonTsExtensions: true });
+monaco.languages.typescript.typescriptDefaults.setCompilerOptions({ noLib: true, allowNonTsExtensions: true });
+
+
+
+monaco.languages.typescript.typescriptDefaults.addExtraLib([
+	'declare function print(message: string) :void',
+	`const assets = { 
+		mount(point:string, path:string) :void,
+		read_text_file(path:string) :string,
+		load_texture(path:string) :number,
+		load_font(path:string, size:int) :number,
+		load_sound(path:string) :number,
+		load_music(path:string) :number,
+		load_shader(vert:string, frag:string) :number,
+		load_sprite_map(path:string) :number,
+		load_tile_map_tmx(path:string, working_dir:string) :number,
+		create_textbox(w:number, h:number, wrap?:bool) :number,
+		unload_texture(asset_id:number) :void,
+		unload_font(asset_id:number) :void,
+		unload_sound(asset_id:number) :void,
+		unload_music(asset_id:number) :void,
+		unload_shader(asset_id:number) :void,
+		unload_sprite_map(asset_id:number) :void,
+		set_wrap(wrap_s:number, wrap_t?:number) :void,
+		set_interpolation(min:number, mag?:number) :void
+	}`,
+	`const renderer = { 
+		clear() :void,
+		begin(reset:boolean) :void,
+		present() :void,
+		draw_texture(texture_id:number, x:number, y:number, width:number, height:number) :void,
+		draw_sub_texture(texture_id:number, dx:number, dy:number, dw:number, dh:number, sx:number, sy:number, sw:number, sh:number) :void,
+		draw_rectangle(float x:number, y:number, width:number, height:number) :void,
+		draw_textbox(textbox_id:number) :void,
+		draw_sprite(sprite_map_id:number, group:string, frame:number, x:number, y:number, w:number, h:number) :void,
+		draw_tile_layer(tile_map_id:number, layer:number) :void,
+		set_background(hex_color:string) :void,
+		set_foreground(hex_color:string) :void,
+		set_window_mode(mode:number) :void,
+		set_position(x:number, y:number) :void,
+		set_origin(x:number, y:number) :void,
+		set_rotation(angle:number) :void,
+		set_scale(x:number, y:number) :void,
+		set_shader(shader_id:number) :void,
+		set_alpha(alpha:number) :void,
+		set_blend(blend:boolean) :void,
+		set_blend_func(src_func:string, dest_func:string) :void,
+		set_blend_preset(preset_name:string, with_alpha:bool) :void
+	}`,
+	'const someString: string ',
+].join('\n'));
