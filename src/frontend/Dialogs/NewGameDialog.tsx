@@ -17,7 +17,7 @@ const codeLanguages = new Dictionary<string>();
 codeLanguages.add('lua', 'Lua');
 codeLanguages.add('py', 'Python');
 codeLanguages.add('js', 'JavaScript');
-codeLanguages.add('ts', 'TypeScript');
+//codeLanguages.add('ts', 'TypeScript');
 
 
 
