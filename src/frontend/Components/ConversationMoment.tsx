@@ -10,6 +10,7 @@ type ConversationMomentProps = {
 	selected: boolean,
 	options: Array<string>,
 	setContent: Function,
+	setOptions: Function,
 	setFocus: Function,
 	doRemoveOption: Function
 }
@@ -19,8 +20,16 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 	//const [content, setContent] = useState("test best rest");
   	const onContentBlur = useCallback((evt:any) => {
 		//setContent(evt.currentTarget.innerHTML);
+		evt.stopPropagation();
 		props.setContent(props.index, evt.currentTarget.innerHTML);
 	}, [props.content]);
+
+	const doSetOption = useCallback((index:number, text:string) => {
+		const opts = [...props.options];
+		opts[index] = text;
+		props.setOptions(props.index, opts);
+	}, [props.options]);
+
 
 	const onFocus = (evt:any) => {
 		props.setFocus(props.index);
@@ -37,8 +46,8 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 			result.push(<>
 				<ConversationMomentOption 
 					key={`moment-${props.index}-${i}`} index={i} content={option}
-					setContent={() => {}}
-					setFocus={() => {}}
+					setContent={doSetOption}
+					setFocus={onFocus}
 					doRemove={doRemoveOption}
 				/>
 			</>);

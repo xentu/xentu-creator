@@ -81,7 +81,6 @@ export default function TabConversationEditor(props: ComponentProps) {
 	 */
 	useEffect(() => {
 		if (loaded) {
-			console.log('yo');
 			const saveEntries = [...entries];
 
 			/* strip out empty id, actor, goto */
@@ -92,6 +91,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 			}
 
 			let replacer = (key:any, value:any) => value === null ? undefined : value;
+			console.log("Entries", saveEntries);
 			let data = JSON.stringify(saveEntries, replacer, 2);
 			props.onSetData(data, true);
 		}
@@ -115,6 +115,17 @@ export default function TabConversationEditor(props: ComponentProps) {
 		if (newEntries[index].content != newContent) {
 			newEntries[index].content = newContent;
 			setEntries(newEntries);
+		}
+	};
+
+
+	const setEntryOptions = async (index:number, newOptions:Array<string>) => {
+		const newEntries = [...entries];
+		if (newEntries[index].options != newOptions) {
+			newEntries[index].options = newOptions;
+			console.log("NewOpts", index, newOptions);
+			console.log("Entries", newEntries);
+			await setEntries(newEntries);
 		}
 	};
 
@@ -191,6 +202,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 								content={entries[i].content}
 								options={entries[i].options}
 								setContent={setEntryContent}
+								setOptions={setEntryOptions}
 								setFocus={setSelectedIndex}
 								doRemoveOption={doRemoveOption}
 								/>);

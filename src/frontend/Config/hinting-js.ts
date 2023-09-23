@@ -1,9 +1,14 @@
+/**
+ * Config Monaco to handle TypeScript/JavaScript files. Adds the Xentu
+ * API to the built-in language server.
+ */
+
+
 import * as monaco from 'monaco-editor';
 
 
-// Remove un-needed auto-complete.
-monaco.languages.typescript.javascriptDefaults.setCompilerOptions({ noLib: true, allowNonTsExtensions: true, noResolve:true });
-monaco.languages.typescript.typescriptDefaults.setCompilerOptions({ noLib: true, allowNonTsExtensions: true, noResolve:true });
+// Remove un-needed auto-complete for JavaScript.
+//monaco.languages.typescript.javascriptDefaults.setCompilerOptions({ noLib: true, allowNonTsExtensions: true, noResolve:true });
 
 
 // Define some definitions to use in js/ts.

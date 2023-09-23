@@ -15,11 +15,19 @@ export default function ConversationMomentOption(props:PropsWithChildren<Convers
 	//const [content, setContent] = useState("test best rest");
   	const onContentBlur = useCallback((evt:any) => {
 		//setContent(evt.currentTarget.innerHTML);
-		props.setContent(props.index, evt.currentTarget.innerHTML);
+		evt.stopPropagation();
+		const newContent = evt.currentTarget.innerHTML;
+		if (newContent != props.content) {
+			props.setContent(props.index, newContent);
+		}
 	}, [props.content]);
 
 	const onFocus = (evt:any) => {
 		props.setFocus(props.index);
+	};
+
+	const optsClick = (evt:any) => {
+		console.log('Opts Clicked');
 	};
 
 	const deleteClick = (evt:any) => {
@@ -35,6 +43,9 @@ export default function ConversationMomentOption(props:PropsWithChildren<Convers
 				  tabIndex={0} contentEditable={true}
 				  onBlur={onContentBlur} onFocus={onFocus} dangerouslySetInnerHTML={{__html: props.content}}
 					/>
+			<a onClick={optsClick}>
+				<span className="icon-cog" style={{userSelect:'none'}} />
+			</a>
 			<a onClick={deleteClick}>
 				<span className="icon-cancel" style={{userSelect:'none'}} />
 			</a>

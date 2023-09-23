@@ -39,7 +39,9 @@ import RenameDialog from './Dialogs/RenameDialog';
 
 require('./window');
 require('./types');
-require('./autocomplete');
+require('./Config/hinting-js');
+require('./Config/hinting-py');
+require('./Config/hinting-lua');
 
 
 const container = document.getElementById('app');
