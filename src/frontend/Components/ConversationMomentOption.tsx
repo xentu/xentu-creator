@@ -3,6 +3,7 @@ import { classList } from '../helpers';
 
 
 type ConversationMomentOptionProps = {
+	momentIndex: number,
 	index: number,
 	content: string,
 	setContent: Function,
@@ -24,13 +25,13 @@ export default function ConversationMomentOption(props:PropsWithChildren<Convers
 	}, [props.content]);
 
 	const onFocus = (evt:any) => {
-		props.setFocus(props.index);
+		props.setFocus(evt, props.index);
 	};
 
-	const optsClick = (evt:any) => {
-		props.setFocus(props.index);
-		props.doOptionDialog(evt);
-		console.log('Opts Clicked');
+	const optsClick = (evt:React.MouseEvent) => {
+		evt.stopPropagation();
+		evt.preventDefault();
+		props.doOptionDialog(evt, props.momentIndex, props.index);
 	};
 
 	const deleteClick = (evt:any) => {

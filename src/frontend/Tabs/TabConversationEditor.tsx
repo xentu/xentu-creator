@@ -98,7 +98,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 			}
 
 			let replacer = (key:any, value:any) => value === null ? undefined : value;
-			console.log("Entries", saveEntries);
+			//console.log("Entries", saveEntries);
 			let data = JSON.stringify(saveEntries, replacer, 2);
 			props.onSetData(data, true);
 		}
@@ -198,22 +198,25 @@ export default function TabConversationEditor(props: ComponentProps) {
 	};
 
 
-	const doOptionDialog = (evt:any) => {
-		const state = {
-			target: "nowhere"
-		};
+	const doOptionDialog = (evt:any, momentIndex:number, optionIndex:number) => {
+		setSelectedIndex(momentIndex);
+		setSelectedOptionIndex(optionIndex);
+		const state = {...entries[momentIndex].options[optionIndex]};
 		props.doTabDialog('conversation-option-edit', state, optDialogComplete);
 	};
 
 
 	const optDialogComplete = (success:boolean, newState:any) => {
 		if (success === true) {
-			console.log("Dialog Complete!", newState);
 			const newEntries = [...entries];
-			if (newEntries[selectedIndex].options[selectedOptionIndex].target != newState.target) {
-				newEntries[selectedIndex].options[selectedOptionIndex].target = newState.target;
-				setEntries(newEntries);
+			try {
+				//console.log("Dialog Complete!", newState, selectedIndex, selectedOptionIndex);
+				if (newEntries[selectedIndex].options[selectedOptionIndex].target != newState.target) {
+					newEntries[selectedIndex].options[selectedOptionIndex].target = newState.target;
+					setEntries(newEntries);
+				}
 			}
+			catch {}
 		}
 	};
 

@@ -59,7 +59,7 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 		for (var option of props.options) {
 			result.push(<>
 				<ConversationMomentOption 
-					key={`moment-${props.index}-${i}`} index={i} content={option.content}
+					key={`moment-${props.index}-${i}`} momentIndex={props.index} index={i} content={option.content}
 					setContent={doSetOption}
 					setFocus={onOptionFocus}
 					doRemove={doRemoveOption}

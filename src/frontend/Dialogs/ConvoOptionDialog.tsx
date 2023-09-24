@@ -12,8 +12,6 @@ export default function ConvoOptionDialog(props: ComponentProps) {
 	const [data, setData] = useState(props.data);
 	const { i18n, t } = useTranslation();
 
-	console.log("InData", data);
-
 	const setTarget = (newTarget:string) => {
 		const clone = {...data};
 		clone.target = newTarget;
