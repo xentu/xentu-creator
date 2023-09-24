@@ -57,8 +57,15 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 		return res;
 	}
 
+	const isNumber = (value?:string|number): boolean => {
+   	return ((value != null) &&
+           	 (value !== '') &&
+           	!isNaN(Number(value.toString())));
+	};
+
 	const updateProjectProperty = async (option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(project));
+		if (isNumber(newValue)) newValue = Number(newValue);
 		clone.game[option] = newValue;
 		props.onPropertiesChanged(clone);
 		await window.api.setProject(clone);
@@ -66,6 +73,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 
 	const updateProjectSubProperty = async (group:any, option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(project));
+		if (isNumber(newValue)) newValue = Number(newValue);
 		clone.game[group][option] = newValue;
 		props.onPropertiesChanged(clone);
 		await window.api.setProject(clone);
@@ -73,6 +81,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 
 	const updateBuildProperty = async (option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(build));
+		if (isNumber(newValue)) newValue = Number(newValue);
 		clone[option] = newValue;
 		props.onBuildChanged(clone);
 		await window.api.setBuild(clone);
@@ -80,6 +89,7 @@ export default function GamePropertiesDialog(props: GamePropertiesDialogProps) {
 
 	const updateBuildSubProperty = async (group:any, option:any, newValue:any) => {
 		const clone = JSON.parse(JSON.stringify(build));
+		if (isNumber(newValue)) newValue = Number(newValue);
 		clone[group][option] = newValue;
 		props.onBuildChanged(clone);
 		await window.api.setBuild(clone);
