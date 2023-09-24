@@ -28,6 +28,7 @@ export default function ConversationMomentOption(props:PropsWithChildren<Convers
 	};
 
 	const optsClick = (evt:any) => {
+		props.setFocus(props.index);
 		props.doOptionDialog(evt);
 		console.log('Opts Clicked');
 	};
