@@ -293,7 +293,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 					<aside data-title="" style={{width:rightBarWidth+'px'}}>
 						{selectedIndex >= 0 && <>
-							<i>Selected Moment: #{selectedIndex} (opt:{selectedOptionIndex})</i>
+							{/*<i>Selected Moment: #{selectedIndex} (opt:{selectedOptionIndex})</i> */}
 
 							<div className="conversation-property" style={{marginTop: '0'}}>
 								<label>Actor:</label>
