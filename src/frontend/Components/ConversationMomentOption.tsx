@@ -7,7 +7,8 @@ type ConversationMomentOptionProps = {
 	content: string,
 	setContent: Function,
 	setFocus: Function
-	doRemove: Function
+	doRemove: Function,
+	doOptionDialog: Function
 }
 
 
@@ -27,6 +28,7 @@ export default function ConversationMomentOption(props:PropsWithChildren<Convers
 	};
 
 	const optsClick = (evt:any) => {
+		props.doOptionDialog(evt);
 		console.log('Opts Clicked');
 	};
 
@@ -41,7 +43,7 @@ export default function ConversationMomentOption(props:PropsWithChildren<Convers
 		<div className="moment-option-wrap">
 			<div className={classList(['moment-option', ''])} 
 				  tabIndex={0} contentEditable={true}
-				  onBlur={onContentBlur} onFocus={onFocus} dangerouslySetInnerHTML={{__html: props.content}}
+				  onBlur={onContentBlur} onFocus={(evt:any) => props.setFocus(evt, props.index)} dangerouslySetInnerHTML={{__html: props.content}}
 					/>
 			<a onClick={optsClick}>
 				<span className="icon-cog" style={{userSelect:'none'}} />

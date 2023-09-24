@@ -76,6 +76,8 @@ function _handleStateReducerField(clone:any, action:any) {
 			clone.dialog2 = '';
 			window.api.finishConfirm(action.value);
 			return true;
+
+		case 'tab-state':	clone.tabState = action?.value; return true;
 	}
 	return false;
 }

@@ -3,16 +3,24 @@ import { classList } from '../helpers';
 import ConversationMomentOption from './ConversationMomentOption';
 
 
+type MomentEntryOption = {
+	content: string,
+	target: string
+}
+
+
 type ConversationMomentProps = {
 	index: number,
 	label: string,
 	content: string,
 	selected: boolean,
-	options: Array<string>,
+	options: Array<MomentEntryOption>,
 	setContent: Function,
 	setOptions: Function,
 	setFocus: Function,
-	doRemoveOption: Function
+	setOptionFocus: Function,
+	doRemoveOption: Function,
+	doOptionDialog: Function
 }
 
 
@@ -26,16 +34,22 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 
 	const doSetOption = useCallback((index:number, text:string) => {
 		const opts = [...props.options];
-		opts[index] = text;
+		opts[index].content = text;
 		props.setOptions(props.index, opts);
 	}, [props.options]);
 
 
 	const onFocus = (evt:any) => {
 		props.setFocus(props.index);
+		props.setOptionFocus(-1);
 	};
 
-	const doRemoveOption = (optionIndex:any) => {
+	const onOptionFocus = (evt:any, optionIndex:number) => {
+		props.setFocus(props.index);
+		props.setOptionFocus(optionIndex);
+	};
+
+	const doRemoveOption = (optionIndex:number) => {
 		props.doRemoveOption(props.index, optionIndex);
 	};
 
@@ -45,10 +59,11 @@ export default function ConversationMoment(props:PropsWithChildren<ConversationM
 		for (var option of props.options) {
 			result.push(<>
 				<ConversationMomentOption 
-					key={`moment-${props.index}-${i}`} index={i} content={option}
+					key={`moment-${props.index}-${i}`} index={i} content={option.content}
 					setContent={doSetOption}
-					setFocus={onFocus}
+					setFocus={onOptionFocus}
 					doRemove={doRemoveOption}
+					doOptionDialog={props.doOptionDialog}
 				/>
 			</>);
 			i++;

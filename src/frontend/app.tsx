@@ -35,6 +35,7 @@ import ConfirmDialog from './Dialogs/ConfirmDialog';
 import PromptDialog from './Dialogs/PromptDialog';
 import ExportDialog from './Dialogs/ExportDialog';
 import RenameDialog from './Dialogs/RenameDialog';
+import ConvoOptionDialog from './Dialogs/ConvoOptionDialog';
 
 
 require('./window');
@@ -60,6 +61,7 @@ function App(props: appProps) {
 	const handleAction = useRef(null);
 	const handleConsole = useRef(null);
 	const xtermRef = useRef(null);
+	const tabCallbackRef = useRef(null);
 	const { i18n, t } = useTranslation();
 
 
@@ -383,6 +385,29 @@ function App(props: appProps) {
 		clone.recentProjects = clone.recentProjects.filter((e:string) => !e.endsWith(path));
 		setSettings(clone);
 		await window.api.setSettings(clone);
+	}
+
+
+	/**
+	 * Tabs that require a dialog can use this.
+	 * @param dialogKey The dialog key.
+	 * @param state A state to pass to the dialog.
+	 * @param callback A function to call when the dialog closes (bool:success, newState:any)
+	 */
+	const handleTabDialog = (dialogKey:string, state:any, callback:Function) => {
+		dispatchAppState({ type:'tab-state', value: state });
+		tabCallbackRef.current = callback;
+		dispatchAppState({ type:'dialog', value:dialogKey });	
+	}
+
+
+	const handleTabDialogClose = (data?:any) => {
+		dispatchAppState({ type:'tab-state', value: null });
+		if (tabCallbackRef.current != null) {
+			tabCallbackRef.current(data !== null, data);
+		}
+		tabCallbackRef.current = null;
+		dispatchAppState({ type:'dialog', value:'' });	
 	}
 
 
@@ -794,7 +819,7 @@ function App(props: appProps) {
 					result.push(<TabCodeEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
 					break;
 				case OpenTabType.ConversationEditor:
-					result.push(<TabConversationEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
+					result.push(<TabConversationEditor key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} doTabDialog={handleTabDialog} />);
 					break;
 				case OpenTabType.DatabaseClient:
 					result.push(<TabDatabaseClient key={key} filePath={tab.path} changed={tab.changed} guid={tab.guid} active={active} labelChanged={(l: string) => handleLabelChanged(tab, l)} onSetData={(n: any, c: boolean) => handleSetData(tab, n, c)} />);
@@ -841,6 +866,7 @@ function App(props: appProps) {
 			case 'rename': result.push(<RenameDialog key={'rename'} onClose={(e:any) => dispatchAppState({ type:'rename-finished', value:e })} oldPath={appState.selectedPath} />); break;
 			case 'game-properties': result.push(<GamePropertiesDialog key={'game-properties'} onCancel={() => dispatchAppState({ type:'dialog', value:'' })} onPropertiesChanged={(s:any) => setProject(s)} onBuildChanged={(s:any) => setBuild(s)} />); break;
 			case 'pick-image': result.push(<PickImageDialog key={'pick-image'} onClose={(e:any) => dispatchAppState({ type:'pick-image-finished', value:e })} />); break;
+			case 'conversation-option-edit': result.push(<ConvoOptionDialog key={'convo-option'} data={appState.tabState} onClose={handleTabDialogClose} />); break;
 		}
 		return result;
 	};

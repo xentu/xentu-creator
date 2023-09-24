@@ -13,9 +13,15 @@ type ComponentProps = {
 	active: boolean,
 	changed: boolean,
 	labelChanged: Function, 
-	onSetData: Function
+	onSetData: Function,
+	doTabDialog: Function
 };
 
+
+type MomentEntryOption = {
+	content: string,
+	target: string
+}
 
 type MomentEntry = {
 	content: string,
@@ -23,7 +29,7 @@ type MomentEntry = {
 	id?: string,
 	goto?: string,
 	clear: boolean,
-	options: Array<string>,
+	options: Array<MomentEntryOption>,
 	properties: Array<KeyValuePair>
 }
 
@@ -52,6 +58,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 	const [rightBarWidth, setRightBarWidth] = useState(300);
 	const [isTrackingMouse, setIsTrackingMouse] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState(-1);
+	const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
 	const [loaded, setLoaded] = useState(false);
 	const settings = useContext(SettingsContext);
 	const containerRef = useRef(null);
@@ -119,12 +126,10 @@ export default function TabConversationEditor(props: ComponentProps) {
 	};
 
 
-	const setEntryOptions = async (index:number, newOptions:Array<string>) => {
+	const setEntryOptions = async (index:number, newOptions:Array<MomentEntryOption>) => {
 		const newEntries = [...entries];
 		if (newEntries[index].options != newOptions) {
 			newEntries[index].options = newOptions;
-			console.log("NewOpts", index, newOptions);
-			console.log("Entries", newEntries);
 			await setEntries(newEntries);
 		}
 	};
@@ -174,7 +179,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 	const addEntryOption = (index:number) => {
 		const newEntries = [...entries];
 		const newText = `Option Text`;
-		newEntries[index].options.push(newText);
+		newEntries[index].options.push({ content:newText, target:'' });
 		setEntries(newEntries);
 	};
 
@@ -193,6 +198,26 @@ export default function TabConversationEditor(props: ComponentProps) {
 	};
 
 
+	const doOptionDialog = (evt:any) => {
+		const state = {
+			target: "nowhere"
+		};
+		props.doTabDialog('conversation-option-edit', state, optDialogComplete);
+	};
+
+
+	const optDialogComplete = (success:boolean, newState:any) => {
+		if (success === true) {
+			console.log("Dialog Complete!", newState);
+			const newEntries = [...entries];
+			if (newEntries[selectedIndex].options[selectedOptionIndex].target != newState.target) {
+				newEntries[selectedIndex].options[selectedOptionIndex].target = newState.target;
+				setEntries(newEntries);
+			}
+		}
+	};
+
+
 	const listMoments = () => {
 		const result = [];
 		for (var i=0; i<entries.length; i++) {
@@ -204,7 +229,9 @@ export default function TabConversationEditor(props: ComponentProps) {
 								setContent={setEntryContent}
 								setOptions={setEntryOptions}
 								setFocus={setSelectedIndex}
+								setOptionFocus={setSelectedOptionIndex}
 								doRemoveOption={doRemoveOption}
+								doOptionDialog={doOptionDialog}
 								/>);
 		}
 		return result;
@@ -266,7 +293,7 @@ export default function TabConversationEditor(props: ComponentProps) {
 
 					<aside data-title="" style={{width:rightBarWidth+'px'}}>
 						{selectedIndex >= 0 && <>
-							{/*<i>Selected Moment: #{selectedIndex}</i>*/}
+							<i>Selected Moment: #{selectedIndex} (opt:{selectedOptionIndex})</i>
 
 							<div className="conversation-property" style={{marginTop: '0'}}>
 								<label>Actor:</label>
