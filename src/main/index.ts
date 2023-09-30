@@ -1101,7 +1101,7 @@ class XentuCreatorApp {
 		// read the main code file for the selected template.
 		const _template = template == '' ? 'blank' : template;
 		const codeDir = path.join(__dirname, '../renderer', 'templates', _template);
-		const codeSrcFile = path.join(codeDir, 'game.' + language);
+		const codeSrcFile = path.join(codeDir, 'game.' + language + '.txt');
 		const codeSrcFileContents = await fs.readFile(codeSrcFile, 'utf8');
 
 		// write the code to the destination path.
