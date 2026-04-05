@@ -8,6 +8,16 @@ convenient features that makes building games much easier and faster.
 ![Screenshot of the editor in Windows 11](https://github.com/xentu/xentu-creator-js/blob/main/screenshot.png?raw=true)
 
 
+## Current Status (5th April 2026)
+
+This version of creator heavily used dependencies that kept on breaking the build cylce. It's important
+for the longevity of the proejct that anyone can donwnload and build the editor safely and without issue,
+so there is a lot of work underway to transition over to a more sustainable build without monaco & electron.
+
+The current release binaries will still work and are safe, so please give that a download if you wish to
+use the current version!
+
+
 ## Features
 
 - Written in Electron (TypeScript and ReactJS).
@@ -26,24 +36,6 @@ find and download an installer for your operating system. Windows, Linux (Debian
 and MacOS are all currently catered for.
 
 If you would prefer to build it yourself, please keep reading;
-
-
-## How To Build
-
-Make sure you have a recent version of NodeJS installed (preferably v16 or higher),
-then clone this repo (green code button at the top right) into a folder on your
-computer, then in a terminal run this to install dependencies:
-
-```
-npm install
-```
-
-Once complete, run this command to start the app:
-
-```
-npm start
-```
-
 
 ## Donate
 
